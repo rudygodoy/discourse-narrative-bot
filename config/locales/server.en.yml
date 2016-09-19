@@ -9,10 +9,7 @@ en:
       [/quote]
 
       Notice that new replies appear automatically, there's no need to refresh the page to get new information posted by other users.
-
-      Next, let's see if you can tell me something I said. To quote another user like I did above, highlight some text and click the "quote reply" button. It looks like this:
-
-      <img src="/uploads/default/original/1X/a0a128235f05949a23cf9aaf84b22789b04d14fa.png" width="122" height="44">
+      Next, let's create a new post. Create a post in the `staff` category and mention me (@system).
     user_quoted: | 
       Great! Next let's try to play with other forms of content. I am really fond of robots. Here is one of my close friends, @voltron!
 
