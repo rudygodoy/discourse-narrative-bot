@@ -10,6 +10,10 @@ enabled_site_setting :introbot_enabled
 PLUGIN_NAME = "discourse-narrative-bot".freeze
 
 after_initialize do
+  require_dependency 'application_controller'
+  require_dependency 'discourse_event'
+  require_dependency File.expand_path('../jobs/narrative_input.rb', __FILE__)
+  
   load File.expand_path("../app/models/group_user.rb", __FILE__)
   load File.expand_path("../narrative.rb", __FILE__)
   load File.expand_path("../narratives/staff_intro.rb", __FILE__)
@@ -21,8 +25,4 @@ after_initialize do
       isolate_namespace IntroBot
     end
   end
-
-  require_dependency 'application_controller'
-  require_dependency 'discourse_event'
-  require_dependency 'admin_constraint'
 end
