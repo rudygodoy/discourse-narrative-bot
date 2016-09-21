@@ -101,6 +101,7 @@ Next, let's create a new post. Create a topic in the `staff` category and mentio
         raw: "Omg, I love #{ subject.to_s }!!! \n #{EXAMPLES[subject.to_s.downcase.singularize]}",
         topic_id: post.topic.id
       )
+      :end
     end
   end
 
