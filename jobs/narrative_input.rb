@@ -1,5 +1,8 @@
 module Jobs
   class NarrativeInput < Jobs::Base
+
+    sidekiq_options queue: 'critical'
+
     def execute(args)
       user = User.find args[:user_id]
       post = Post.find args[:post_id] rescue nil
