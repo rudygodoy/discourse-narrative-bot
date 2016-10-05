@@ -132,7 +132,14 @@ Next, can you create a new topic in the #staff category and mention any subject 
       data[:topic_id] = post.topic.id
       dirty
 
-      reply get_user, "Omg, I love #{ subject.to_s }!!! \n #{EXAMPLES[subject.to_s.downcase.singularize]} \n Do you have any links about #{ subject.to_s }? Reply with a link on its own line and Discourse will show you more info!"
+      copy = %Q{I'm so glad you started this topic, because I love #{ subject.to_s }!
+
+#{EXAMPLES[subject.to_s.downcase.singularize]}
+
+Can you share any Wikipedia links about #{ subject.to_s }? Try replying with a link on a line by itself, and it'll automatically expand to include a summary.
+}
+
+      reply get_user, copy
       :duel
     end
   end
