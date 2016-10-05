@@ -75,7 +75,7 @@ Don't be alarmed, but I'm not a real person. I'm a robot that helps introduce st
 
 I'll send a brief greeting to each new staff member in this topic, welcoming them to the site and offering them a chance to experiment with me and discover how everything works. There's even a special prize at the end! :gift: Really!
 
-If you'd like to interact with me, just mention @discobot anywhere in the staff category. Otherwise I'll stay out of your way, because I know you're busy.
+If you'd like to interact with me, just mention @discobot anywhere in this private #staff category. Otherwise I'll stay out of your way, because I know you're busy.
       }
       data[:topic_id] = ( reply get_user, copy, {
           title: title, 
