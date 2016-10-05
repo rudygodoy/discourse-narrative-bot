@@ -39,7 +39,7 @@ DiscourseEvent.on(:group_user_created) do | group_user |
 end
 
 DiscourseEvent.on(:post_created) do | post |
-  Jobs.enqueue_in( rand(1..2).seconds, :narrative_input,
+  Jobs.enqueue(:narrative_input,
     user_id: post.user.id,
     post_id: post.id,
     narrative: 'staff_introduction',
@@ -52,16 +52,30 @@ end
 
 Narrative.create 'staff_introduction' do
   state :begin, on: 'init' do | user |
-    data[:topic_id] = PostCreator.create(
-      get_user,
-      raw: %Q{Hi @#{ user.username }.
-Welcome to your new Discourse install: #{SiteSetting.title}.
-Reply to this post and I'll quote you!},
-      title: "Welcome, #{ user.username }!", 
-      category: Category.find_by(slug: 'staff').id
-    ).topic.id
+    title = "Discobot welcomes you to Discourse!" 
+    main_topic = Topic.find_by({slug: Slug.for(title)})
+    copy = %Q{Hi @#{ user.username }.
+Welcome to #{SiteSetting.title}!
+Reply to this post to get started.}
+    
+    if (main_topic != nil)
+      data[:topic_id] = main_topic.id
+      dirty
+    end
 
-    dirty
+    if (data[:topic_id])
+      reply get_user, copy
+    else
+      data[:topic_id] = ( reply get_user, "I'll use this thread to say hello to new Staff users and introduce them to  Discourse!", {
+          title: title, 
+          category: Category.find_by(slug: 'staff').id
+        }
+      ).topic.id
+
+      dirty
+
+      reply get_user, copy
+    end
 
     :waiting_quote
   end
