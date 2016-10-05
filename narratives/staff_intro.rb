@@ -52,11 +52,13 @@ end
 
 Narrative.create 'staff_introduction' do
   state :begin, on: 'init' do | user |
-    title = "Discobot welcomes you to Discourse!" 
+    title = "I'm Discobot, stop by and say hello!" 
     main_topic = Topic.find_by({slug: Slug.for(title)})
-    copy = %Q{Hi @#{ user.username }.
-Welcome to #{SiteSetting.title}!
-Reply to this post to get started.}
+    copy = %Q{Hi @#{user.username}
+    
+Welcome to #{SiteSetting.title}! It's great to meet you.
+
+I'd :heart: to show you around, if you have time. Just reply to this post to get started.}
     
     if (main_topic != nil)
       data[:topic_id] = main_topic.id
@@ -66,7 +68,16 @@ Reply to this post to get started.}
     if (data[:topic_id])
       reply get_user, copy
     else
-      data[:topic_id] = ( reply get_user, "I'll use this thread to say hello to new Staff users and introduce them to  Discourse!", {
+      copy = %Q{
+Hey, I'm Discobot!
+
+Don't be alarmed, but I'm not a real person. I'm a robot that helps introduce staff to your site and teaches everyone how it works.
+
+I'll send a brief greeting to each new staff member in this topic, welcoming them to the site and offering them a chance to experiment with me and discover how everything works. There's even a special prize at the end! :gift: Really!
+
+If you'd like to interact with me, just mention @discobot anywhere in the staff category. Otherwise I'll stay out of your way, because I know you're busy.
+      }
+      data[:topic_id] = ( reply get_user, copy, {
           title: title, 
           category: Category.find_by(slug: 'staff').id
         }
@@ -83,13 +94,25 @@ Reply to this post to get started.}
   #(I18n.t 'narratives.quote_user', username: post.user.username )
   state :waiting_quote, on: 'reply' do | user, post |
     if data[:topic_id] === post.topic.id
-      reply get_user, %Q{Great! If I remember correctly, you said:
+      copy = %Q{Excellent! Let me quote what you just said:
+
 [quote="#{post.user.username}, post:#{post.id}, topic:#{post.topic.id}, full:true"]
-  #{post.raw}
+#{post.raw}
 [/quote]
 
-Notice that new replies appear automatically, there's no need to refresh the page to get new information posted by other users.
-Next, let's create a new topic. Create a topic in the `staff` category and mention a subject I like, like **unicorns** or **bacon** or **ninjas** or **monkeys**!!!.}
+Did you notice how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :clock:
+
+Next, can you create a new topic in the #staff category and mention any subject I like?
+
+- unicorns
+- bacon
+- ninjas
+- monkeys
+
+(Please don't judge me. I was programmed this way!)
+}
+
+      reply get_user, copy
 
       # post.topic.update_status( :closed, true, get_user )
 
