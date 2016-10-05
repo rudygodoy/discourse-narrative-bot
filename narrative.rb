@@ -38,16 +38,14 @@ class Narrative
   # Call event on state, log state for input but not "enter" or "leave"
   def input(input, *params)
     result = fire(data[:state], input, *params)
-    go( result ) if result && result.is_a?(Symbol)
+    go( result, *params ) if result && result.is_a?(Symbol)
   end
 
-  def go(to)
+  def go(to, *params)
     @data[:previous] = data[:state]
     @data[:state] = to
-    fire(data[:previous], 'leave')
-    fire(data[:state], 'enter')
-    puts "DATA"
-    puts @data
+    fire(data[:previous], 'leave', *params)
+    fire(data[:state], 'enter', *params)
     dirty
   end
 
@@ -64,9 +62,18 @@ class Narrative
   # There's probably a smarter way to do this
   def dirty
     data_listeners.each do | listener |
-      puts "DIRTY #{data}"
       listener.call(data)
     end
+  end
+
+  # Utility
+  def reply (as, raw, options = {})
+    # Eh.
+    sleep(rand(2..3).seconds)
+    options[:raw] = raw;
+    options[:topic_id] ||= data[:topic_id] if data[:topic_id]
+
+    PostCreator.create( as, options )
   end
 end
 
