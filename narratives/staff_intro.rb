@@ -1,8 +1,6 @@
-# TODO Move to jobs 
-
 PLUGIN_NAME = "discourse-narrative-bot"
 
-# In the future, don't just hijack this guy. Also, load user data from central point
+# TODO In the future, don't just hijack this guy.
 def get_user
   @discobot ||= User.find_by({username: "discobot"})
 
@@ -16,15 +14,15 @@ def get_user
       email: "#{SecureRandom.hex}@anon.#{Discourse.current_hostname}",
       trust_level: 4,
       trust_level_locked: true,
-      created_at: 1.day.ago
+      created_at: 10000.years.ago
     )
 
     @discobot.grant_admin!
     @discobot.activate
 
-    # For now
+    # TODO Pull the user avatar from that thread for now. In the future, pull it from a local file or from some central discobot repo.
     UserAvatar.import_url_for_user(
-      "https://cdn.discourse.org/dev/uploads/default/original/2X/e/eeea0bcff05d9363f3b5554d82dcf5ca22394d39.png",
+      "https://cdn.discourse.org/dev/uploads/default/original/2X/e/edb63d57a720838a7ce6a68f02ba4618787f2299.png",
       @discobot,
       override_gravatar: true )
   end
