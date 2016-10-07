@@ -4,9 +4,9 @@ welcome_topic_title: |
 welcome_topic_body: |
   Hey, I'm Discobot!
 
-  Don't be alarmed, but I'm not a real person. I'm a robot that helps introduce staff to your site and teaches everyone how it works.
+  Don't be alarmed, but I'm not a real person. I am here to help, though!
 
-  I'll send a brief greeting to each new staff member in this topic, welcoming them to the site and offering them a chance to experiment with me and discover how everything works. There's even a special prize at the end! :gift: Really!
+  I'll send a brief greeting to each new staff member in this topic, welcoming them to the site and offering them a chance to experiment and discover how everything works. There's even a special prize at the end! :gift: Really!
 
   If you'd like to interact with me, just mention @discobot anywhere in this private #staff category. Otherwise I'll stay out of your way, because I know you're busy.
 
@@ -60,5 +60,111 @@ quote_user: |
   (Please don't judge me. I was programmed this way!)
 
 congratulations: |
-  Wow, good job! I think after all that you deserve an award!
+  That's all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
+
   <img src='data:image/svg+xml;utf8,<?xml version="1.0" encoding="utf-8"?> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 792 612" style="enable-background:new 0 0 792 612;" xml:space="preserve"> <style type="text/css"> @import "https://fonts.googleapis.com/css?family=Great+Vibes|Montserrat"; .st3{font-size:50px;} .st4{font-family: Sans-serif;} .st5{font-size:16px;} .st7{font-size:25px;} .st8{font-size:80px;} .st10{font-family: "Montserrat"; font-weight: 900;} .st11{font-size:30px;} </style> <radialGradient id="SVGID_1_" cx="396" cy="306" r="353.8729" gradientUnits="userSpaceOnUse"> <stop offset="0.273" stop-color="#FFF9D6"/> <stop offset="1" stop-color="#FFE7A3"/> </radialGradient> <rect width="792" height="612" fill="url(#SVGID_1_)"/> <text text-anchor="middle" transform="matrix(1 0 0 1 396 229.5503)" font-family="Great Vibes" class="st3"><%= user.username %></text> <text text-anchor="middle" transform="matrix(1 0 0 1 396 285.6582)" class="st4 st5">This SVG is proves that you, <%=user.username %>, did something truly fantastical</text> <text text-anchor="middle" transform="matrix(1 0 0 1 396 52.5498)"><tspan x="0" y="0" font-family="Great Vibes" class="st7">Proof of Concept of</tspan><tspan x="0" y="96" font-family="Great Vibes" class="st8">Awesomeness</tspan></text> <g> <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 147.927 464.799" to="360 147.927 464.799" dur="4s" repeatCount="indefinite" /> <path fill="#EAD053" d="M274.9,484.1l-28-35.7l15.1-42.9l-43.6-12.4l-12.9-43.5l-42.6,15.7l-36-27.6l-25.2,37.7l-45.3-1.1l1.7,45.4 l-37.2,25.8l28,35.7l-15.1,42.9l43.6,12.4l12.9,43.5l42.6-15.7l36,27.6l25.2-37.7l45.3,1.1l-1.7-45.4L274.9,484.1z"/> </g> <text transform="matrix(0.9715 -0.2368 0.2368 0.9715 67.9774 492.0969)" fill="#FFFFFF" class="st10 st11">AWESOME</text> </svg>'>
+
+  Bye for now! If you'd like to speak with me again any time, just mention `@discobot` here in the #staff category.  ;)
+
+tutorial_topic_ok: |
+  I'm so glad you started this topic, because I love <%= subject %>!  
+
+tutorial_onebox: |
+  Can you share a Wikipedia link related to this topic? Try replying with **a link on a line by itself**, and it'll automatically expand to include a handy summary.
+  
+  (This also works for links from YouTube, Kickstarter, SoundCloud, WordPress and hundreds of other popular websites. But let's try Wikipedia first!)
+
+tutorial_onebox_ok: |
+  That is an excellent link! 
+
+  I pressed the like :heart: button on your post to let you know how much I appreciated it :heart_eyes: 
+
+tutorial_picture: |
+  Here's a picture of a <%= subject %>:
+
+  <img src="/uploads/default/original/1X/ec5ab50b042f1c24757b9bab67871e352e881f7a.jpg" width="500" height="367">
+
+  If you like it (and who wouldn't!) go ahead and press the like :heart: button below this post to let me know.
+
+  Hey, speaking of – **can you reply with a picture?** Anything will do! You can drag and drop, press the upload button, or even copy and paste it in.
+
+tutorial_picture_ok: |
+  Nifty picture – well done!
+
+tutorial_formatting: |
+  Can you try adding some formatting to your post? Can you make some words **bold** and _italic_ in your reply? 
+
+  To format, use Markdown, BBCode, or HTML, or if you're not into typing, push the buttons on the editor toolbar:
+
+  `**bold** and _italic_`
+  `<b>bold</b> and <i>italic</i>`
+  `[b]bold[/b] and [i]italic[/i]`
+
+  (If you are feeling extra frisky, there is [a whole tutorial on formatting](http://commonmark.org/help) you can try, too.)
+
+tutorial_formatting_ok: |
+  Posts are so much more _**exciting**_ with a little formatting, don't you agree?
+
+tutorial_quote: |
+  Can you try quoting me when you reply so I know exactly what part you're replying to? Here are three quotes:
+
+  > If this is coffee, please bring me some tea; but if this is tea, please bring me some coffee. 
+  >
+  > One advantage of talking to yourself is that you know at least somebody's listening. 
+  >
+  > I want my children to have all the things I couldn't afford. Then I want to move in with them.  
+
+  Select the quote you prefer, and then press the **Quote Reply** button that pops up over the selection.
+
+tutorial_quote_ok: |
+  Nice work, you picked my favorite quote! :left_speech_bubble:
+
+tutorial_emoji: |
+  You may have seen me use these little pictures in my replies, like so: :cherries: 
+
+  Those are called Emoji. Can you try **adding an emoji** to your reply? 
+
+  1. Type a traditional "smiley" like `:)` or `;)` or or `:D` or `:P` 
+
+  2. Type a colon `:` then complete the name of the emoji you want like `:tada:`
+
+  3. Press the emoji toolbar button in the editor for a visual picker.
+
+  :race_car::dash:   Go for it!
+
+tutorial_emoji_ok: |
+  That's downright :sparkles: _emojitastic!_ :sparkles:
+
+tutorial_mention: |
+  Sometimes you might want to get a person's attention even if you aren't replying to them directly. To do this, just mention their name by typing a `@` then completing their name.
+
+  Give it a try – reply to this topic and mention my name `@discobot` in your reply, and I'll get notified!
+
+tutorial_mention_ok: |
+  _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand: 
+
+tutorial_link: |
+  One handy way to refer to previous discussions is to link to them. To get a link to a reply or topic:
+
+  - Use the link :link: button on the post.
+
+  - Copy the link from the address bar of your browser.
+
+  And you know what's _really_ cool? A link between two topics automatically works both ways, so anyone interested in either topic can easily follow all the linked topics, too! 
+
+  Can you **paste a link to [my welcome topic](/t/im-discobot-stop-by-and-say-hello/29)** in your next reply?
+
+tutorial_link_ok: |
+  Now that's some prime linkage!
+
+tutorial_pm: |
+  If you'd prefer to reply to me directly, rather than in the topic, you can send me a personal message any time. Let's try it! Select my avatar to expand my user card, then press the :envelope: Message button.
+
+  I'll be waiting for your message!
+
+  (You can also send me a message from my user page, too.)
+
+tutorial_pm_ok: |
+  Hey, I got your personal message :mailbox_with_mail: – thanks! I'll reply to you there, too. :+1:
+
+tutorial_pm_reply: |
