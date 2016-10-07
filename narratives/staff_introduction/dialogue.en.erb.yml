@@ -1,0 +1,64 @@
+welcome_topic_title: |
+  I'm Discobot, stop by and say hello!
+
+welcome_topic_body: |
+  Hey, I'm Discobot!
+
+  Don't be alarmed, but I'm not a real person. I'm a robot that helps introduce staff to your site and teaches everyone how it works.
+
+  I'll send a brief greeting to each new staff member in this topic, welcoming them to the site and offering them a chance to experiment with me and discover how everything works. There's even a special prize at the end! :gift: Really!
+
+  If you'd like to interact with me, just mention @discobot anywhere in this private #staff category. Otherwise I'll stay out of your way, because I know you're busy.
+
+hello: |
+  Hi @<%= user.username %>
+      
+  Welcome to <%= SiteSetting.title %>! It's great to meet you.
+
+  I'd :heart: to show you around, if you have time. Just reply to this post to get started.
+
+topic_bot_likes: |
+  I'm so glad you started this topic, because I love <%= subject %>!
+
+  <%= dialogue("bot_likes_#{subject.downcase.singularize}") %>
+
+  Hey, can you post a Wikipedia link on <%= subject %>? Try replying with a link on a line by itself, and it'll automatically expand to include a nifty summary.
+
+bot_likes_unicorn: |
+  Did you know that the unicorn is Scotland's national animal? :unicorn: 
+  https://en.wikipedia.org/wiki/Unicorn
+bot_likes_ninja: |
+  Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:? 
+  http://nerdreactor.com/wp-content/uploads/2012/12/Ninja_Gaiden_NES_02.jpg
+bot_likes_bacon: |
+  :pig: :pig: :pig: :pig: :pig: :pig: 
+  https://media.giphy.com/media/10l8MVei2OxbuU/giphy.gif 
+  https://media.giphy.com/media/qZiUOutzxgfKM/giphy.gif
+bot_likes_monkey: |
+  :monkey: :fries:
+  https://www.youtube.com/watch?v=FjqfX8-L0Tk
+
+no_onebox: |
+  That does not have a onebox in it! Paste a link to something on its own line to onebox something.
+
+quote_user: |
+  Excellent! Let me quote what you just said:
+
+  [quote="<%= post.user.username %>, post:<%= post.id %>, topic:<%= post.topic.id %>, full:true"]
+    <%= post.raw %>
+  [/quote]
+
+  Did you notice how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :clock:
+
+  Next, can you create a new topic in the #staff category and mention any subject I like?
+
+  - unicorns
+  - bacon
+  - ninjas
+  - monkeys
+
+  (Please don't judge me. I was programmed this way!)
+
+congratulations: |
+  Wow, good job! I think after all that you deserve an award!
+  <img src='data:image/svg+xml;utf8,<?xml version="1.0" encoding="utf-8"?> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 792 612" style="enable-background:new 0 0 792 612;" xml:space="preserve"> <style type="text/css"> @import "https://fonts.googleapis.com/css?family=Great+Vibes|Montserrat"; .st3{font-size:50px;} .st4{font-family: Sans-serif;} .st5{font-size:16px;} .st7{font-size:25px;} .st8{font-size:80px;} .st10{font-family: "Montserrat"; font-weight: 900;} .st11{font-size:30px;} </style> <radialGradient id="SVGID_1_" cx="396" cy="306" r="353.8729" gradientUnits="userSpaceOnUse"> <stop offset="0.273" stop-color="#FFF9D6"/> <stop offset="1" stop-color="#FFE7A3"/> </radialGradient> <rect width="792" height="612" fill="url(#SVGID_1_)"/> <text text-anchor="middle" transform="matrix(1 0 0 1 396 229.5503)" font-family="Great Vibes" class="st3"><%= user.username %></text> <text text-anchor="middle" transform="matrix(1 0 0 1 396 285.6582)" class="st4 st5">This SVG is proves that you, <%=user.username %>, did something truly fantastical</text> <text text-anchor="middle" transform="matrix(1 0 0 1 396 52.5498)"><tspan x="0" y="0" font-family="Great Vibes" class="st7">Proof of Concept of</tspan><tspan x="0" y="96" font-family="Great Vibes" class="st8">Awesomeness</tspan></text> <g> <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 147.927 464.799" to="360 147.927 464.799" dur="4s" repeatCount="indefinite" /> <path fill="#EAD053" d="M274.9,484.1l-28-35.7l15.1-42.9l-43.6-12.4l-12.9-43.5l-42.6,15.7l-36-27.6l-25.2,37.7l-45.3-1.1l1.7,45.4 l-37.2,25.8l28,35.7l-15.1,42.9l43.6,12.4l12.9,43.5l42.6-15.7l36,27.6l25.2-37.7l45.3,1.1l-1.7-45.4L274.9,484.1z"/> </g> <text transform="matrix(0.9715 -0.2368 0.2368 0.9715 67.9774 492.0969)" fill="#FFFFFF" class="st10 st11">AWESOME</text> </svg>'>

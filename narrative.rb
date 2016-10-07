@@ -75,6 +75,14 @@ class Narrative
 
     PostCreator.create( as, options )
   end
+
+  def dialogue_file
+    @dialogue_file ||= YAML.load_file File.expand_path("../narratives/#{ @story }/dialogue.en.erb.yml", __FILE__)
+  end
+
+  def dialogue( term, b=nil)
+    (ERB.new dialogue_file[term]).result(b)
+  end
 end
 
 ## TODO: Test properly

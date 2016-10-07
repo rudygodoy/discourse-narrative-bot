@@ -18,8 +18,9 @@ after_initialize do
 
   load File.expand_path("../app/models/group_user.rb", __FILE__)
   load File.expand_path("../narrative.rb", __FILE__)
+
   # TODO Automatically load this folder in 
-  load File.expand_path("../narratives/staff_intro.rb", __FILE__)
+  load File.expand_path("../narratives/staff_introduction/index.rb", __FILE__)
 
   module ::Narratives
     class Engine < ::Rails::Engine
@@ -42,7 +43,6 @@ after_initialize do
   Narratives::Engine.routes.draw do
     get "/reset/:user_id/:narrative" => "narratives#reset", constraints: AdminConstraint.new
     get "/status/:user_id/:narrative" => "narratives#status", constraints: AdminConstraint.new
-
   end
 
   Discourse::Application.routes.prepend do
