@@ -17,13 +17,6 @@ hello: |
 
   I'd :heart: to show you around, if you have time. Just reply to this post to get started.
 
-topic_bot_likes: |
-  I'm so glad you started this topic, because I love <%= subject %>!
-
-  <%= dialogue("bot_likes_#{subject.downcase.singularize}") %>
-
-  Hey, can you post a Wikipedia link on <%= subject %>? Try replying with a link on a line by itself, and it'll automatically expand to include a nifty summary.
-
 bot_likes_unicorn: |
   Did you know that the unicorn is Scotland's national animal? :unicorn: 
   https://en.wikipedia.org/wiki/Unicorn
@@ -67,7 +60,9 @@ congratulations: |
   Bye for now! If you'd like to speak with me again any time, just mention `@discobot` here in the #staff category.  ;)
 
 tutorial_topic_ok: |
-  I'm so glad you started this topic, because I love <%= subject %>!  
+  I'm so glad you started this topic, because I love <%= data[:subject].pluralize %>!
+
+  <%= dialogue("bot_likes_#{ data[:subject].downcase.singularize}") %>
 
 tutorial_onebox: |
   Can you share a Wikipedia link related to this topic? Try replying with **a link on a line by itself**, and it'll automatically expand to include a handy summary.
@@ -80,7 +75,7 @@ tutorial_onebox_ok: |
   I pressed the like :heart: button on your post to let you know how much I appreciated it :heart_eyes: 
 
 tutorial_picture: |
-  Here's a picture of a <%= subject %>:
+  Here's a picture of a <%= data[:subject].singularize %>:
 
   <img src="/uploads/default/original/1X/ec5ab50b042f1c24757b9bab67871e352e881f7a.jpg" width="500" height="367">
 

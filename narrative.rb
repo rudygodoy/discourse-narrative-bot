@@ -44,6 +44,7 @@ class Narrative
   def go(to, *params)
     @data[:previous] = data[:state]
     @data[:state] = to
+    dirty
     fire(data[:previous], 'leave', *params)
     fire(data[:state], 'enter', *params)
     dirty
@@ -68,9 +69,7 @@ class Narrative
 
   # Utility
   def reply (as, raw, options = {})
-    # Eh.
-    sleep(rand(2..3).seconds)
-    options[:raw] = raw;
+    options[:raw] = raw
     options[:topic_id] ||= data[:topic_id] if data[:topic_id]
 
     PostCreator.create( as, options )
@@ -81,7 +80,7 @@ class Narrative
   end
 
   def dialogue( term, b=nil)
-    (ERB.new dialogue_file[term]).result(b)
+    (ERB.new dialogue_file[term]).result(b || binding)
   end
 end
 
