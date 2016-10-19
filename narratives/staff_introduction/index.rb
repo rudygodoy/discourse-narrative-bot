@@ -79,7 +79,7 @@ Narrative.create 'staff_introduction' do
   state :waiting_quote, on: 'reply' do | user, post |
     next unless data[:topic_id] === post.topic.id
 
-    sleep(rand(2..3).seconds)
+    sleep(rand(3..5).seconds)
     reply get_user, dialogue('quote_user', binding)
     :tutorial_topic
   end
@@ -100,7 +100,6 @@ Narrative.create 'staff_introduction' do
 
   # Category is "staff" and subject has a fun topic and it's a new topic
   state :tutorial_topic, on: 'reply' do | user, post |
-    next unless post.topic.category.slug === 'staff' && (subject = (/((unicorn)|(bacon)|(ninja)|(monkey))/i.match(post.raw)).to_s) && post.topic.id != data[:topic_id]
     
     data[:topic_id] = post.topic.id
     data[:subject] = subject
@@ -124,7 +123,7 @@ Narrative.create 'staff_introduction' do
   state :tutorial_formatting, on: 'reply' do | user, post |
     processor = CookedPostProcessor.new(post)
     doc = Nokogiri::HTML.fragment(processor.html)
-    :next_tutorial if data[:topic_id] == post.topic.id && doc.css("strong").size > 0 && doc.css("em").size > 0
+    :next_tutorial if data[:topic_id] == post.topic.id && doc.css("strong").size > 0 && (doc.css("em").size > 0 || doc.css("i").size > 0)
   end
 
   state :tutorial_quote, on: 'reply' do | user, post |
