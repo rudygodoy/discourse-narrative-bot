@@ -65,7 +65,7 @@ after_initialize do
     )
   end
 
-  Narrative.create 'staff_introduction' do
+  ::DiscourseNarrativeBot::Narrative.create 'staff_introduction' do
     state :begin, on: 'init' do |user|
       title = dialogue('welcome_topic_title', binding)
       main_topic = Topic.find_by({slug: Slug.for(title)})
