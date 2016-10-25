@@ -1,5 +1,3 @@
-PLUGIN_NAME = "discourse-narrative-bot"
-
 # TODO In the future, don't just hijack this guy. Or maybe do. Are there consequences to this?
 def get_user
   @discobot ||= User.find_by({username: "discobot"})
