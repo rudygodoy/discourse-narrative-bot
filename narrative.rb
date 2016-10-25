@@ -1,5 +1,5 @@
 class Narrative
-  def data 
+  def data
     @data ||= {
       state: :begin,
       previous: nil
@@ -7,7 +7,7 @@ class Narrative
   end
 
   # static
-  def self.stories 
+  def self.stories
     @stories ||= Hash.new
   end
 
@@ -82,21 +82,27 @@ class Narrative
   def dialogue( term, b=nil)
     (ERB.new dialogue_file[term]).result(b || binding)
   end
+
+  private
+
+  def get_user
+    @discobot ||= User.find(-2)
+  end
 end
 
 ## TODO: Test properly
 
 # Narrative.create 'gun' do |n|
-#   n.state :begin do 
+#   n.state :begin do
 #     puts 'Ready!'
 #   end
 
-#   n.state :begin, on: 'fire' do 
+#   n.state :begin, on: 'fire' do
 #     puts 'BANG!'
 #     :empty
 #   end
 
-#   n.state :empty do 
+#   n.state :empty do
 #     puts 'TIME TO RELOAD!'
 #   end
 
@@ -118,15 +124,15 @@ end
 # gun.input 'reload'
 # gun.input 'fire'
 
-## Fun one 
+## Fun one
 
 # Narrative.create 'turnstile' do |n|
-#   n.state :locked, on: 'coin' do 
+#   n.state :locked, on: 'coin' do
 #     puts 'BEEP'
 #     :unlocked
 #   end
 
-#   n.state :locked, on: 'push' do 
+#   n.state :locked, on: 'push' do
 #     puts 'NOPE'
 #   end
 
