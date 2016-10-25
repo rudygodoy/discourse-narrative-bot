@@ -77,16 +77,14 @@ module DiscourseNarrativeBot
     end
 
     def dialogue_file
-      @dialogue_file ||= YAML.load_file File.expand_path("../narratives/#{ @story }/dialogue.en.erb.yml", __FILE__)
+      @dialogue_file ||= YAML.load_file File.expand_path("../../../narratives/#{@story}/dialogue.en.erb.yml", __FILE__)
     end
 
     def dialogue( term, b=nil)
       (ERB.new dialogue_file[term]).result(b || binding)
     end
 
-    private
-
-    def get_user
+    def self.get_user
       @discobot ||= User.find(-2)
     end
   end

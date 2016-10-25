@@ -6,7 +6,6 @@
 require 'json'
 
 enabled_site_setting :introbot_enabled
-
 PLUGIN_NAME = "discourse-narrative-bot".freeze
 
 after_initialize do
@@ -27,14 +26,24 @@ after_initialize do
       isolate_namespace DiscourseNarrativeBot
     end
 
+    class Store
+      def self.set(narrative, user_id, value)
+        ::PluginStore.set(PLUGIN_NAME, "narrative_#{narrative}_#{user_id}", value)
+      end
+
+      def self.get(narrative, user_id)
+        ::PluginStore.get(PLUGIN_NAME, "narrative_#{narrative}_#{user_id}")
+      end
+    end
+
     class NarrativesController < ::ApplicationController
       def reset
-        ::PluginStore.set(PLUGIN_NAME, "narrative_#{params[:narrative]}_#{params[:user_id]}", nil)
+        ::DiscourseNarrativeBot::Store.set(params[:narrative], params[:user_id], nil)
         render :json, {}.to_s
       end
 
       def status
-        render :json, ::PluginStore.get(PLUGIN_NAME, "narrative_#{params[:narrative]}_#{params[:user_id]}")
+        render :json, ::DiscourseNarrativeBot::Store.get(params[:narrative], params[:user_id])
       end
     end
   end
@@ -49,20 +58,24 @@ after_initialize do
   end
 
   DiscourseEvent.on(:group_user_created) do |group_user|
-    Jobs.enqueue(:narrative_input,
-      user_id: group_user.user.id,
-      narrative: 'staff_introduction',
-      input: 'init'
-    ) if group_user.group.name === 'staff' && group_user.user.id != get_user.id
+    if group_user.group.name === 'staff' && ![-1, -2].include?(group_user.user.id)
+      Jobs.enqueue(:narrative_input,
+        user_id: group_user.user.id,
+        narrative: 'staff_introduction',
+        input: 'init'
+      )
+    end
   end
 
   DiscourseEvent.on(:post_created) do |post|
-    Jobs.enqueue(:narrative_input,
-      user_id: post.user.id,
-      post_id: post.id,
-      narrative: 'staff_introduction',
-      input: 'reply'
-    )
+    if ![-1, -2].include?(user = post.user.id)
+      Jobs.enqueue(:narrative_input,
+        user_id: post.user.id,
+        post_id: post.id,
+        narrative: 'staff_introduction',
+        input: 'reply'
+      )
+    end
   end
 
   ::DiscourseNarrativeBot::Narrative.create 'staff_introduction' do
@@ -77,15 +90,15 @@ after_initialize do
       end
 
       if (data[:topic_id])
-        reply get_user, dialogue('hello', binding)
+        reply self.class.get_user, dialogue('hello', binding)
       else
-        data[:topic_id] = ( reply get_user, dialogue('welcome_topic_body', binding), {
+        data[:topic_id] = ( reply self.class.get_user, dialogue('welcome_topic_body', binding), {
             title: title,
             category: Category.find_by(slug: 'staff').id
           }
         ).topic.id
 
-        reply get_user, dialogue('hello', binding)
+        reply self.class.get_user, dialogue('hello', binding)
       end
 
       :waiting_quote
@@ -95,7 +108,7 @@ after_initialize do
       next unless data[:topic_id] == post.topic.id
 
       sleep(rand(3..5).seconds)
-      reply get_user, dialogue('quote_user', binding)
+      reply self.class.get_user, dialogue('quote_user', binding)
       :tutorial_topic
     end
 
@@ -107,17 +120,16 @@ after_initialize do
       dialogue_next_mission = dialogue( next_mission.to_s, binding )
 
       sleep(rand(2..3).seconds)
-      PostAction.act(get_user, post, PostActionType.types[:like])
-      reply get_user, "#{dialogue_previous_ending}\n#{dialogue_next_mission}"
+      PostAction.act(self.class.get_user, post, PostActionType.types[:like])
+      reply self.class.get_user, "#{dialogue_previous_ending}\n#{dialogue_next_mission}"
 
       go next_mission
     end
 
     # Category is "staff" and subject has a fun topic and it's a new topic
     state :tutorial_topic, on: 'reply' do |user, post|
-
       data[:topic_id] = post.topic.id
-      data[:subject] = subject
+      data[:subject] = 'unicorn'
 
       :next_tutorial
     end
@@ -153,7 +165,7 @@ after_initialize do
     end
 
     state :tutorial_mention, on: 'reply' do |user, post|
-      :next_tutorial if data[:topic_id] == post.topic.id && post.raw.include?("@#{get_user.username}")
+      :next_tutorial if data[:topic_id] == post.topic.id && post.raw.include?("@#{self.class.get_user.username}")
     end
 
     state :tutorial_link, on: 'reply' do |user, post|
@@ -163,8 +175,8 @@ after_initialize do
 
     # TODO broken, fix
     state :tutorial_pm, on: 'reply' do |user, post|
-      if post.archetype == Archetype.private_message && post.topic.all_allowed_users.any? { |p| p.id == get_user.id }
-        reply get_user, dialogue('tutorial_pm_reply', binding), { topic_id: post.topic }
+      if post.archetype == Archetype.private_message && post.topic.all_allowed_users.any? { |p| p.id == self.class.get_user.id }
+        reply self.class.get_user, dialogue('tutorial_pm_reply', binding), { topic_id: post.topic }
         :next_tutorial
       end
     end

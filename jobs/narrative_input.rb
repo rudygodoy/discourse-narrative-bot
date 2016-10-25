@@ -7,9 +7,13 @@ module Jobs
       user = User.find args[:user_id]
       post = Post.find args[:post_id] rescue nil
 
-      narrative = Narrative.new args[:narrative], ::PluginStore.get(PLUGIN_NAME, "narrative_#{args[:narrative]}_#{user.id}") 
+      narrative = ::DiscourseNarrativeBot::Narrative.new(
+        args[:narrative],
+        ::DiscourseNarrativeBot::Store.get(args[:narrative], user.id)
+      )
+
       narrative.on_data do | data |
-        ::PluginStore.set(PLUGIN_NAME, "narrative_#{args[:narrative]}_#{user.id}", data) 
+        ::DiscourseNarrativeBot::Store.set(args[:narrative], user.id, data)
       end
 
       narrative.input args[:input], user, post
