@@ -19,7 +19,7 @@ after_initialize do
 
 
   load File.expand_path("../app/models/group_user.rb", __FILE__)
-  load File.expand_path("../narrative.rb", __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/narrative.rb", __FILE__)
 
   module ::DiscourseNarrativeBot
     class Engine < ::Rails::Engine
