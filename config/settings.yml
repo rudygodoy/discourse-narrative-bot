@@ -1,3 +1,6 @@
 plugins:
   introbot_enabled:
     true
+  discobot_welcome_topic_id:
+    default: -1
+    hidden: true
