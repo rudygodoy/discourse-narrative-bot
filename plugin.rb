@@ -6,7 +6,6 @@
 require 'json'
 
 enabled_site_setting :introbot_enabled
-PLUGIN_NAME = "discourse-narrative-bot".freeze
 
 after_initialize do
   SeedFu.fixture_paths << Rails.root.join("plugins", "discourse-narrative-bot", "db", "fixtures").to_s
@@ -21,6 +20,8 @@ after_initialize do
   load File.expand_path("../lib/discourse_narrative_bot/narrative.rb", __FILE__)
 
   module ::DiscourseNarrativeBot
+    PLUGIN_NAME = "discourse-narrative-bot".freeze
+
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME
       isolate_namespace DiscourseNarrativeBot
@@ -28,11 +29,17 @@ after_initialize do
 
     class Store
       def self.set(narrative, user_id, value)
-        ::PluginStore.set(PLUGIN_NAME, "narrative_#{narrative}_#{user_id}", value)
+        ::PluginStore.set(PLUGIN_NAME, key(narrative, user_id), value)
       end
 
       def self.get(narrative, user_id)
-        ::PluginStore.get(PLUGIN_NAME, "narrative_#{narrative}_#{user_id}")
+        ::PluginStore.get(PLUGIN_NAME, key(narrative, user_id))
+      end
+
+      private
+
+      def self.key(narrative, user_id)
+        "narrative_#{narrative}_#{user_id}"
       end
     end
 
