@@ -445,7 +445,12 @@ describe DiscourseNarrativeBot::Narrative do
         end_post = Post.last
 
         expect(pm_post.raw).to eq(I18n.t('discourse_narrative_bot.narratives.pm.message'))
-        expect(end_post.raw).to eq(I18n.t('discourse_narrative_bot.narratives.end.message'))
+
+        expect(end_post.raw).to eq(I18n.t(
+          'discourse_narrative_bot.narratives.end.message',
+          username: user.username
+        ))
+
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
       end
     end

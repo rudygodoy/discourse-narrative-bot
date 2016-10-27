@@ -76,6 +76,7 @@ module DiscourseNarrativeBot
       @data = DiscourseNarrativeBot::Store.get(user.id) || {}
       @state = (@data[:state] && @data[:state].to_sym) || :begin
       @input = input
+      @user = user
 
       opts = transition(input)
       new_state = opts[:next_state]
@@ -345,7 +346,7 @@ module DiscourseNarrativeBot
       fake_delay
 
       reply_to(
-        raw: I18n.t(i18n_key('end.message')),
+        raw: I18n.t(i18n_key('end.message'), username: @user.username),
         topic_id: @data[:topic_id]
       )
     end
