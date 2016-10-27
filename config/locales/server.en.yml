@@ -152,11 +152,11 @@ en:
 
           And you know what's _really_ cool? A link between two topics automatically works both ways, so anyone interested in either topic can easily follow all the linked topics, too!
 
-          Can you **paste a link to [my welcome topic](/t/%{topic_id})** in your next reply?
+          Can you **paste a link to [my welcome topic](/t/slug/%{topic_id})** in your next reply?
         reply: |-
           Now that's some prime linkage!
         not_found: |-
-          Did you forget to link [my welcome topic](/t/%{topic_id}) in your reply?
+          Did you forget to link [my welcome topic](/t/slug/%{topic_id}) in your reply?
       pm:
         instructions: |-
           If you'd prefer to reply to me directly, rather than in the topic, you can send me a personal message any time. Let's try it! Select my avatar to expand my user card, then press the :envelope: Message button.
@@ -205,7 +205,7 @@ en:
           Perhaps mention me (@discobot) in a reply with the command `/reset_bot` to start over? In the meantime, I'll stay out of your way.
       reset:
         message: |-
-          Looks like you would like me to walk you through the features again. Mention me again in the [welcome topic](/t/%{topic_id}) to get me started again.
+          Looks like you would like me to walk you through the features again. Mention me again in the [welcome topic](/t/slug/%{topic_id}) to get me started again.
         welcome_topic_message: |-
           Got it! Just mention me here to get started again!
 
