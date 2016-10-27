@@ -19,6 +19,43 @@ describe DiscourseNarrativeBot::Narrative do
       DiscourseNarrativeBot::Store.set(user.id, state: :begin)
     end
 
+    describe 'when post contains the right reset trigger' do
+      before do
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_topic, topic_id: topic.id)
+      end
+
+      describe 'in the new bot topic' do
+        it 'should reset the bot' do
+          post.update_attributes!(raw: described_class::RESET_TRIGGER)
+          narrative.input(:reply, user, post)
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.narratives.reset.message',
+            topic_id: SiteSetting.discobot_welcome_topic_id
+          ))
+        end
+      end
+
+      describe 'in the bot welcome topic' do
+        it 'should reset the bot' do
+          new_post = Fabricate(:post,
+            topic_id: SiteSetting.discobot_welcome_topic_id,
+            raw: described_class::RESET_TRIGGER
+          )
+
+          narrative.input(:reply, user, new_post)
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.narratives.reset.welcome_topic_message',
+          ))
+        end
+      end
+    end
+
     describe 'when input does not have a valid transition from current state' do
       it 'should raise the right error' do
         expect { narrative.input(:something, user, post) }.to raise_error(

@@ -196,10 +196,16 @@ en:
 
           Unfortunately, as a poorly programmed bot, I can't quite understand that one. :frowning:
 
-          You can try again, or if you'd like to start over at the beginning of the lesson, reply with the word `reset`.
+          You can try again, or if you'd like to start over at the beginning of the lesson, mention me (@discobot) with the command `/reset_bot`.
         second_response: |-
           Aw, sorry. I'm still not getting it. :anguished:
 
           It's not you – it's me. I blame my programmers! They're terrible!
 
-          Perhaps reply with the word `reset` to start over? In the meantime, I'll stay out of your way.
+          Perhaps mention me (@discobot) in a reply with the command `/reset_bot` to start over? In the meantime, I'll stay out of your way.
+      reset:
+        message: |-
+          Looks like you would like me to walk you through the features again. Mention me again in the [welcome topic](/t/%{topic_id}) to get me started again.
+        welcome_topic_message: |-
+          Got it! Just mention me here to get started again!
+

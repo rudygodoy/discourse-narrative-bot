@@ -42,17 +42,6 @@ after_initialize do
         "narrative_state_#{user_id}"
       end
     end
-
-    class NarrativesController < ::ApplicationController
-      def reset
-        ::DiscourseNarrativeBot::Store.set(params[:narrative], params[:user_id], nil)
-        render :json, {}.to_s
-      end
-
-      def status
-        render :json, ::DiscourseNarrativeBot::Store.get(params[:narrative], params[:user_id])
-      end
-    end
   end
 
   DiscourseNarrativeBot::Engine.routes.draw do

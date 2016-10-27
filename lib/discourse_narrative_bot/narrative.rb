@@ -70,6 +70,8 @@ module DiscourseNarrativeBot
       }
     }
 
+    RESET_TRIGGER = '@discobot /reset_bot'
+
     class TransitionError < StandardError; end
     class DoNotUnderstandError < StandardError; end
 
@@ -80,6 +82,8 @@ module DiscourseNarrativeBot
       @user = user
       @post = post
       opts = {}
+
+      return if reset_bot?
 
       begin
         opts = transition
@@ -493,8 +497,46 @@ module DiscourseNarrativeBot
       @data[:do_not_understand_count] += 1
     end
 
+    def reset_bot?
+      reset = false
+
+      if @post &&
+         bot_mentioned? &&
+         [@data[:topic_id], SiteSetting.discobot_welcome_topic_id].include?(@post.topic.id) &&
+         @post.raw.match(/#{RESET_TRIGGER}/)
+
+        reset_data
+        fake_delay
+
+        raw =
+          if @data[:topic_id] == @post.topic.id
+            I18n.t(i18n_key('reset.message'), topic_id: SiteSetting.discobot_welcome_topic_id)
+          elsif SiteSetting.discobot_welcome_topic_id == @post.topic.id
+            I18n.t(i18n_key('reset.welcome_topic_message'))
+          end
+
+        reply_to(
+          raw: raw,
+          topic_id: @post.topic.id,
+          reply_to_post_number: @post.post_number
+        )
+
+        reset = true
+      end
+
+      reset
+    end
+
     def store_data
-      DiscourseNarrativeBot::Store.set(@user.id, @data)
+      set_data(@data)
+    end
+
+    def reset_data
+      set_data(nil)
+    end
+
+    def set_data(value)
+      DiscourseNarrativeBot::Store.set(@user.id, value)
     end
 
     def self.discobot_user
