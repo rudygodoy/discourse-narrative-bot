@@ -140,7 +140,8 @@ module DiscourseNarrativeBot
           username: @post.user.username,
           post_id: @post.id,
           topic_id: post_topic_id,
-          post_raw: @post.raw
+          post_raw: @post.raw,
+          category_slug: Category.find(SiteSetting.discobot_category_id).slug
         ),
         topic_id: post_topic_id,
         reply_to_post_number: @post.post_number
@@ -148,7 +149,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_topic
-      return unless @post.topic.category_id == SiteSetting.staff_category_id
+      return unless @post.topic.category_id == SiteSetting.discobot_category_id
       return unless @post.is_first_post?
 
       post_topic_id = @post.topic.id
@@ -439,7 +440,10 @@ module DiscourseNarrativeBot
       fake_delay
 
       reply_to(
-        raw: I18n.t(i18n_key('end.message'), username: @user.username),
+        raw: I18n.t(i18n_key('end.message'),
+          username: @user.username,
+          category_slug: Category.find(SiteSetting.discobot_category_id).slug
+        ),
         topic_id: @data[:topic_id]
       )
     end

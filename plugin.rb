@@ -54,22 +54,29 @@ after_initialize do
   end
 
   DiscourseEvent.on(:group_user_created) do |group_user|
-    if group_user.group.name === 'staff' && ![-1, -2].include?(group_user.user.id)
+    category = Category.find(SiteSetting.discobot_category_id)
+    group = group_user.group
+    user = group_user.user
+    user_group_ids = user.group_ids - [group.id]
+    category_secure_group_ids = category.secure_group_ids
+
+    if (category.secure_group_ids & user_group_ids).empty? &&
+       !(category.secure_group_ids & [group.id]).empty? &&
+       ![-1, -2].include?(user.id)
+
       Jobs.enqueue(:narrative_input,
-        user_id: group_user.user.id,
-        narrative: 'staff_introduction',
-        input: 'init'
+        user_id: user.id,
+        input: :init
       )
     end
   end
 
   DiscourseEvent.on(:post_created) do |post|
-    if ![-1, -2].include?(user = post.user.id)
+    if ![-1, -2].include?(post.user.id)
       Jobs.enqueue(:narrative_input,
         user_id: post.user.id,
         post_id: post.id,
-        narrative: 'staff_introduction',
-        input: 'reply'
+        input: :reply
       )
     end
   end

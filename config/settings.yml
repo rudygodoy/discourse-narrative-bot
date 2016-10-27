@@ -4,3 +4,6 @@ plugins:
   discobot_welcome_topic_id:
     default: -1
     hidden: true
+  discobot_category_id:
+    default: -1
+    hidden: true

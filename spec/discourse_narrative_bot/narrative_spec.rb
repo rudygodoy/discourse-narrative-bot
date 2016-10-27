@@ -10,7 +10,7 @@ describe DiscourseNarrativeBot::Narrative do
   let(:other_post) { Fabricate(:post, topic: other_topic) }
 
   before do
-    SiteSetting.staff_category_id = category.id
+    SiteSetting.discobot_category_id = category.id
     SiteSetting.title = "This is an awesome site!"
   end
 
@@ -129,7 +129,8 @@ describe DiscourseNarrativeBot::Narrative do
           username: post.user.username,
           post_id: post.id,
           topic_id: post.topic.id,
-          post_raw: post.raw
+          post_raw: post.raw,
+          category_slug: category.slug
         ).chomp)
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_topic)
@@ -516,7 +517,8 @@ describe DiscourseNarrativeBot::Narrative do
 
         expect(end_post.raw).to eq(I18n.t(
           'discourse_narrative_bot.narratives.end.message',
-          username: user.username
+          username: user.username,
+          category_slug: category.slug
         ))
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
