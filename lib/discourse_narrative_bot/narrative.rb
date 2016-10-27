@@ -149,6 +149,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key(Regexp.last_match.to_s.downcase))}
+
         #{I18n.t(i18n_key(next_instructions_key))}
       RAW
 
@@ -171,6 +172,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key('onebox.reply'))}
+
         #{I18n.t(i18n_key(next_instructions_key))}
       RAW
 
@@ -193,6 +195,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key('images.reply'))}
+
         #{I18n.t(i18n_key(next_instructions_key))}
       RAW
 
@@ -215,6 +218,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key('formatting.reply'))}
+
         #{I18n.t(i18n_key(next_instructions_key))}
       RAW
 
@@ -237,6 +241,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key('quoting.reply'))}
+
         #{I18n.t(i18n_key(next_instructions_key))}
       RAW
 
@@ -259,6 +264,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key('emoji.reply'))}
+
         #{I18n.t(i18n_key(next_instructions_key))}
       RAW
 
@@ -279,6 +285,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key('mention.reply'))}
+
         #{I18n.t(i18n_key(next_instructions_key), topic_id: SiteSetting.discobot_welcome_topic_id)}
       RAW
 
@@ -314,6 +321,7 @@ module DiscourseNarrativeBot
 
       raw = <<~RAW
         #{I18n.t(i18n_key('link.reply'))}
+
         #{I18n.t(i18n_key(next_instructions_key))}
       RAW
 
