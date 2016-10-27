@@ -54,20 +54,23 @@ after_initialize do
   end
 
   DiscourseEvent.on(:group_user_created) do |group_user|
-    category = Category.find(SiteSetting.discobot_category_id)
-    group = group_user.group
     user = group_user.user
-    user_group_ids = user.group_ids - [group.id]
-    category_secure_group_ids = category.secure_group_ids
 
-    if (category.secure_group_ids & user_group_ids).empty? &&
-       !(category.secure_group_ids & [group.id]).empty? &&
-       ![-1, -2].include?(user.id)
+    if ![-1, -2].include?(user.id)
+      if category = Category.find_by(SiteSetting.discobot_category_id)
+        category_secure_group_ids = category.secure_group_ids
+        group = group_user.group
+        user_group_ids = user.group_ids - [group.id]
 
-      Jobs.enqueue(:narrative_input,
-        user_id: user.id,
-        input: :init
-      )
+        if (category.secure_group_ids & user_group_ids).empty? &&
+           !(category.secure_group_ids & [group.id]).empty?
+
+          Jobs.enqueue(:narrative_input,
+            user_id: user.id,
+            input: :init
+          )
+        end
+      end
     end
   end
 
