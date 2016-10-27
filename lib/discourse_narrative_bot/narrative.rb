@@ -71,6 +71,7 @@ module DiscourseNarrativeBot
     }
 
     class TransitionError < StandardError; end
+    class DoNotUnderstandError < StandardError; end
 
     def input(input, user, post)
       @data = DiscourseNarrativeBot::Store.get(user.id) || {}
@@ -78,8 +79,16 @@ module DiscourseNarrativeBot
       @input = input
       @user = user
       @post = post
+      opts = {}
 
-      opts = transition
+      begin
+        opts = transition
+      rescue DoNotUnderstandError
+        generic_replies
+        store_data
+        return
+      end
+
       new_state = opts[:next_state]
       action = opts[:after_action]
 
@@ -87,12 +96,9 @@ module DiscourseNarrativeBot
         @next_instructions_key = next_instructions_key
       end
 
-      output = self.send(action)
-
-      if output
+      if self.send(action)
         @data[:state] = new_state
-        DiscourseNarrativeBot::Store.set(user.id, @data)
-
+        store_data
         end_reply if new_state == :end
       end
     end
@@ -106,6 +112,9 @@ module DiscourseNarrativeBot
         reply_to(raw: raw, topic_id: SiteSetting.discobot_welcome_topic_id)
       else
         return unless bot_mentioned?
+
+        fake_delay
+        like_post
 
         reply_to(
           raw: raw,
@@ -166,22 +175,33 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       @post.post_analyzer.cook(@post.raw, {})
-      return unless @post.post_analyzer.found_oneboxes?
 
-      raw = <<~RAW
-        #{I18n.t(i18n_key('onebox.reply'))}
+      if @post.post_analyzer.found_oneboxes?
+        raw = <<~RAW
+          #{I18n.t(i18n_key('onebox.reply'))}
 
-        #{I18n.t(i18n_key(@next_instructions_key))}
-      RAW
+          #{I18n.t(i18n_key(@next_instructions_key))}
+        RAW
 
-      fake_delay
-      like_post
+        fake_delay
+        like_post
 
-      reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
+        reply_to(
+          raw: raw,
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        fake_delay
+
+        reply_to(
+          raw: I18n.t(i18n_key('onebox.not_found')),
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+
+        false
+      end
     end
 
     def reply_to_image
@@ -189,45 +209,65 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       @post.post_analyzer.cook(@post.raw, {})
-      return unless @post.post_analyzer.image_count > 0
 
-      raw = <<~RAW
-        #{I18n.t(i18n_key('images.reply'))}
+      if @post.post_analyzer.image_count > 0
+        raw = <<~RAW
+          #{I18n.t(i18n_key('images.reply'))}
 
-        #{I18n.t(i18n_key(@next_instructions_key))}
-      RAW
+          #{I18n.t(i18n_key(@next_instructions_key))}
+        RAW
 
-      fake_delay
-      like_post
+        fake_delay
+        like_post
 
-      reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
+        reply_to(
+          raw: raw,
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        fake_delay
+
+        reply_to(
+          raw: I18n.t(i18n_key('images.not_found')),
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+
+        false
+      end
     end
 
     def reply_to_formatting
       post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
-      doc = Nokogiri::HTML.fragment(@post.cooked)
-      return unless doc.css("b", "strong", "em", "i").size > 0
+      if Nokogiri::HTML.fragment(@post.cooked).css("b", "strong", "em", "i").size > 0
+        raw = <<~RAW
+          #{I18n.t(i18n_key('formatting.reply'))}
 
-      raw = <<~RAW
-        #{I18n.t(i18n_key('formatting.reply'))}
+          #{I18n.t(i18n_key(@next_instructions_key))}
+        RAW
 
-        #{I18n.t(i18n_key(@next_instructions_key))}
-      RAW
+        fake_delay
+        like_post
 
-      fake_delay
-      like_post
+        reply_to(
+          raw: raw,
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        fake_delay
 
-      reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
+        reply_to(
+          raw: I18n.t(i18n_key('formatting.not_found')),
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+
+        false
+      end
     end
 
     def reply_to_quote
@@ -235,22 +275,33 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       doc = Nokogiri::HTML.fragment(@post.cooked)
-      return unless doc.css(".quote").size > 0
 
-      raw = <<~RAW
-        #{I18n.t(i18n_key('quoting.reply'))}
+      if doc.css(".quote").size > 0
+        raw = <<~RAW
+          #{I18n.t(i18n_key('quoting.reply'))}
 
-        #{I18n.t(i18n_key(@next_instructions_key))}
-      RAW
+          #{I18n.t(i18n_key(@next_instructions_key))}
+        RAW
 
-      fake_delay
-      like_post
+        fake_delay
+        like_post
 
-      reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
+        reply_to(
+          raw: raw,
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        fake_delay
+
+        reply_to(
+          raw: I18n.t(i18n_key('quoting.not_found')),
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+
+        false
+      end
     end
 
     def reply_to_emoji
@@ -258,43 +309,65 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       doc = Nokogiri::HTML.fragment(@post.cooked)
-      return unless doc.css(".emoji").size > 0
 
-      raw = <<~RAW
-        #{I18n.t(i18n_key('emoji.reply'))}
+      if doc.css(".emoji").size > 0
+        raw = <<~RAW
+          #{I18n.t(i18n_key('emoji.reply'))}
 
-        #{I18n.t(i18n_key(@next_instructions_key))}
-      RAW
+          #{I18n.t(i18n_key(@next_instructions_key))}
+        RAW
 
-      fake_delay
-      like_post
+        fake_delay
+        like_post
 
-      reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
+        reply_to(
+          raw: raw,
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        fake_delay
+
+        reply_to(
+          raw: I18n.t(i18n_key('emoji.not_found')),
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+
+        false
+      end
     end
 
     def reply_to_mention
       post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
-      return unless bot_mentioned?
 
-      raw = <<~RAW
-        #{I18n.t(i18n_key('mention.reply'))}
+      if bot_mentioned?
+        raw = <<~RAW
+          #{I18n.t(i18n_key('mention.reply'))}
 
-        #{I18n.t(i18n_key(@next_instructions_key), topic_id: SiteSetting.discobot_welcome_topic_id)}
-      RAW
+          #{I18n.t(i18n_key(@next_instructions_key), topic_id: SiteSetting.discobot_welcome_topic_id)}
+        RAW
 
-      fake_delay
-      like_post
+        fake_delay
+        like_post
 
-      reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
+        reply_to(
+          raw: raw,
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        fake_delay
+
+        reply_to(
+          raw: I18n.t(i18n_key('mention.not_found'), username: @user.username),
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+
+        false
+      end
     end
 
     def bot_mentioned?
@@ -314,22 +387,33 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       @post.post_analyzer.cook(@post.raw, {})
-      return unless @post.post_analyzer.link_count > 0
 
-      raw = <<~RAW
-        #{I18n.t(i18n_key('link.reply'))}
+      if @post.post_analyzer.link_count > 0
+        raw = <<~RAW
+          #{I18n.t(i18n_key('link.reply'))}
 
-        #{I18n.t(i18n_key(@next_instructions_key))}
-      RAW
+          #{I18n.t(i18n_key(@next_instructions_key))}
+        RAW
 
-      fake_delay
-      like_post
+        fake_delay
+        like_post
 
-      reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
+        reply_to(
+          raw: raw,
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        fake_delay
+
+        reply_to(
+          raw: I18n.t(i18n_key('link.not_found'), topic_id: SiteSetting.discobot_welcome_topic_id),
+          topic_id: post_topic_id,
+          reply_to_post_number: @post.post_number
+        )
+
+        false
+      end
     end
 
     def reply_to_pm
@@ -361,6 +445,10 @@ module DiscourseNarrativeBot
     end
 
     def transition
+      if @state == :end && @post.topic.id == @data[:topic_id]
+        raise DoNotUnderstandError.new
+      end
+
       TRANSITION_TABLE.fetch([@state, @input])
     rescue KeyError
       raise TransitionError.new("No transition from state '#{@state}' for input '#{@input}'")
@@ -380,6 +468,33 @@ module DiscourseNarrativeBot
 
     def like_post
       PostAction.act(self.class.discobot_user, @post, PostActionType.types[:like])
+    end
+
+    def generic_replies
+      count = (@data[:do_not_understand_count] ||= 0)
+
+      case count
+      when 0
+        reply_to(
+          raw: I18n.t(i18n_key('do_not_understand.first_response')),
+          topic_id: @post.topic.id,
+          reply_to_post_number: @post.post_number
+        )
+      when 1
+        reply_to(
+          raw: I18n.t(i18n_key('do_not_understand.second_response')),
+          topic_id: @post.topic.id,
+          reply_to_post_number: @post.post_number
+        )
+      else
+        # Stay out of the user's way
+      end
+
+      @data[:do_not_understand_count] += 1
+    end
+
+    def store_data
+      DiscourseNarrativeBot::Store.set(@user.id, @data)
     end
 
     def self.discobot_user

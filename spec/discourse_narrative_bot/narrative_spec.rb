@@ -56,6 +56,15 @@ describe DiscourseNarrativeBot::Narrative do
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_quote)
       end
+
+      describe 'when a post is created without mentioning the bot' do
+        it 'should not create a do not understand response' do
+          post
+
+          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:begin)
+        end
+      end
     end
 
     describe 'when [:waiting_quote, :reply]' do
@@ -151,9 +160,10 @@ describe DiscourseNarrativeBot::Narrative do
 
       describe 'when post does not contain onebox' do
         it 'should not do anything' do
-          post
+          narrative.input(:reply, user, post)
+          new_post = Post.last
 
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.narratives.onebox.not_found'))
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
         end
       end
@@ -191,8 +201,9 @@ describe DiscourseNarrativeBot::Narrative do
 
       describe 'when post does not contain an image' do
         it 'should not do anything' do
-          post
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.narratives.images.not_found'))
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
         end
       end
@@ -232,8 +243,9 @@ describe DiscourseNarrativeBot::Narrative do
 
       describe 'when post does not contain any formatting' do
         it 'should not do anything' do
-          post
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.narratives.formatting.not_found'))
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_formatting)
         end
       end
@@ -271,8 +283,9 @@ describe DiscourseNarrativeBot::Narrative do
 
       describe 'when post does not contain any quotes' do
         it 'should not do anything' do
-          post
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.narratives.quoting.not_found'))
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_quote)
         end
       end
@@ -310,10 +323,11 @@ describe DiscourseNarrativeBot::Narrative do
         end
       end
 
-      describe 'when post does not contain any quotes' do
+      describe 'when post does not contain any emoji' do
         it 'should not do anything' do
-          post
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.narratives.emoji.not_found'))
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_emoji)
         end
       end
@@ -351,10 +365,15 @@ describe DiscourseNarrativeBot::Narrative do
         end
       end
 
-      describe 'when post does not contain any quotes' do
+      describe 'when post does not contain any mentions' do
         it 'should not do anything' do
-          post
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.narratives.mention.not_found',
+            username: user.username
+          ))
+
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_mention)
         end
       end
@@ -394,8 +413,13 @@ describe DiscourseNarrativeBot::Narrative do
 
       describe 'when post does not contain any quotes' do
         it 'should not do anything' do
-          post
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.narratives.link.not_found',
+            topic_id: SiteSetting.discobot_welcome_topic_id
+          ))
+
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_link)
         end
       end
@@ -457,6 +481,43 @@ describe DiscourseNarrativeBot::Narrative do
           'discourse_narrative_bot.narratives.end.message',
           username: user.username
         ))
+
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+      end
+    end
+
+    describe ':end state' do
+      before do
+        DiscourseNarrativeBot::Store.set(user.id, state: :end, topic_id: topic.id)
+      end
+
+      it 'should raise the right error when reply is not in the right topic' do
+        expect { narrative.input(:reply, user, other_post) }.to raise_error(
+          described_class::TransitionError
+        )
+      end
+
+      it 'should create the right generic do not understand responses' do
+        narrative.input(:reply, user, post)
+
+        expect(Post.last.raw).to eq(I18n.t(
+          'discourse_narrative_bot.narratives.do_not_understand.first_response'
+        ))
+
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+
+        narrative.input(:reply, user, Fabricate(:post, topic: topic))
+
+
+        expect(Post.last.raw).to eq(I18n.t(
+          'discourse_narrative_bot.narratives.do_not_understand.second_response'
+        ))
+
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+
+        new_post = Fabricate(:post, topic: topic)
+
+        expect { narrative.input(:reply, user, new_post) }.to_not change { Post.count }
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
       end
