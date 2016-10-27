@@ -21,9 +21,9 @@ describe DiscourseNarrativeBot::Narrative do
 
     describe 'when input does not have a valid transition from current state' do
       it 'should raise the right error' do
-        expect { narrative.input(:reply, user, post) }.to raise_error(
+        expect { narrative.input(:something, user, post) }.to raise_error(
           described_class::TransitionError,
-          "No transition from state 'begin' for input 'reply'"
+          "No transition from state 'begin' for input 'something'"
         )
       end
     end
@@ -31,6 +31,23 @@ describe DiscourseNarrativeBot::Narrative do
     describe 'when [:begin, :init]' do
       it 'should create the right post' do
         narrative.input(:init, user, nil)
+        new_post = Post.last
+
+        expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.narratives.hello',
+          username: user.username, title: SiteSetting.title
+        ).chomp)
+
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_quote)
+      end
+    end
+
+    describe 'when [:begin, :reply]' do
+      it 'should create the right post' do
+        post.update_attributes!(
+          raw: '@discobot Lets us get this started!'
+        )
+
+        narrative.input(:reply, user, post)
         new_post = Post.last
 
         expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.narratives.hello',

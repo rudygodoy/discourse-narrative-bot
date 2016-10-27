@@ -6,6 +6,11 @@ module DiscourseNarrativeBot
         after_action: :say_hello
       },
 
+      [:begin, :reply] => {
+        next_state: :waiting_quote,
+        after_action: :say_hello
+      },
+
       [:waiting_quote, :reply] => {
         next_state: :tutorial_topic,
         after_action: :quote_user_reply
@@ -70,6 +75,7 @@ module DiscourseNarrativeBot
     def input(input, user, post)
       @data = DiscourseNarrativeBot::Store.get(user.id) || {}
       @state = (@data[:state] && @data[:state].to_sym) || :begin
+      @input = input
 
       opts = transition(input)
       new_state = opts[:next_state]
@@ -94,10 +100,20 @@ module DiscourseNarrativeBot
     private
 
     def say_hello(user:, post: nil)
-      reply_to(
-        raw: I18n.t(i18n_key('hello'), username: user.username, title: SiteSetting.title),
-        topic_id: SiteSetting.discobot_welcome_topic_id
-      )
+      if @input == :init
+        reply_to(
+          raw: I18n.t(i18n_key('hello'), username: user.username, title: SiteSetting.title),
+          topic_id: SiteSetting.discobot_welcome_topic_id
+        )
+      else
+        return unless bot_mentioned?(post)
+
+        reply_to(
+          raw: I18n.t(i18n_key('hello'), username: user.username, title: SiteSetting.title),
+          topic_id: post.topic.id,
+          reply_to_post_number: post.post_number
+        )
+      end
     end
 
     def quote_user_reply(user:, post:)
@@ -258,16 +274,7 @@ module DiscourseNarrativeBot
     def reply_to_mention(user:, post:, next_instructions_key:)
       post_topic_id = post.topic.id
       return unless valid_topic?(post_topic_id)
-
-      doc = Nokogiri::HTML.fragment(post.cooked)
-
-      valid = false
-
-      mentions = doc.css(".mention").each do |mention|
-        valid = true if mention.text == "@#{self.class.discobot_user.username}"
-      end
-
-      return unless valid
+      return unless bot_mentioned?(post)
 
       raw = <<~RAW
         #{I18n.t(i18n_key('mention.reply'))}
@@ -282,6 +289,18 @@ module DiscourseNarrativeBot
         topic_id: post_topic_id,
         reply_to_post_number: post.post_number
       )
+    end
+
+    def bot_mentioned?(post)
+      doc = Nokogiri::HTML.fragment(post.cooked)
+
+      valid = false
+
+      doc.css(".mention").each do |mention|
+        valid = true if mention.text == "@#{self.class.discobot_user.username}"
+      end
+
+      valid
     end
 
     def reply_to_link(user:, post:, next_instructions_key:)
