@@ -126,6 +126,7 @@ describe DiscourseNarrativeBot::Narrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.narratives.unicorn')}
+
           #{I18n.t('discourse_narrative_bot.narratives.onebox.instructions')}
         RAW
 
@@ -165,6 +166,7 @@ describe DiscourseNarrativeBot::Narrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.narratives.onebox.reply')}
+
           #{I18n.t('discourse_narrative_bot.narratives.images.instructions')}
         RAW
 
@@ -205,6 +207,7 @@ describe DiscourseNarrativeBot::Narrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.narratives.images.reply')}
+
           #{I18n.t('discourse_narrative_bot.narratives.formatting.instructions')}
         RAW
 
@@ -243,6 +246,7 @@ describe DiscourseNarrativeBot::Narrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.narratives.formatting.reply')}
+
           #{I18n.t('discourse_narrative_bot.narratives.quoting.instructions')}
         RAW
 
@@ -283,6 +287,7 @@ describe DiscourseNarrativeBot::Narrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.narratives.quoting.reply')}
+
           #{I18n.t('discourse_narrative_bot.narratives.emoji.instructions')}
         RAW
 
@@ -323,6 +328,7 @@ describe DiscourseNarrativeBot::Narrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.narratives.emoji.reply')}
+
           #{I18n.t('discourse_narrative_bot.narratives.mention.instructions')}
         RAW
 
@@ -363,6 +369,7 @@ describe DiscourseNarrativeBot::Narrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.narratives.mention.reply')}
+
           #{I18n.t('discourse_narrative_bot.narratives.link.instructions', topic_id: SiteSetting.discobot_welcome_topic_id)}
         RAW
 

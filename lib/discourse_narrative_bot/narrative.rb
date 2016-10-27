@@ -77,18 +77,17 @@ module DiscourseNarrativeBot
       @state = (@data[:state] && @data[:state].to_sym) || :begin
       @input = input
       @user = user
+      @post = post
 
-      opts = transition(input)
+      opts = transition
       new_state = opts[:next_state]
       action = opts[:after_action]
 
-      args = { user: user, post: post }
-
       if next_instructions_key = opts[:next_instructions_key]
-        args[:next_instructions_key] = next_instructions_key
+        @next_instructions_key = next_instructions_key
       end
 
-      output = self.send(action, args)
+      output = self.send(action)
 
       if output
         @data[:state] = new_state
@@ -100,207 +99,206 @@ module DiscourseNarrativeBot
 
     private
 
-    def say_hello(user:, post: nil)
+    def say_hello
+      raw = I18n.t(i18n_key('hello'), username: @user.username, title: SiteSetting.title)
+
       if @input == :init
-        reply_to(
-          raw: I18n.t(i18n_key('hello'), username: user.username, title: SiteSetting.title),
-          topic_id: SiteSetting.discobot_welcome_topic_id
-        )
+        reply_to(raw: raw, topic_id: SiteSetting.discobot_welcome_topic_id)
       else
-        return unless bot_mentioned?(post)
+        return unless bot_mentioned?
 
         reply_to(
-          raw: I18n.t(i18n_key('hello'), username: user.username, title: SiteSetting.title),
-          topic_id: post.topic.id,
-          reply_to_post_number: post.post_number
+          raw: raw,
+          topic_id: @post.topic.id,
+          reply_to_post_number: @post.post_number
         )
       end
     end
 
-    def quote_user_reply(user:, post:)
-      post_topic_id = post.topic.id
+    def quote_user_reply
+      post_topic_id = @post.topic.id
       return unless post_topic_id == SiteSetting.discobot_welcome_topic_id
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: I18n.t(i18n_key('quote_user_reply'),
-          username: post.user.username,
-          post_id: post.id,
+          username: @post.user.username,
+          post_id: @post.id,
           topic_id: post_topic_id,
-          post_raw: post.raw
+          post_raw: @post.raw
         ),
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_topic(user:, post:, next_instructions_key:)
-      return unless post.topic.category_id == SiteSetting.staff_category_id
-      return unless post.is_first_post?
+    def reply_to_topic
+      return unless @post.topic.category_id == SiteSetting.staff_category_id
+      return unless @post.is_first_post?
 
-      post_topic_id = post.topic.id
+      post_topic_id = @post.topic.id
       @data[:topic_id] = post_topic_id
 
-      unless key = post.raw.match(/(unicorn|bacon|ninja|monkey)/i)
+      unless key = @post.raw.match(/(unicorn|bacon|ninja|monkey)/i)
         return
       end
 
       raw = <<~RAW
         #{I18n.t(i18n_key(Regexp.last_match.to_s.downcase))}
 
-        #{I18n.t(i18n_key(next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_onebox(user:, post:, next_instructions_key:)
-      post_topic_id = post.topic.id
+    def reply_to_onebox
+      post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
-      post.post_analyzer.cook(post.raw, {})
-      return unless post.post_analyzer.found_oneboxes?
+      @post.post_analyzer.cook(@post.raw, {})
+      return unless @post.post_analyzer.found_oneboxes?
 
       raw = <<~RAW
         #{I18n.t(i18n_key('onebox.reply'))}
 
-        #{I18n.t(i18n_key(next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_image(user:, post:, next_instructions_key:)
-      post_topic_id = post.topic.id
+    def reply_to_image
+      post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
-      post.post_analyzer.cook(post.raw, {})
-      return unless post.post_analyzer.image_count > 0
+      @post.post_analyzer.cook(@post.raw, {})
+      return unless @post.post_analyzer.image_count > 0
 
       raw = <<~RAW
         #{I18n.t(i18n_key('images.reply'))}
 
-        #{I18n.t(i18n_key(next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_formatting(user:, post:, next_instructions_key:)
-      post_topic_id = post.topic.id
+    def reply_to_formatting
+      post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
-      doc = Nokogiri::HTML.fragment(post.cooked)
+      doc = Nokogiri::HTML.fragment(@post.cooked)
       return unless doc.css("b", "strong", "em", "i").size > 0
 
       raw = <<~RAW
         #{I18n.t(i18n_key('formatting.reply'))}
 
-        #{I18n.t(i18n_key(next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_quote(user:, post:, next_instructions_key:)
-      post_topic_id = post.topic.id
+    def reply_to_quote
+      post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
-      doc = Nokogiri::HTML.fragment(post.cooked)
+      doc = Nokogiri::HTML.fragment(@post.cooked)
       return unless doc.css(".quote").size > 0
 
       raw = <<~RAW
         #{I18n.t(i18n_key('quoting.reply'))}
 
-        #{I18n.t(i18n_key(next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_emoji(user:, post:, next_instructions_key:)
-      post_topic_id = post.topic.id
+    def reply_to_emoji
+      post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
-      doc = Nokogiri::HTML.fragment(post.cooked)
+      doc = Nokogiri::HTML.fragment(@post.cooked)
       return unless doc.css(".emoji").size > 0
 
       raw = <<~RAW
         #{I18n.t(i18n_key('emoji.reply'))}
 
-        #{I18n.t(i18n_key(next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_mention(user:, post:, next_instructions_key:)
-      post_topic_id = post.topic.id
+    def reply_to_mention
+      post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
-      return unless bot_mentioned?(post)
+      return unless bot_mentioned?
 
       raw = <<~RAW
         #{I18n.t(i18n_key('mention.reply'))}
 
-        #{I18n.t(i18n_key(next_instructions_key), topic_id: SiteSetting.discobot_welcome_topic_id)}
+        #{I18n.t(i18n_key(@next_instructions_key), topic_id: SiteSetting.discobot_welcome_topic_id)}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def bot_mentioned?(post)
-      doc = Nokogiri::HTML.fragment(post.cooked)
+    def bot_mentioned?
+      doc = Nokogiri::HTML.fragment(@post.cooked)
 
       valid = false
 
@@ -311,41 +309,40 @@ module DiscourseNarrativeBot
       valid
     end
 
-    def reply_to_link(user:, post:, next_instructions_key:)
-      post_topic_id = post.topic.id
+    def reply_to_link
+      post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
-      post = post.reload
-      post.post_analyzer.cook(post.raw, {})
-      return unless post.post_analyzer.link_count > 0
+      @post.post_analyzer.cook(@post.raw, {})
+      return unless @post.post_analyzer.link_count > 0
 
       raw = <<~RAW
         #{I18n.t(i18n_key('link.reply'))}
 
-        #{I18n.t(i18n_key(next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
 
       fake_delay
-      like_post(post)
+      like_post
 
       reply_to(
         raw: raw,
         topic_id: post_topic_id,
-        reply_to_post_number: post.post_number
+        reply_to_post_number: @post.post_number
       )
     end
 
-    def reply_to_pm(user:, post:)
-      if post.archetype == Archetype.private_message &&
-        post.topic.allowed_users.any? { |p| p.id == self.class.discobot_user.id }
+    def reply_to_pm
+      if @post.archetype == Archetype.private_message &&
+        @post.topic.allowed_users.any? { |p| p.id == self.class.discobot_user.id }
 
         fake_delay
-        like_post(post)
+        like_post
 
         reply_to(
           raw: I18n.t(i18n_key('pm.message')),
-          topic_id: post.topic.id,
-          reply_to_post_number: post.post_number
+          topic_id: @post.topic.id,
+          reply_to_post_number: @post.post_number
         )
       end
     end
@@ -363,10 +360,10 @@ module DiscourseNarrativeBot
       topic_id == @data[:topic_id]
     end
 
-    def transition(input)
-      TRANSITION_TABLE.fetch([@state, input])
+    def transition
+      TRANSITION_TABLE.fetch([@state, @input])
     rescue KeyError
-      raise TransitionError.new("No transition from state '#{@state}' for input '#{input}'")
+      raise TransitionError.new("No transition from state '#{@state}' for input '#{@input}'")
     end
 
     def i18n_key(key)
@@ -381,8 +378,8 @@ module DiscourseNarrativeBot
       sleep(rand(2..3)) if Rails.env.production?
     end
 
-    def like_post(post)
-      PostAction.act(self.class.discobot_user, post, PostActionType.types[:like])
+    def like_post
+      PostAction.act(self.class.discobot_user, @post, PostActionType.types[:like])
     end
 
     def self.discobot_user
