@@ -5,19 +5,37 @@ en:
     narratives:
       welcome_topic_title: "I'm Discobot, stop by and say hello!"
       welcome_topic_body: |-
-        Hey, I'm Discobot!
+        Hey, I’m Discobot!
 
-        Don't be alarmed, but I'm not a real person. I am here to help, though!
+        Don’t be alarmed, but I’m not a real person. I am here to help, though!
 
-        I'll send a brief greeting to each new member in this topic, welcoming them to the site and offering them a chance to experiment and discover how everything works. There's even a special prize at the end! :gift: Really!
+        I’ll send a brief greeting to each new member in this topic, welcoming them to the site and offering them a chance to experiment and discover how everything works. There’s even a special prize at the end! :gift: Really!
 
-        If you'd like to interact with me, just mention @discobot anywhere in this #%{category_slug} category. Otherwise I'll stay out of your way, because I know you're busy.
+        If you’d like to interact with me, just mention @discobot anywhere in this #%{category_slug} category. Otherwise I’ll stay out of your way, because I know you're busy.
       hello: |-
         Hi @%{username}
 
-        Welcome to %{title}! It's great to meet you.
+        Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply to this post to get started.
+      hello_1: |-
+        Hey, it’s good to see you @%{username}!
 
-        I'd :heart: to show you around, if you have time. Just reply to this post to get started.
+        If you’re interested, I can give you a brief tour. To begin, reply to this post!
+      hello_2: |-
+        Thanks for joining, @%{username}!
+
+        I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me. :slight_smile:
+      hello_3: |-
+        Well if it isn’t @%{username}!
+
+        Great to have you here at %{title}. If you’d like to play with me and learn the basics, please reply to this post. If not, that’s OK too! :wink:
+      hello_4: |-
+        Look who just arrived – @%{username}!
+
+        If you’re new to %{title}, we can talk through a few things together if you reply to me. :sunny: It’ll be fun, I swear! 
+      hello_5: |-
+        :wave: and welcome @%{username}!
+
+        It’s my job to greet everyone that arrives here at %{title} and offer to help, if I can. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me if so!
       quote_user_reply: |-
         Excellent! Let me quote what you just said:
 
@@ -36,7 +54,7 @@ en:
 
         (Please don't judge me. I was programmed this way!)
       unicorn: |-
-        Did you know that the unicorn is Scotland's national animal? :unicorn:
+        Did you know that the unicorn is Scotland’s national animal? :unicorn:
         https://en.wikipedia.org/wiki/Unicorn
       ninja: |-
         Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
@@ -58,14 +76,14 @@ en:
 
           I pressed the like :heart: button on your post to let you know how much I appreciated it :heart_eyes:
         not_found: |-
-          It doesn't look like there was a link in your reply.
+          It doesn’t look like there was a link in your reply.
 
           Can you try adding the following link on its own line in your next reply?
 
           `https://en.wikipedia.org/wiki/Exotic_Shorthair`
       images:
         instructions: |-
-          Here's a picture of a unicorn:
+          Here’s a picture of a unicorn:
 
           <img src="http://i.imgur.com/awlYmzR.jpg" width="500" height="367">
 
@@ -75,29 +93,29 @@ en:
         reply: |-
           Nifty picture – well done!
         not_found: |-
-          Looks like you didn't upload an image so I've specially choosen a GIF that I think you will enjoy.
+          Looks like you didn’t upload an image so I’ve choosen a picture that I’m _sure_ you will enjoy.
 
           Try uploading this next: `https://media.giphy.com/media/AI1cYf864Rtlu/giphy.gif`
       formatting:
         instructions: |-
           Can you try adding some formatting to your post? Can you make some words **bold** and _italic_ in your reply?
 
-          To format, use Markdown, BBCode, or HTML, or if you're not into typing, push the buttons on the editor toolbar:
+          To format, use Markdown, BBCode, or HTML, or if you’re not into typing, push the buttons on the editor toolbar:
 
           `**bold** and _italic_`
           `<b>bold</b> and <i>italic</i>`
           `[b]bold[/b] and [i]italic[/i]`
 
-          (If you are feeling extra frisky, there is [a whole tutorial on formatting](http://commonmark.org/help) you can try, too.)
+          (There’s also [a whole tutorial on formatting](http://commonmark.org/help) you can try, too.)
         reply: |-
-          Posts are so much more _**exciting**_ with a little formatting, don't you agree?
+          Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
         not_found: |-
-          **Aww, I didn't find any formatting in your reply.**
+          **Aww, I didn’t find any formatting in your reply.** :sweat_smile:
 
           _Can you try again?_
       quoting:
         instructions: |-
-          Can you try quoting me when you reply so I know exactly what part you're replying to? Here are three quotes:
+          Can you try quoting me when you reply so I know exactly what part you’re replying to? Here are three quotes:
 
           > If this is coffee, please bring me some tea; but if this is tea, please bring me some coffee.
           >
@@ -109,7 +127,7 @@ en:
         reply: |-
           Nice work, you picked my favorite quote! :left_speech_bubble:
         not_found: |-
-          Hmm it looks like you didn't quote me in your reply.
+          Hmm it looks like you didn’t quote me in your reply.
 
           Highlighting any part of my post will bring up the quote reply button. Can you try again?
       emoji:
@@ -124,7 +142,7 @@ en:
 
           3. Press the emoji toolbar button in the editor for a visual picker.
 
-          :race_car::dash:   Go for it!
+          :race_car::dash:  Go for it!
         reply: |-
           That's downright :sparkles: _emojitastic!_ :sparkles:
         not_found: |-
@@ -135,9 +153,9 @@ en:
           `:sunrise: :bird: :bug:`
       mention:
         instructions: |-
-          Sometimes you might want to get a person's attention even if you aren't replying to them directly. To do this, just mention their name by typing a `@` then completing their name.
+          Sometimes you might want to get a person’s attention even if you aren’t replying to them directly. Just mention their name by typing a `@` then completing their name.
 
-          Give it a try – reply to this topic and mention my name `@discobot` in your reply, and I'll get notified!
+          Give it a try – reply to this topic and mention my name `@discobot` in your reply, and I’ll get notified!
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
@@ -150,18 +168,18 @@ en:
 
           - Copy the link from the address bar of your browser.
 
-          And you know what's _really_ cool? A link between two topics automatically works both ways, so anyone interested in either topic can easily follow all the linked topics, too!
+          And you know what’s _really_ cool? A link between two topics automatically works both ways, so anyone interested in either topic can easily follow all the linked topics, too!
 
           Can you **paste a link to [my welcome topic](/t/slug/%{topic_id})** in your next reply?
         reply: |-
-          Now that's some prime linkage!
+          Now that’s some prime linkage!
         not_found: |-
           Did you forget to link [my welcome topic](/t/slug/%{topic_id}) in your reply?
       pm:
         instructions: |-
-          If you'd prefer to reply to me directly, rather than in the topic, you can send me a personal message any time. Let's try it! Select my avatar to expand my user card, then press the :envelope: Message button.
+          If you’d prefer to reply to me directly, rather than in the topic, you can send me a personal message any time. Let’s try it! Select my avatar to expand my user card, then press the :envelope: Message button.
 
-          I'll be waiting for your message!
+          I’ll be waiting for your message!
 
           (You can also send me a message from my user page, too.)
         reply: |-
@@ -180,12 +198,12 @@ en:
                   /|
                   \|
 
-          You can also add multiple people to a PM to make it a group PM, as needed.
+          Once you’ve been here a while, you’ll be able to add multiple people to a PM to make it a group PM, as needed.
 
-          No need to reply to this, but please know that I will always treasure our correspondence!
+          No need to reply to this — but please know that I will always treasure our correspondence!
       end:
         message: |-
-          @%{username} That's all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
+          @%{username} That’s all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
 
           <img src='data:image/svg+xml;utf8,<?xml version="1.0" encoding="utf-8"?> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 792 612" style="enable-background:new 0 0 792 612;" xml:space="preserve"> <style type="text/css"> @import "https://fonts.googleapis.com/css?family=Great+Vibes|Montserrat"; .st3{font-size:50px;} .st4{font-family: Sans-serif;} .st5{font-size:16px;} .st7{font-size:25px;} .st8{font-size:80px;} .st10{font-family: "Montserrat"; font-weight: 900;} .st11{font-size:30px;} </style> <radialGradient id="SVGID_1_" cx="396" cy="306" r="353.8729" gradientUnits="userSpaceOnUse"> <stop offset="0.273" stop-color="#FFF9D6"/> <stop offset="1" stop-color="#FFE7A3"/> </radialGradient> <rect width="792" height="612" fill="url(#SVGID_1_)"/> <text text-anchor="middle" transform="matrix(1 0 0 1 396 229.5503)" font-family="Great Vibes" class="st3">%{username}</text> <text text-anchor="middle" transform="matrix(1 0 0 1 396 285.6582)" class="st4 st5">Every so often someone does something so amazing, so epic, so monumental, so ... awesome ... that it needs to be recognized in front of a roaring crowd of adoring fans. This is that moment when you finally get the credit for your hard work, a great attitude, and in general ... just being awesome.</text> <text text-anchor="middle" transform="matrix(1 0 0 1 396 52.5498)"><tspan x="0" y="0" font-family="Great Vibes" class="st7">Proof of Concept of</tspan><tspan x="0" y="96" font-family="Great Vibes" class="st8">Awesomeness</tspan></text> <g> <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 147.927 464.799" to="360 147.927 464.799" dur="30s" repeatCount="indefinite" /> <path fill="#EAD053" d="M274.9,484.1l-28-35.7l15.1-42.9l-43.6-12.4l-12.9-43.5l-42.6,15.7l-36-27.6l-25.2,37.7l-45.3-1.1l1.7,45.4 l-37.2,25.8l28,35.7l-15.1,42.9l43.6,12.4l12.9,43.5l42.6-15.7l36,27.6l25.2-37.7l45.3,1.1l-1.7-45.4L274.9,484.1z"/> </g> <text transform="matrix(0.9715 -0.2368 0.2368 0.9715 67.9774 492.0969)" fill="#FFFFFF" class="st10 st11">AWESOME</text> </svg>'>
 
@@ -198,11 +216,11 @@ en:
 
           You can try again, or if you'd like to start over at the beginning of the lesson, mention me (@discobot) with the command `/reset_bot`.
         second_response: |-
-          Aw, sorry. I'm still not getting it. :anguished:
+          Aw, sorry. I’m still not getting it. :anguished:
 
-          It's not you – it's me. I blame my programmers! They're terrible!
+          It’s not you – it’s me. I blame my programmers! They're terrible!
 
-          Perhaps mention me (@discobot) in a reply with the command `/reset_bot` to start over? In the meantime, I'll stay out of your way.
+          Perhaps mention me (@discobot) in a reply with the command `/reset_bot` to start over? In the meantime, I’ll stay out of your way.
       reset:
         message: |-
           Looks like you would like me to walk you through the features again. Mention me again in the [welcome topic](/t/slug/%{topic_id}) to get me started again.
