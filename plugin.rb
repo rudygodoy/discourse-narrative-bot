@@ -58,12 +58,12 @@ after_initialize do
 
     if ![-1, -2].include?(user.id)
       if category = Category.find_by(id: SiteSetting.discobot_category_id)
-        category_secure_group_ids = category.secure_group_ids
+        category_secure_group_ids = category.secure_group_ids || []
         group = group_user.group
-        user_group_ids = user.group_ids - [group.id]
+        user_group_ids = (user.group_ids || []) - [group.id]
 
-        if (category.secure_group_ids & user_group_ids).empty? &&
-           !(category.secure_group_ids & [group.id]).empty?
+        if (category_secure_group_ids & user_group_ids).empty? &&
+           !(category_secure_group_ids & [group.id]).empty?
 
           Jobs.enqueue(:narrative_input,
             user_id: user.id,
