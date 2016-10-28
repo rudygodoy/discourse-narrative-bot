@@ -13,7 +13,6 @@ describe DiscourseNarrativeBot::Narrative do
   describe 'Bot initiation' do
     let(:group) { Fabricate(:group) }
     let(:other_group) { Fabricate(:group, name: 'test') }
-    let(:user) { Fabricate(:user, groups: [group, other_group]) }
 
     describe 'restricted bot category' do
       describe 'when creating a new user' do
@@ -28,8 +27,9 @@ describe DiscourseNarrativeBot::Narrative do
 
           it 'should initiate the bot for the user' do
             category
+            user
 
-            expect { user }.to change { Post.count }.by(1)
+            expect { user.groups << [group, other_group] }.to change { Post.count }.by(1)
             expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_quote)
           end
         end
@@ -37,8 +37,9 @@ describe DiscourseNarrativeBot::Narrative do
         describe 'and user is not allowed to view category' do
           it 'should not initiate the bot' do
             category
+            user
 
-            expect { user }.to change { Post.count }.by(0)
+            expect { user.groups << [group, other_group] }.to change { Post.count }.by(0)
             expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
           end
         end
@@ -54,8 +55,9 @@ describe DiscourseNarrativeBot::Narrative do
 
         it 'should initiate the bot for the user' do
           category
+          user
 
-          expect { user }.to change { Post.count }.by(1)
+          expect { user.groups << [group, other_group] }.to change { Post.count }.by(1)
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_quote)
         end
       end
