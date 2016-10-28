@@ -57,7 +57,7 @@ after_initialize do
     user = group_user.user
 
     if ![-1, -2].include?(user.id)
-      if category = Category.find_by(SiteSetting.discobot_category_id)
+      if category = Category.find_by(id: SiteSetting.discobot_category_id)
         category_secure_group_ids = category.secure_group_ids
         group = group_user.group
         user_group_ids = user.group_ids - [group.id]
