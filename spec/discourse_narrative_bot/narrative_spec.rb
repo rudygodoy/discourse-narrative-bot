@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe DiscourseNarrativeBot::Narrative do
   let(:category) { Fabricate(:category) }
+  let(:welcome_topic) { Fabricate(:topic, category: category) }
   let(:topic) { Fabricate(:topic, category: category) }
   let(:user) { Fabricate(:user) }
   let(:post) { Fabricate(:post, topic: topic) }
@@ -11,6 +12,7 @@ describe DiscourseNarrativeBot::Narrative do
 
   before do
     SiteSetting.discobot_category_id = category.id
+    SiteSetting.discobot_welcome_topic_id = welcome_topic.id
     SiteSetting.title = "This is an awesome site!"
   end
 
