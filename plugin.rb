@@ -62,8 +62,9 @@ after_initialize do
         group = group_user.group
         user_group_ids = (user.group_ids || []) - [group.id]
 
-        if (category_secure_group_ids & user_group_ids).empty? &&
-           !(category_secure_group_ids & [group.id]).empty?
+        if category_secure_group_ids.empty? ||
+           ((category_secure_group_ids & user_group_ids).empty? &&
+           !(category_secure_group_ids & [group.id]).empty?)
 
           Jobs.enqueue(:narrative_input,
             user_id: user.id,

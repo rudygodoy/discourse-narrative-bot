@@ -10,14 +10,62 @@ describe DiscourseNarrativeBot::Narrative do
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
 
-  before do
-    SiteSetting.discobot_category_id = category.id
-    SiteSetting.discobot_welcome_topic_id = welcome_topic.id
-    SiteSetting.title = "This is an awesome site!"
+  describe 'Bot initiation' do
+    let(:group) { Fabricate(:group) }
+    let(:user) { Fabricate(:user, groups: [group]) }
+
+    describe 'restricted bot category' do
+      describe 'when creating a new user' do
+        describe 'and user is allowed to view category' do
+          let(:category)  { Fabricate(:category, read_restricted: true, groups: [group]) }
+          let(:welcome_topic) { Fabricate(:topic, category: category) }
+
+          before do
+            SiteSetting.discobot_category_id = category.id
+            SiteSetting.discobot_welcome_topic_id = welcome_topic.id
+          end
+
+          it 'should initiate the bot for the user' do
+            category
+            user
+
+            expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_quote)
+          end
+        end
+
+        describe 'and user is not allowed to view category' do
+          it 'should not initiate the bot' do
+            category
+            user
+
+            expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
+          end
+        end
+      end
+    end
+
+    describe 'unrestricted bot category' do
+      describe 'when creating a new user' do
+        before do
+          SiteSetting.discobot_category_id = category.id
+          SiteSetting.discobot_welcome_topic_id = welcome_topic.id
+        end
+
+        it 'should initiate the bot for the user' do
+          category
+          user
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_quote)
+        end
+      end
+    end
   end
 
   describe '#input' do
     before do
+      SiteSetting.discobot_category_id = category.id
+      SiteSetting.discobot_welcome_topic_id = welcome_topic.id
+      SiteSetting.title = "This is an awesome site!"
       DiscourseNarrativeBot::Store.set(user.id, state: :begin)
     end
 
