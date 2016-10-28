@@ -62,7 +62,7 @@ after_initialize do
         group = group_user.group
         user_group_ids = (user.group_ids || []) - [group.id]
 
-        if category_secure_group_ids.empty? ||
+        if (category_secure_group_ids.empty? && user.groups.count == 0) ||
            ((category_secure_group_ids & user_group_ids).empty? &&
            !(category_secure_group_ids & [group.id]).empty?)
 
