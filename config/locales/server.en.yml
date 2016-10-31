@@ -12,30 +12,31 @@ en:
         I’ll send a brief greeting to each new member in this topic, welcoming them to the site and offering them a chance to experiment and discover how everything works. There’s even a special prize at the end! :gift: Really!
 
         If you’d like to interact with me, just mention @discobot anywhere in this #%{category_slug} category. Otherwise I’ll stay out of your way, because I know you're busy.
-      hello: |-
-        Hi @%{username}
+      hello:
+        message_1: |-
+          Hi @%{username}
 
-        Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply to this post to get started.
-      hello_1: |-
-        Hey, it’s good to see you @%{username}!
+          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply to this post to get started.
+        message_2: |-
+          Hey, it’s good to see you @%{username}!
 
-        If you’re interested, I can give you a brief tour. To begin, reply to this post!
-      hello_2: |-
-        Thanks for joining, @%{username}!
+          If you’re interested, I can give you a brief tour. To begin, reply to this post!
+        message_3: |-
+          Thanks for joining, @%{username}!
 
-        I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me. :slight_smile:
-      hello_3: |-
-        Well if it isn’t @%{username}!
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me. :slight_smile:
+        message_4: |-
+          Well if it isn’t @%{username}!
 
-        Great to have you here at %{title}. If you’d like to play with me and learn the basics, please reply to this post. If not, that’s OK too! :wink:
-      hello_4: |-
-        Look who just arrived – @%{username}!
+          Great to have you here at %{title}. If you’d like to play with me and learn the basics, please reply to this post. If not, that’s OK too! :wink:
+        message_5: |-
+          Look who just arrived – @%{username}!
 
-        If you’re new to %{title}, we can talk through a few things together if you reply to me. :sunny: It’ll be fun, I swear! 
-      hello_5: |-
-        :wave: and welcome @%{username}!
+          If you’re new to %{title}, we can talk through a few things together if you reply to me. :sunny: It’ll be fun, I swear!
+        message_6: |-
+          :wave: and welcome @%{username}!
 
-        It’s my job to greet everyone that arrives here at %{title} and offer to help, if I can. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me if so!
+          It’s my job to greet everyone that arrives here at %{title} and offer to help, if I can. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me if so!
       quote_user_reply: |-
         Excellent! Let me quote what you just said:
 

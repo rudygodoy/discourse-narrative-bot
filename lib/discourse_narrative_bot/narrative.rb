@@ -110,7 +110,11 @@ module DiscourseNarrativeBot
     private
 
     def say_hello
-      raw = I18n.t(i18n_key('hello'), username: @user.username, title: SiteSetting.title)
+      raw = I18n.t(
+        i18n_key("hello.message_#{Time.now.to_i % 6 + 1}"),
+        username: @user.username,
+        title: SiteSetting.title
+      )
 
       if @input == :init
         reply_to(raw: raw, topic_id: SiteSetting.discobot_welcome_topic_id)
