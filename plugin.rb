@@ -3,8 +3,6 @@
 # version: 0.0.1
 # authors: Nick Sahler (@nicksahler)
 
-require 'json'
-
 enabled_site_setting :introbot_enabled
 
 after_initialize do
@@ -42,15 +40,6 @@ after_initialize do
         "narrative_state_#{user_id}"
       end
     end
-  end
-
-  DiscourseNarrativeBot::Engine.routes.draw do
-    get "/reset/:user_id/:narrative" => "narratives#reset", constraints: AdminConstraint.new
-    get "/status/:user_id/:narrative" => "narratives#status", constraints: AdminConstraint.new
-  end
-
-  Discourse::Application.routes.prepend do
-    mount ::DiscourseNarrativeBot::Engine, at: "/narratives"
   end
 
   DiscourseEvent.on(:group_user_created) do |group_user|
