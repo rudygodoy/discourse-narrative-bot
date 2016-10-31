@@ -73,7 +73,7 @@ module DiscourseNarrativeBot
     RESET_TRIGGER = '/reset_bot'.freeze
     TIMEOUT_DURATION = 900 # 15 mins
 
-    class TransitionError < StandardError; end
+    class InvalidTransitionError < StandardError; end
     class DoNotUnderstandError < StandardError; end
 
     def input(input, user, post)
@@ -515,7 +515,7 @@ module DiscourseNarrativeBot
 
       TRANSITION_TABLE.fetch([@state, @input])
     rescue KeyError
-      raise TransitionError.new("No transition from state '#{@state}' for input '#{@input}'")
+      raise InvalidTransitionError.new("No transition from state '#{@state}' for input '#{@input}'")
     end
 
     def i18n_key(key)

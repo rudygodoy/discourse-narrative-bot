@@ -131,7 +131,7 @@ describe DiscourseNarrativeBot::Narrative do
     describe 'when input does not have a valid transition from current state' do
       it 'should raise the right error' do
         expect { narrative.input(:something, user, post) }.to raise_error(
-          described_class::TransitionError,
+          described_class::InvalidTransitionError,
           "No transition from state 'begin' for input 'something'"
         )
       end
@@ -649,7 +649,7 @@ describe DiscourseNarrativeBot::Narrative do
 
       it 'should raise the right error when reply is not in the right topic' do
         expect { narrative.input(:reply, user, other_post) }.to raise_error(
-          described_class::TransitionError
+          described_class::InvalidTransitionError
         )
       end
 
