@@ -101,9 +101,9 @@ module DiscourseNarrativeBot
         @next_instructions_key = next_instructions_key
       end
 
-      if post = self.send(action)
+      if new_post = self.send(action)
         @data[:state] = new_state
-        @data[:last_post_id] = post.id
+        @data[:last_post_id] = new_post.id
         store_data
 
         if new_state == :end
