@@ -8,6 +8,6 @@ class QuoteGenerator
     response = connection.request(expects: [200, 201], method: :Get)
 
     response_body = JSON.parse(response.body)
-    { quote: response_body["quoteText"].chomp, author: response_body["quoteAuthor"].chomp }
+    { quote: response_body["quoteText"].strip, author: response_body["quoteAuthor"].strip }
   end
 end
