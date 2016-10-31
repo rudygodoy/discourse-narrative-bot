@@ -98,7 +98,7 @@ describe DiscourseNarrativeBot::Narrative do
 
       describe 'in the new bot topic' do
         it 'should reset the bot' do
-          post.update_attributes!(raw: described_class::RESET_TRIGGER)
+          post.update_attributes!(raw: "@discobot something #{described_class::RESET_TRIGGER}")
           narrative.input(:reply, user, post)
 
           expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
@@ -114,7 +114,7 @@ describe DiscourseNarrativeBot::Narrative do
         it 'should reset the bot' do
           new_post = Fabricate(:post,
             topic_id: SiteSetting.discobot_welcome_topic_id,
-            raw: described_class::RESET_TRIGGER
+            raw: "something #{described_class::RESET_TRIGGER} @discobot"
           )
 
           narrative.input(:reply, user, new_post)

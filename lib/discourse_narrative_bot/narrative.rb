@@ -70,7 +70,7 @@ module DiscourseNarrativeBot
       }
     }
 
-    RESET_TRIGGER = '@discobot /reset_bot'.freeze
+    RESET_TRIGGER = '/reset_bot'.freeze
     TIMEOUT_DURATION = 900 # 15 mins
 
     class TransitionError < StandardError; end
