@@ -5,7 +5,7 @@ describe DiscourseNarrativeBot::Narrative do
   let(:welcome_topic) { Fabricate(:topic, category: category) }
   let(:topic) { Fabricate(:topic, category: category) }
   let(:user) { Fabricate(:user) }
-  let(:post) { Fabricate(:post, topic: topic) }
+  let(:post) { Fabricate(:post, topic: topic, user: user) }
   let(:narrative) { described_class.new }
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
@@ -157,7 +157,8 @@ describe DiscourseNarrativeBot::Narrative do
       it 'should create the right post' do
         Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
           post.update_attributes!(
-            raw: '@discobot Lets us get this started!'
+            raw: '@discobot Lets us get this started!',
+            topic: welcome_topic
           )
 
           narrative.input(:reply, user, post)
@@ -654,6 +655,17 @@ describe DiscourseNarrativeBot::Narrative do
       end
 
       it 'should create the right generic do not understand responses' do
+        discobot_post = Fabricate(:post,
+          topic: topic,
+          user: described_class.discobot_user
+        )
+
+        post = Fabricate(:post,
+          topic: topic,
+          user: user,
+          reply_to_post_number: discobot_post.post_number
+        )
+
         narrative.input(:reply, user, post)
 
         expect(Post.last.raw).to eq(I18n.t(
@@ -662,8 +674,11 @@ describe DiscourseNarrativeBot::Narrative do
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
 
-        narrative.input(:reply, user, Fabricate(:post, topic: topic))
-
+        narrative.input(:reply, user, Fabricate(:post,
+          topic: topic,
+          user: user,
+          reply_to_post_number: Post.last.post_number
+        ))
 
         expect(Post.last.raw).to eq(I18n.t(
           'discourse_narrative_bot.narratives.do_not_understand.second_response'
@@ -671,11 +686,66 @@ describe DiscourseNarrativeBot::Narrative do
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
 
-        new_post = Fabricate(:post, topic: topic)
+        new_post = Fabricate(:post,
+          topic: topic,
+          user: user,
+          reply_to_post_number: Post.last.post_number
+        )
 
         expect { narrative.input(:reply, user, new_post) }.to_not change { Post.count }
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+      end
+    end
+
+    describe 'random discobot mentions' do
+      let(:other_topic) { Fabricate(:topic) }
+      let(:other_post) { Fabricate(:post, topic: other_topic) }
+
+      before do
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_link, topic_id: topic.id)
+      end
+
+      describe 'when discobot is mentioned' do
+        it 'should create the right reply' do
+          other_post.update_attributes!(raw: 'Show me what you can do @discobot')
+          narrative.input(:reply, user, other_post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(
+            I18n.t("discourse_narrative_bot.narratives.random_mention.message")
+          )
+        end
+
+        describe 'when discobot is asked to roll dice' do
+          it 'should create the right reply' do
+            other_post.update_attributes!(raw: '@discobot roll dice 2d1')
+            narrative.input(:reply, user, other_post)
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(
+              I18n.t("discourse_narrative_bot.narratives.random_mention.dice",
+              results: '1, 1'
+            ))
+          end
+        end
+
+        describe 'when a quote is requested' do
+          it 'should create the right reply' do
+            QuoteGenerator.expects(:generate).returns(
+              quote: "Be Like Water", author: "Bruce Lee"
+            )
+
+            other_post.update_attributes!(raw: '@discobot show me a quote')
+            narrative.input(:reply, user, other_post)
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(
+              I18n.t("discourse_narrative_bot.narratives.random_mention.quote",
+              quote: "Be Like Water", author: "Bruce Lee"
+            ))
+          end
+        end
       end
     end
   end

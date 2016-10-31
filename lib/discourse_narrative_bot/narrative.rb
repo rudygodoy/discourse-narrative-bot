@@ -1,3 +1,6 @@
+require_relative '../dice'
+require_relative '../quote_generator'
+
 module DiscourseNarrativeBot
   class Narrative
     TRANSITION_TABLE = {
@@ -71,10 +74,12 @@ module DiscourseNarrativeBot
     }
 
     RESET_TRIGGER = '/reset_bot'.freeze
+    DICE_TRIGGER = 'roll'.freeze
     TIMEOUT_DURATION = 900 # 15 mins
 
     class InvalidTransitionError < StandardError; end
     class DoNotUnderstandError < StandardError; end
+    class TransitionError < StandardError; end
 
     def input(input, user, post)
       @data = DiscourseNarrativeBot::Store.get(user.id) || {}
@@ -90,7 +95,9 @@ module DiscourseNarrativeBot
         opts = transition
       rescue DoNotUnderstandError
         generic_replies
-        store_data
+        return
+      rescue TransitionError
+        mention_replies
         return
       end
 
@@ -508,9 +515,21 @@ module DiscourseNarrativeBot
       topic_id == @data[:topic_id]
     end
 
+    def reply_to_bot_post?
+      @post&.reply_to_post && @post.reply_to_post.user_id == -2
+    end
+
     def transition
-      if @state == :end && @post.topic.id == @data[:topic_id]
-        raise DoNotUnderstandError.new
+      if @post
+        topic_id = @post.topic.id
+        valid_topic = valid_topic?(topic_id)
+
+        if !valid_topic && topic_id != SiteSetting.discobot_welcome_topic_id
+          raise TransitionError.new if bot_mentioned?
+          raise DoNotUnderstandError.new if reply_to_bot_post?
+        elsif valid_topic && @state == :end
+          raise DoNotUnderstandError.new if reply_to_bot_post?
+        end
       end
 
       TRANSITION_TABLE.fetch([@state, @input])
@@ -555,6 +574,31 @@ module DiscourseNarrativeBot
       end
 
       @data[:do_not_understand_count] += 1
+      store_data
+    end
+
+    def mention_replies
+      post_raw = @post.raw
+
+      raw =
+        if match_data = post_raw.match(/roll dice (\d+)d(\d+)/i)
+          I18n.t(i18n_key('random_mention.dice'),
+            results: Dice.new(match_data[1].to_i, match_data[2].to_i).roll.join(", ")
+          )
+        elsif match_data = post_raw.match(/show me a quote/i)
+          I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
+        else
+          I18n.t(i18n_key('random_mention.message'))
+        end
+
+      like_post
+      fake_delay
+
+      reply_to(
+        raw: raw,
+        topic_id: @post.topic.id,
+        reply_to_post_number: @post.post_number
+      )
     end
 
     def reset_bot?

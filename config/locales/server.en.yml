@@ -234,4 +234,21 @@ en:
           I won't bug you, but if you want to continue just go ahead and reply to me any time. Or if you got stuck and want to reset, just reply with `@discobot /reset_bot`.
 
           (If you'd rather not, that's OK too. I'm a robot. You won't hurt my feelings. Much. :sob:)
+      random_mention:
+        dice: |-
+          :game_die: dice roll: %{results}
+        quote: |-
+          > :left_speech_bubble: _%{quote}_ &mdash; %{author}
+        message: |-
+          You rang? :telephone: :ear:
 
+          I currently know how to do the following things:
+
+          `@discobot roll dice 2d6`
+          > :game_die: dice roll: 3, 6
+
+          `@discobot weather 94530`
+          > :sunny: 94530 weather forecast
+
+          `@discobot show me a quote`
+          > :left_speech_bubble: _Carry out a random act of kindness, with no expectation of reward, safe in the knowledge that one day someone might do the same for you_ &mdash; Princess Diana
