@@ -3,70 +3,70 @@ module DiscourseNarrativeBot
     TRANSITION_TABLE = {
       [:begin, :init] => {
         next_state: :waiting_reply,
-        after_action: :say_hello
+        action: :say_hello
       },
 
       [:begin, :reply] => {
         next_state: :waiting_reply,
-        after_action: :say_hello
+        action: :say_hello
       },
 
       [:waiting_reply, :reply] => {
         next_state: :tutorial_topic,
-        after_action: :quote_user_reply
+        action: :quote_user_reply
       },
 
       [:tutorial_topic, :reply] => {
         next_state: :tutorial_onebox,
         next_instructions_key: 'onebox.instructions',
-        after_action: :reply_to_topic
+        action: :reply_to_topic
       },
 
       [:tutorial_onebox, :reply] => {
         next_state: :tutorial_images,
         next_instructions_key: 'images.instructions',
-        after_action: :reply_to_onebox
+        action: :reply_to_onebox
       },
 
       [:tutorial_images, :reply] => {
         next_state: :tutorial_formatting,
         next_instructions_key: 'formatting.instructions',
-        after_action: :reply_to_image
+        action: :reply_to_image
       },
 
       [:tutorial_formatting, :reply] => {
         next_state: :tutorial_quote,
         next_instructions_key: 'quoting.instructions',
-        after_action: :reply_to_formatting
+        action: :reply_to_formatting
       },
 
       [:tutorial_quote, :reply] => {
         next_state: :tutorial_emoji,
         next_instructions_key: 'emoji.instructions',
-        after_action: :reply_to_quote
+        action: :reply_to_quote
       },
 
       [:tutorial_emoji, :reply] => {
         next_state: :tutorial_mention,
         next_instructions_key: 'mention.instructions',
-        after_action: :reply_to_emoji
+        action: :reply_to_emoji
       },
 
       [:tutorial_mention, :reply] => {
         next_state: :tutorial_link,
         next_instructions_key: 'link.instructions',
-        after_action: :reply_to_mention
+        action: :reply_to_mention
       },
 
       [:tutorial_link, :reply] => {
         next_state: :tutorial_pm,
         next_instructions_key: 'pm.instructions',
-        after_action: :reply_to_link
+        action: :reply_to_link
       },
 
       [:tutorial_pm, :reply] => {
         next_state: :end,
-        after_action: :reply_to_pm
+        action: :reply_to_pm
       }
     }
 
@@ -95,7 +95,7 @@ module DiscourseNarrativeBot
       end
 
       new_state = opts[:next_state]
-      action = opts[:after_action]
+      action = opts[:action]
 
       if next_instructions_key = opts[:next_instructions_key]
         @next_instructions_key = next_instructions_key
