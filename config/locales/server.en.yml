@@ -227,4 +227,11 @@ en:
           Looks like you would like me to walk you through the features again. Mention me again in the [welcome topic](/t/slug/%{topic_id}) to get me started again.
         welcome_topic_message: |-
           Got it! Just mention me here to get started again!
+      timeout:
+        message: |-
+          Hey @%{username}, just checking in because I haven't heard from you in a while. :calendar_spiral:
+
+          I won't bug you, but if you want to continue just go ahead and reply to me any time. Or if you got stuck and want to reset, just reply with `@discobot /reset_bot`.
+
+          (If you'd rather not, that's OK too. I'm a robot. You won't hurt my feelings. Much. :sob:)
 

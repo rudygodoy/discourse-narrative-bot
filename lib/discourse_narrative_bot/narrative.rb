@@ -2,16 +2,16 @@ module DiscourseNarrativeBot
   class Narrative
     TRANSITION_TABLE = {
       [:begin, :init] => {
-        next_state: :waiting_quote,
+        next_state: :waiting_reply,
         after_action: :say_hello
       },
 
       [:begin, :reply] => {
-        next_state: :waiting_quote,
+        next_state: :waiting_reply,
         after_action: :say_hello
       },
 
-      [:waiting_quote, :reply] => {
+      [:waiting_reply, :reply] => {
         next_state: :tutorial_topic,
         after_action: :quote_user_reply
       },
@@ -70,7 +70,8 @@ module DiscourseNarrativeBot
       }
     }
 
-    RESET_TRIGGER = '@discobot /reset_bot'
+    RESET_TRIGGER = '@discobot /reset_bot'.freeze
+    TIMEOUT_DURATION = 900 # 15 mins
 
     class TransitionError < StandardError; end
     class DoNotUnderstandError < StandardError; end
@@ -100,10 +101,27 @@ module DiscourseNarrativeBot
         @next_instructions_key = next_instructions_key
       end
 
-      if self.send(action)
+      if post = self.send(action)
         @data[:state] = new_state
+        @data[:last_post_id] = post.id
         store_data
-        end_reply if new_state == :end
+
+        if new_state == :end
+          end_reply
+          cancel_timeout_job(user)
+        end
+      end
+    end
+
+    def notify_timeout(user)
+      @data = DiscourseNarrativeBot::Store.get(user.id) || {}
+
+      if post = Post.find_by(id: @data[:last_post_id])
+        reply_to(
+          raw: I18n.t(i18n_key("timeout.message"), username: user.username),
+          topic_id: post.topic.id,
+          reply_to_post_number: post.post_number
+        )
       end
     end
 
@@ -139,7 +157,7 @@ module DiscourseNarrativeBot
       fake_delay
       like_post
 
-      reply_to(
+      reply = reply_to(
         raw: I18n.t(i18n_key('quote_user_reply'),
           username: @post.user.username,
           post_id: @post.id,
@@ -150,6 +168,9 @@ module DiscourseNarrativeBot
         topic_id: post_topic_id,
         reply_to_post_number: @post.post_number
       )
+
+      enqueue_timeout_job(@user)
+      reply
     end
 
     def reply_to_topic
@@ -172,11 +193,14 @@ module DiscourseNarrativeBot
       fake_delay
       like_post
 
-      reply_to(
+      reply = reply_to(
         raw: raw,
         topic_id: post_topic_id,
         reply_to_post_number: @post.post_number
       )
+
+      enqueue_timeout_job(@user)
+      reply
     end
 
     def reply_to_onebox
@@ -195,11 +219,14 @@ module DiscourseNarrativeBot
         fake_delay
         like_post
 
-        reply_to(
+        reply = reply_to(
           raw: raw,
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
+
+        enqueue_timeout_job(@user)
+        reply
       else
         fake_delay
 
@@ -209,6 +236,7 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
+        enqueue_timeout_job(@user)
         false
       end
     end
@@ -229,11 +257,14 @@ module DiscourseNarrativeBot
         fake_delay
         like_post
 
-        reply_to(
+        reply = reply_to(
           raw: raw,
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
+
+        enqueue_timeout_job(@user)
+        reply
       else
         fake_delay
 
@@ -243,6 +274,7 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
+        enqueue_timeout_job(@user)
         false
       end
     end
@@ -261,11 +293,14 @@ module DiscourseNarrativeBot
         fake_delay
         like_post
 
-        reply_to(
+        reply = reply_to(
           raw: raw,
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
+
+        enqueue_timeout_job(@user)
+        reply
       else
         fake_delay
 
@@ -275,6 +310,7 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
+        enqueue_timeout_job(@user)
         false
       end
     end
@@ -295,11 +331,14 @@ module DiscourseNarrativeBot
         fake_delay
         like_post
 
-        reply_to(
+        reply = reply_to(
           raw: raw,
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
+
+        enqueue_timeout_job(@user)
+        reply
       else
         fake_delay
 
@@ -309,6 +348,7 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
+        enqueue_timeout_job(@user)
         false
       end
     end
@@ -329,11 +369,14 @@ module DiscourseNarrativeBot
         fake_delay
         like_post
 
-        reply_to(
+        reply = reply_to(
           raw: raw,
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
+
+        enqueue_timeout_job(@user)
+        reply
       else
         fake_delay
 
@@ -343,6 +386,7 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
+        enqueue_timeout_job(@user)
         false
       end
     end
@@ -361,11 +405,14 @@ module DiscourseNarrativeBot
         fake_delay
         like_post
 
-        reply_to(
+        reply = reply_to(
           raw: raw,
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
+
+        enqueue_timeout_job(@user)
+        reply
       else
         fake_delay
 
@@ -375,6 +422,7 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
+        enqueue_timeout_job(@user)
         false
       end
     end
@@ -407,11 +455,14 @@ module DiscourseNarrativeBot
         fake_delay
         like_post
 
-        reply_to(
+        reply = reply_to(
           raw: raw,
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
+
+        enqueue_timeout_job(@user)
+        reply
       else
         fake_delay
 
@@ -421,6 +472,7 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
+        enqueue_timeout_job(@user)
         false
       end
     end
@@ -533,6 +585,15 @@ module DiscourseNarrativeBot
       end
 
       reset
+    end
+
+    def cancel_timeout_job(user)
+      Jobs.cancel_scheduled_job(:narrative_timeout, user_id: user.id)
+    end
+
+    def enqueue_timeout_job(user)
+      cancel_timeout_job(user)
+      Jobs.enqueue_in(TIMEOUT_DURATION, :narrative_timeout, user_id: user.id)
     end
 
     def store_data

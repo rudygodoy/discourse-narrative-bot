@@ -12,7 +12,7 @@ after_initialize do
   require_dependency 'discourse_event'
   require_dependency 'admin_constraint'
   require_dependency File.expand_path('../jobs/narrative_input.rb', __FILE__)
-
+  require_dependency File.expand_path('../jobs/narrative_timeout.rb', __FILE__)
 
   load File.expand_path("../app/models/group_user.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/narrative.rb", __FILE__)
