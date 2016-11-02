@@ -1,5 +1,6 @@
 require_relative '../dice'
 require_relative '../quote_generator'
+require 'distributed_mutex'
 
 module DiscourseNarrativeBot
   class NewUserNarrative
@@ -15,14 +16,9 @@ module DiscourseNarrativeBot
       },
 
       [:waiting_reply, :reply] => {
-        next_state: :tutorial_topic,
-        action: :quote_user_reply
-      },
-
-      [:tutorial_topic, :reply] => {
         next_state: :tutorial_onebox,
         next_instructions_key: 'onebox.instructions',
-        action: :reply_to_topic
+        action: :react_to_reply
       },
 
       [:tutorial_onebox, :reply] => {
@@ -62,14 +58,8 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_link, :reply] => {
-        next_state: :tutorial_pm,
-        next_instructions_key: 'pm.instructions',
-        action: :reply_to_link
-      },
-
-      [:tutorial_pm, :reply] => {
         next_state: :end,
-        action: :reply_to_pm
+        action: :reply_to_link
       }
     }
 
@@ -82,40 +72,46 @@ module DiscourseNarrativeBot
     class TransitionError < StandardError; end
 
     def input(input, user, post)
-      @data = DiscourseNarrativeBot::Store.get(user.id) || {}
-      @state = (@data[:state] && @data[:state].to_sym) || :begin
-      @input = input
-      @user = user
-      @post = post
-      opts = {}
+      DistributedMutex.synchronize("new_user_narrative_#{user.id}") do
+        @data = DiscourseNarrativeBot::Store.get(user.id) || {}
+        @state = (@data[:state] && @data[:state].to_sym) || :begin
+        @input = input
+        @user = user
+        @post = post
+        opts = {}
 
-      return if reset_bot?
+        if reset_bot?
+          reset_rate_limits
+          return
+        end
 
-      begin
-        opts = transition
-      rescue DoNotUnderstandError
-        generic_replies
-        return
-      rescue TransitionError
-        mention_replies
-        return
-      end
+        begin
+          opts = transition
+        rescue DoNotUnderstandError
+          generic_replies
+          return
+        rescue TransitionError
+          mention_replies
+          return
+        end
 
-      new_state = opts[:next_state]
-      action = opts[:action]
+        new_state = opts[:next_state]
+        action = opts[:action]
 
-      if next_instructions_key = opts[:next_instructions_key]
-        @next_instructions_key = next_instructions_key
-      end
+        if next_instructions_key = opts[:next_instructions_key]
+          @next_instructions_key = next_instructions_key
+        end
 
-      if new_post = self.send(action)
-        @data[:state] = new_state
-        @data[:last_post_id] = new_post.id
-        store_data
+        if new_post = self.send(action)
+          @data[:state] = new_state
+          @data[:last_post_id] = new_post.id
+          store_data
+          reset_rate_limits
 
-        if new_state == :end
-          end_reply
-          cancel_timeout_job(user)
+          if new_state == :end
+            end_reply
+            cancel_timeout_job(user)
+          end
         end
       end
     end
@@ -141,64 +137,44 @@ module DiscourseNarrativeBot
         title: SiteSetting.title
       )
 
-      if @input == :init
-        reply_to(raw: raw, topic_id: SiteSetting.discobot_welcome_topic_id)
-      else
-        return unless bot_mentioned?
+      raw = <<~RAW
+      #{raw}
 
-        fake_delay
-        like_post
+      #{I18n.t(i18n_key('hello.triggers'))}
+      RAW
 
-        reply_to(
-          raw: raw,
-          topic_id: @post.topic.id,
-          reply_to_post_number: @post.post_number
-        )
-      end
+      post = reply_to(
+        title: I18n.t(i18n_key("hello.title"), title: SiteSetting.title),
+        raw: raw,
+        target_usernames: @user.username,
+        archetype: Archetype.private_message
+      )
+
+      @data[:topic_id] = post.topic.id
+      post
     end
 
-    def quote_user_reply
+    def react_to_reply
       post_topic_id = @post.topic.id
-      return unless post_topic_id == SiteSetting.discobot_welcome_topic_id
+      return unless valid_topic?(post_topic_id)
 
       fake_delay
       like_post
 
-      reply = reply_to(
-        raw: I18n.t(i18n_key('quote_user_reply'),
-          username: @post.user.username,
-          post_id: @post.id,
-          topic_id: post_topic_id,
-          post_raw: @post.raw,
-          category_slug: Category.find(SiteSetting.discobot_category_id).slug
-        ),
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
-
-      enqueue_timeout_job(@user)
-      reply
-    end
-
-    def reply_to_topic
-      return unless @post.topic.category_id == SiteSetting.discobot_category_id
-      return unless @post.is_first_post?
-
-      post_topic_id = @post.topic.id
-      @data[:topic_id] = post_topic_id
-
-      unless key = @post.raw.match(/(unicorn|bacon|ninja|monkey)/i)
-        return
-      end
+      raw =
+        if key = @post.raw.match(/(unicorn|bacon|ninja|monkey)/i)
+          I18n.t(i18n_key("start.#{key}"))
+        else
+          I18n.t(i18n_key("start.no_likes_message"))
+        end
 
       raw = <<~RAW
-        #{I18n.t(i18n_key(Regexp.last_match.to_s.downcase))}
+        #{raw}
+
+        #{I18n.t(i18n_key('start.message'))}
 
         #{I18n.t(i18n_key(@next_instructions_key))}
       RAW
-
-      fake_delay
-      like_post
 
       reply = reply_to(
         raw: raw,
@@ -403,10 +379,11 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       if bot_mentioned?
+        topic = welcome_topic
         raw = <<~RAW
           #{I18n.t(i18n_key('mention.reply'))}
 
-          #{I18n.t(i18n_key(@next_instructions_key), topic_id: SiteSetting.discobot_welcome_topic_id)}
+          #{I18n.t(i18n_key(@next_instructions_key), topic_id: topic.id, slug: topic.slug)}
         RAW
 
         fake_delay
@@ -455,8 +432,6 @@ module DiscourseNarrativeBot
       if @post.post_analyzer.link_count > 0
         raw = <<~RAW
           #{I18n.t(i18n_key('link.reply'))}
-
-          #{I18n.t(i18n_key(@next_instructions_key))}
         RAW
 
         fake_delay
@@ -473,8 +448,9 @@ module DiscourseNarrativeBot
       else
         fake_delay
 
+        topic = welcome_topic
         reply_to(
-          raw: I18n.t(i18n_key('link.not_found'), topic_id: SiteSetting.discobot_welcome_topic_id),
+          raw: I18n.t(i18n_key('link.not_found'), topic_id: topic.id, slug: topic.slug),
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
@@ -503,10 +479,7 @@ module DiscourseNarrativeBot
       fake_delay
 
       reply_to(
-        raw: I18n.t(i18n_key('end.message'),
-          username: @user.username,
-          category_slug: Category.find(SiteSetting.discobot_category_id).slug
-        ),
+        raw: I18n.t(i18n_key('end.message'), username: @user.username),
         topic_id: @data[:topic_id]
       )
     end
@@ -521,10 +494,9 @@ module DiscourseNarrativeBot
 
     def transition
       if @post
-        topic_id = @post.topic.id
-        valid_topic = valid_topic?(topic_id)
+        valid_topic = valid_topic?(@post.topic.id)
 
-        if !valid_topic && topic_id != SiteSetting.discobot_welcome_topic_id
+        if !valid_topic
           raise TransitionError.new if bot_mentioned?
           raise DoNotUnderstandError.new if reply_to_bot_post?
         elsif valid_topic && @state == :end
@@ -603,24 +575,19 @@ module DiscourseNarrativeBot
 
     def reset_bot?
       reset = false
+      topic_id = @data[:topic_id]
 
       if @post &&
          bot_mentioned? &&
-         [@data[:topic_id], SiteSetting.discobot_welcome_topic_id].include?(@post.topic.id) &&
+         valid_topic?(topic_id) &&
          @post.raw.match(/#{RESET_TRIGGER}/)
 
         reset_data
+        set_data({ topic_id: topic_id })
         fake_delay
 
-        raw =
-          if @data[:topic_id] == @post.topic.id
-            I18n.t(i18n_key('reset.message'), topic_id: SiteSetting.discobot_welcome_topic_id)
-          elsif SiteSetting.discobot_welcome_topic_id == @post.topic.id
-            I18n.t(i18n_key('reset.welcome_topic_message'))
-          end
-
         reply_to(
-          raw: raw,
+          raw: I18n.t(i18n_key('reset.message')),
           topic_id: @post.topic.id,
           reply_to_post_number: @post.post_number
         )
@@ -632,12 +599,12 @@ module DiscourseNarrativeBot
     end
 
     def cancel_timeout_job(user)
-      Jobs.cancel_scheduled_job(:narrative_timeout, user_id: user.id)
+      Jobs.cancel_scheduled_job(:new_user_narrative_timeout, user_id: user.id)
     end
 
     def enqueue_timeout_job(user)
       cancel_timeout_job(user)
-      Jobs.enqueue_in(TIMEOUT_DURATION, :narrative_timeout, user_id: user.id)
+      Jobs.enqueue_in(TIMEOUT_DURATION, :new_user_narrative_timeout, user_id: user.id)
     end
 
     def store_data
@@ -646,6 +613,17 @@ module DiscourseNarrativeBot
 
     def reset_data
       set_data(nil)
+    end
+
+    def reset_rate_limits
+      if @post
+        @post.default_rate_limiter.rollback!
+        @post.limit_posts_per_day&.rollback!
+      end
+    end
+
+    def welcome_topic
+      Topic.find_by(slug: 'welcome-to-discourse', archetype: Archetype.default)
     end
 
     def set_data(value)

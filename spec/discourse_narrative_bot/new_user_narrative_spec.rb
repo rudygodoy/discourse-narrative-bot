@@ -1,73 +1,18 @@
 require 'rails_helper'
 
 describe DiscourseNarrativeBot::NewUserNarrative do
-  let(:category) { Fabricate(:category) }
-  let(:welcome_topic) { Fabricate(:topic, category: category) }
-  let(:topic) { Fabricate(:topic, category: category) }
+  let!(:welcome_topic) { Fabricate(:topic, title: 'Welcome to Discourse') }
+  let(:topic) { Fabricate(:topic) }
   let(:user) { Fabricate(:user) }
   let(:post) { Fabricate(:post, topic: topic, user: user) }
   let(:narrative) { described_class.new }
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
 
-  describe 'Bot initiation' do
-    let(:group) { Fabricate(:group) }
-    let(:other_group) { Fabricate(:group, name: 'test') }
-
-    describe 'restricted bot category' do
-      describe 'when creating a new user' do
-        describe 'and user is allowed to view category' do
-          let(:category)  { Fabricate(:category, read_restricted: true, groups: [group]) }
-          let(:welcome_topic) { Fabricate(:topic, category: category) }
-
-          before do
-            SiteSetting.discobot_category_id = category.id
-            SiteSetting.discobot_welcome_topic_id = welcome_topic.id
-          end
-
-          it 'should initiate the bot for the user' do
-            category
-            user
-
-            expect { user.groups << [group, other_group] }.to change { Post.count }.by(1)
-            expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_reply)
-          end
-        end
-
-        describe 'and user is not allowed to view category' do
-          it 'should not initiate the bot' do
-            category
-            user
-
-            expect { user.groups << [group, other_group] }.to change { Post.count }.by(0)
-            expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
-          end
-        end
-      end
-    end
-
-    describe 'unrestricted bot category' do
-      describe 'when creating a new user' do
-        before do
-          SiteSetting.discobot_category_id = category.id
-          SiteSetting.discobot_welcome_topic_id = welcome_topic.id
-        end
-
-        it 'should initiate the bot for the user' do
-          category
-          user
-
-          expect { user.groups << [group, other_group] }.to change { Post.count }.by(1)
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_reply)
-        end
-      end
-    end
-  end
-
   describe '#notify_timeout' do
     before do
       DiscourseNarrativeBot::Store.set(user.id,
-        state: :tutorial_topic,
+        state: :tutorial_images,
         topic_id: topic.id,
         last_post_id: post.id
       )
@@ -85,45 +30,45 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
   describe '#input' do
     before do
-      SiteSetting.discobot_category_id = category.id
-      SiteSetting.discobot_welcome_topic_id = welcome_topic.id
       SiteSetting.title = "This is an awesome site!"
       DiscourseNarrativeBot::Store.set(user.id, state: :begin)
     end
 
     describe 'when post contains the right reset trigger' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_topic, topic_id: topic.id)
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_images, topic_id: topic.id)
       end
 
-      describe 'in the new bot topic' do
-        it 'should reset the bot' do
-          post.update_attributes!(raw: "@discobot something #{described_class::RESET_TRIGGER}")
-          narrative.input(:reply, user, post)
+      it 'should reset the bot' do
+        post.update_attributes!(raw: "@discobot something #{described_class::RESET_TRIGGER}")
+        narrative.input(:reply, user, post)
 
-          expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
+        expect(DiscourseNarrativeBot::Store.get(user.id)).to eq({ "topic_id" => topic.id })
 
-          expect(Post.last.raw).to eq(I18n.t(
-            'discourse_narrative_bot.new_user_narrative.reset.message',
-            topic_id: SiteSetting.discobot_welcome_topic_id
-          ))
-        end
-      end
+        expect(Post.last.raw).to eq(I18n.t(
+          'discourse_narrative_bot.new_user_narrative.reset.message'
+        ))
 
-      describe 'in the bot welcome topic' do
-        it 'should reset the bot' do
-          new_post = Fabricate(:post,
-            topic_id: SiteSetting.discobot_welcome_topic_id,
-            raw: "something #{described_class::RESET_TRIGGER} @discobot"
+        Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
+          expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
+            username: user.username, title: SiteSetting.title
           )
 
-          narrative.input(:reply, user, new_post)
+          expected_raw = <<~RAW
+          #{expected_raw}
 
-          expect(DiscourseNarrativeBot::Store.get(user.id)).to eq(nil)
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
+          RAW
 
-          expect(Post.last.raw).to eq(I18n.t(
-            'discourse_narrative_bot.new_user_narrative.reset.welcome_topic_message',
-          ))
+          narrative.input(
+            :reply,
+            user,
+            Fabricate(:post, topic: topic, raw: '@discobot hi there!!')
+          )
+
+          new_post = Post.last
+          expect(new_post.raw).to eq(expected_raw.chomp)
+          expect(new_post.topic.id).to_not eq(topic.id)
         end
       end
     end
@@ -143,9 +88,17 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.input(:init, user, nil)
           new_post = Post.last
 
-          expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
+          expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
             username: user.username, title: SiteSetting.title
-          ).chomp)
+          )
+
+          expected_raw = <<~RAW
+          #{expected_raw}
+
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
+          RAW
+
+          expect(new_post.raw).to eq(expected_raw.chomp)
 
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym)
             .to eq(:waiting_reply)
@@ -153,41 +106,12 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:begin, :reply]' do
-      it 'should create the right post' do
-        Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-          post.update_attributes!(
-            raw: '@discobot Lets us get this started!',
-            topic: welcome_topic
-          )
-
-          narrative.input(:reply, user, post)
-          new_post = Post.last
-
-          expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
-            username: user.username, title: SiteSetting.title
-          ))
-
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_reply)
-        end
-      end
-
-      describe 'when a post is created without mentioning the bot' do
-        it 'should not create a do not understand response' do
-          post
-
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:begin)
-        end
-      end
-    end
-
     describe 'when [:waiting_reply, :reply]' do
-      let(:post) { Fabricate(:post, topic_id: SiteSetting.discobot_welcome_topic_id) }
+      let(:post) { Fabricate(:post, topic_id: topic.id) }
       let(:other_post) { Fabricate(:post) }
 
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :waiting_reply)
+        DiscourseNarrativeBot::Store.set(user.id, state: :waiting_reply, topic_id: topic.id)
       end
 
       describe 'when post is not from the right topic' do
@@ -201,79 +125,54 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
-      it 'should create the right reply' do
-        narrative.expects(:enqueue_timeout_job).with(user)
+      describe 'when post contains the right text' do
+        it 'should create the right reply' do
+          narrative.expects(:enqueue_timeout_job).with(user)
+          post.update_attributes!(raw: 'omg this is a unicorn!')
 
-        narrative.input(:reply, user, post)
-        new_post = Post.last
+          narrative.input(:reply, user, post)
+          new_post = Post.last
 
-        expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.quote_user_reply',
-          username: post.user.username,
-          post_id: post.id,
-          topic_id: post.topic.id,
-          post_raw: post.raw,
-          category_slug: category.slug
-        ))
+          expected_raw = <<~RAW
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.unicorn')}
 
-        data = DiscourseNarrativeBot::Store.get(user.id)
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
 
-        expect(data[:state].to_sym).to eq(:tutorial_topic)
-        expect(data[:last_post_id]).to eq(new_post.id)
-      end
-    end
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
+          RAW
 
-    describe 'when [:tutorial_topic, :reply]' do
-      let(:other_topic) { Fabricate(:topic, category: category) }
-      let(:other_post) { Fabricate(:post, topic: other_topic, raw: 'This Unicorn is so fluffy!') }
+          expect(new_post.raw).to eq(expected_raw.chomp)
 
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_topic)
-      end
+          data = DiscourseNarrativeBot::Store.get(user.id)
 
-      describe 'when post is not the first post' do
-        let(:other_post) { Fabricate(:post, topic: post.topic) }
-
-        it 'should not do anything' do
-          narrative.expects(:enqueue_timeout_job).with(user).never
-
-          other_post
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_topic)
+          expect(data[:state].to_sym).to eq(:tutorial_onebox)
+          expect(data[:last_post_id]).to eq(new_post.id)
         end
       end
 
-      describe 'when topic is not in the right category' do
-        let(:other_topic) { Fabricate(:topic) }
-        let(:other_post) { Fabricate(:post, topic: other_topic) }
+      describe 'when post does not contain the right text' do
+        it 'should create the right reply' do
+          narrative.expects(:enqueue_timeout_job).with(user)
+          post.update_attributes!(raw: 'omg this is a horse!')
 
-        it 'should not do anything' do
-          narrative.expects(:enqueue_timeout_job).with(user).never
+          narrative.input(:reply, user, post)
+          new_post = Post.last
 
-          post
-          other_post
+          expected_raw = <<~RAW
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.no_likes_message')}
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_topic)
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
+
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
+          RAW
+
+          expect(new_post.raw).to eq(expected_raw.chomp)
+
+          data = DiscourseNarrativeBot::Store.get(user.id)
+
+          expect(data[:state].to_sym).to eq(:tutorial_onebox)
+          expect(data[:last_post_id]).to eq(new_post.id)
         end
-      end
-
-      it 'should create the right reply' do
-        narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, other_post)
-        new_post = Post.last
-
-        expected_raw = <<~RAW
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.unicorn')}
-
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
-        RAW
-
-        expect(new_post.raw).to eq(expected_raw.chomp)
-
-        data = DiscourseNarrativeBot::Store.get(user.id)
-
-        expect(data[:state].to_sym).to eq(:tutorial_onebox)
-        expect(data[:last_post_id]).to eq(new_post.id)
       end
     end
 
@@ -540,7 +439,10 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.mention.reply')}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.link.instructions', topic_id: SiteSetting.discobot_welcome_topic_id)}
+          #{I18n.t(
+            'discourse_narrative_bot.new_user_narrative.link.instructions',
+            topic_id: welcome_topic.id, slug: welcome_topic.slug
+          )}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
@@ -570,7 +472,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(Post.last.raw).to eq(I18n.t(
             'discourse_narrative_bot.new_user_narrative.link.not_found',
-            topic_id: SiteSetting.discobot_welcome_topic_id
+            topic_id: welcome_topic.id, slug: welcome_topic.slug
           ))
 
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_link)
@@ -590,55 +492,9 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.link.reply')}
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.pm.instructions')}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_pm)
-      end
-    end
-
-    describe 'when [:tutorial_pm, :reply]' do
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_pm, topic_id: topic.id)
-      end
-
-      describe 'when post is not a PM' do
-        it 'should not do anything' do
-          post
-
-          expect { narrative.input(:reply, user, post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_pm)
-        end
-      end
-
-      describe 'when post is not a PM to bot' do
-        let(:other_post) { Fabricate(:private_message_post) }
-
-        it 'should not do anything' do
-          other_post
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_pm)
-        end
-      end
-
-      it 'should send a PM to the user' do
-        post = Fabricate(:private_message_post, user: user)
-        post.topic.allowed_users << User.find(-2)
-
-        expect { narrative.input(:reply, user, post) }.to change { Post.count }.by(2)
-
-        pm_post = Post.offset(1).last
-        end_post = Post.last
-
-        expect(pm_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.pm.message'))
-
-        expect(end_post.raw).to eq(I18n.t(
-          'discourse_narrative_bot.new_user_narrative.end.message',
-          username: user.username,
-          category_slug: category.slug
-        ))
-
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
       end
     end

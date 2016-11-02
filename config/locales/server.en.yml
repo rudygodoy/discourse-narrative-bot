@@ -3,73 +3,76 @@ en:
     introbot_enabled: 'Enable intro bot'
   discourse_narrative_bot:
     new_user_narrative:
-      welcome_topic_title: "I'm Discobot, stop by and say hello!"
-      welcome_topic_body: |-
-        Hey, I’m Discobot!
-
-        Don’t be alarmed, but I’m not a real person. I am here to help, though!
-
-        I’ll send a brief greeting to each new member in this topic, welcoming them to the site and offering them a chance to experiment and discover how everything works. There’s even a special prize at the end! :gift: Really!
-
-        If you’d like to interact with me, just mention @discobot anywhere in this #%{category_slug} category. Otherwise I’ll stay out of your way, because I know you're busy.
       hello:
+        title: ":robot: I'm your friendly neighborhood discobot"
+        triggers: |-
+          - unicorns :unicorn:
+          - bacon :pig:
+          - ninjas :japanese_castle:
+          - monkeys :monkey_face:
+
+          (Please don't judge me. I was programmed this way!)
         message_1: |-
           Hi @%{username}
 
-          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply to this post to get started.
+          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply to this post and mention any of following things that I like to get started.
         message_2: |-
           Hey, it’s good to see you @%{username}!
 
-          If you’re interested, I can give you a brief tour. To begin, reply to this post!
+          If you’re interested, I can give you a brief tour. To begin, reply to this post and mention any of following things that I like!
         message_3: |-
           Thanks for joining, @%{username}!
 
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me. :slight_smile:
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me and mention any of following things that I like. :slight_smile:
         message_4: |-
           Well if it isn’t @%{username}!
 
-          Great to have you here at %{title}. If you’d like to play with me and learn the basics, please reply to this post. If not, that’s OK too! :wink:
+          Great to have you here at %{title}. If you’d like to play with me and learn the basics, please reply to this post and mention any of following things that I like. If not, that’s OK too! :wink:
         message_5: |-
           Look who just arrived – @%{username}!
 
-          If you’re new to %{title}, we can talk through a few things together if you reply to me. :sunny: It’ll be fun, I swear!
+          If you’re new to %{title}, we can talk through a few things together if you reply to me and mention any of following things that I like. :sunny: It’ll be fun, I swear!
         message_6: |-
           :wave: and welcome @%{username}!
 
-          It’s my job to greet everyone that arrives here at %{title} and offer to help, if I can. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me if so!
-      quote_user_reply: |-
-        Excellent! Let me quote what you just said:
+          It’s my job to greet everyone that arrives here at %{title} and offer to help, if I can. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me and mention any of following things that I like if so!
+      start:
+        no_likes_message: |-
+          Awww you didn't mention any of my favorite things.
 
-        [quote="%{username}, post:%{post_id}, topic:%{post.topic.id}>, full:true"]
-          %{post_raw}
-        [/quote]
+          https://media.giphy.com/media/TZBED1pP5m8N2/giphy.gif
 
-        Did you notice how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :clock:
+          It is ok... life will still have to go on.
+        message: |-
+          Anyway, did you notice how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :clock:
+        unicorn: |-
+          Awesome! I didn't know you like :unicorn: too.
 
-        Next, can you create a new topic in the #%{category_slug} category and mention any subject I like?
+          Did you know that the unicorn is Scotland’s national animal? :unicorn:
 
-        - unicorns
-        - bacon
-        - ninjas
-        - monkeys
+          https://en.wikipedia.org/wiki/Unicorn
+        ninja: |-
+          Looks like we have gotten ourselves a ninja over here.
 
-        (Please don't judge me. I was programmed this way!)
-      unicorn: |-
-        Did you know that the unicorn is Scotland’s national animal? :unicorn:
-        https://en.wikipedia.org/wiki/Unicorn
-      ninja: |-
-        Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
-        http://nerdreactor.com/wp-content/uploads/2012/12/Ninja_Gaiden_NES_02.jpg
-      bacon: |-
-        :pig: :pig: :pig: :pig: :pig: :pig:
-        https://media.giphy.com/media/10l8MVei2OxbuU/giphy.gif
-        https://media.giphy.com/media/qZiUOutzxgfKM/giphy.gif
-      monkey: |-
-        :monkey: :fries:
-        https://www.youtube.com/watch?v=FjqfX8-L0Tk
+          Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
+
+          http://nerdreactor.com/wp-content/uploads/2012/12/Ninja_Gaiden_NES_02.jpg
+        bacon: |-
+          I had bacon for breakfast today :grin:
+
+          :pig: :pig: :pig: :pig: :pig: :pig:
+
+          https://media.giphy.com/media/10l8MVei2OxbuU/giphy.gif
+          https://media.giphy.com/media/qZiUOutzxgfKM/giphy.gif
+        monkey: |-
+          I hope you're not up to any monkey business.
+
+          :monkey: :fries:
+
+          https://www.youtube.com/watch?v=FjqfX8-L0Tk
       onebox:
         instructions: |-
-          Can you share a Wikipedia link related to this topic? Try replying with **a link on a line by itself**, and it'll automatically expand to include a handy summary.
+          To get things started, can you share a Wikipedia link related to something that you like? Try replying with **a link on a line by itself**, and it'll automatically expand to include a handy summary.
 
           (This also works for links from YouTube, Kickstarter, SoundCloud, WordPress and hundreds of other popular websites. But let's try Wikipedia first!)
         reply: |-
@@ -156,7 +159,7 @@ en:
         instructions: |-
           Sometimes you might want to get a person’s attention even if you aren’t replying to them directly. Just mention their name by typing a `@` then completing their name.
 
-          Give it a try – reply to this topic and mention my name `@discobot` in your reply, and I’ll get notified!
+          Give it a try – reply to this private message and mention my name `@discobot` in your reply, and I’ll get notified!
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
@@ -171,37 +174,11 @@ en:
 
           And you know what’s _really_ cool? A link between two topics automatically works both ways, so anyone interested in either topic can easily follow all the linked topics, too!
 
-          Can you **paste a link to [my welcome topic](/t/slug/%{topic_id})** in your next reply?
+          Can you **paste a link to [the welcome topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
           Now that’s some prime linkage!
         not_found: |-
-          Did you forget to link [my welcome topic](/t/slug/%{topic_id}) in your reply?
-      pm:
-        instructions: |-
-          If you’d prefer to reply to me directly, rather than in the topic, you can send me a personal message any time. Let’s try it! Select my avatar to expand my user card, then press the :envelope: Message button.
-
-          I’ll be waiting for your message!
-
-          (You can also send me a message from my user page, too.)
-        reply: |-
-          Hey, I got your personal message :mailbox_with_mail: – thanks! I'll reply to you there, too. :+1:
-        message: |-
-          My very own personal message? For _me?_ Aw, you shouldn't have. :upside_down:
-
-                ______ _                    _
-              (_) |  | |                  | |
-                  |  | |     __,   _  _   | |
-                _ |  |/ \   /  |  / |/ |  |/_)
-               (_/   |   |_/\_/||/  |  |_/| \_/
-                      __         |
-               |   | /  \_|   |  |
-                \_/|/\__/  \_/|_/o
-                  /|
-                  \|
-
-          Once you’ve been here a while, you’ll be able to add multiple people to a PM to make it a group PM, as needed.
-
-          No need to reply to this — but please know that I will always treasure our correspondence!
+          Did you forget to link [the welcome topic](/t/%{slug}/%{topic_id}) in your reply?
       end:
         message: |-
           @%{username} That’s all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
@@ -229,7 +206,7 @@ en:
               : + - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - + :
               -----------------------------------------------------------------
 
-          Bye for now! If you'd like to speak with me again any time, just mention `@discobot` here in the #%{category_slug} category. ;)
+          Bye for now! If you'd like to speak with me again any time, just send me a private mesage ;)
       do_not_understand:
         first_response: |-
           Hey, thanks for the reply!
@@ -245,8 +222,6 @@ en:
           Perhaps mention me (@discobot) in a reply with the command `/reset_bot` to start over? In the meantime, I’ll stay out of your way.
       reset:
         message: |-
-          Looks like you would like me to walk you through the features again. Mention me again in the [welcome topic](/t/slug/%{topic_id}) to get me started again.
-        welcome_topic_message: |-
           Got it! Just mention me here to get started again!
       timeout:
         message: |-
