@@ -2,7 +2,7 @@ en:
   site_settings:
     introbot_enabled: 'Enable intro bot'
   discourse_narrative_bot:
-    narratives:
+    new_user_narrative:
       welcome_topic_title: "I'm Discobot, stop by and say hello!"
       welcome_topic_body: |-
         Hey, I’m Discobot!

@@ -11,11 +11,11 @@ after_initialize do
   require_dependency 'application_controller'
   require_dependency 'discourse_event'
   require_dependency 'admin_constraint'
-  require_dependency File.expand_path('../jobs/narrative_input.rb', __FILE__)
-  require_dependency File.expand_path('../jobs/narrative_timeout.rb', __FILE__)
+  require_dependency File.expand_path('../jobs/new_user_narrative_input.rb', __FILE__)
+  require_dependency File.expand_path('../jobs/new_user_narrative_timeout.rb', __FILE__)
 
   load File.expand_path("../app/models/group_user.rb", __FILE__)
-  load File.expand_path("../lib/discourse_narrative_bot/narrative.rb", __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/new_user_narrative.rb", __FILE__)
 
   module ::DiscourseNarrativeBot
     PLUGIN_NAME = "discourse-narrative-bot".freeze
@@ -59,7 +59,7 @@ after_initialize do
            ((category_secure_group_ids & user_group_ids).empty? &&
            !(category_secure_group_ids & [group.id]).empty?)
 
-          Jobs.enqueue(:narrative_input,
+          Jobs.enqueue(:new_user_narrative_input,
             user_id: user.id,
             input: :init
           )
@@ -70,7 +70,7 @@ after_initialize do
 
   DiscourseEvent.on(:post_created) do |post|
     if ![-1, -2].include?(post.user.id)
-      Jobs.enqueue(:narrative_input,
+      Jobs.enqueue(:new_user_narrative_input,
         user_id: post.user.id,
         post_id: post.id,
         input: :reply

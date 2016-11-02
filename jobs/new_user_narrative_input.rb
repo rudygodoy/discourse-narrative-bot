@@ -1,5 +1,5 @@
 module Jobs
-  class NarrativeInput < Jobs::Base
+  class NewUserNarrativeInput < Jobs::Base
 
     sidekiq_options queue: 'critical'
 
@@ -7,7 +7,7 @@ module Jobs
       user = User.find args[:user_id]
       post = Post.find args[:post_id] rescue nil
 
-      DiscourseNarrativeBot::Narrative.new.input(args[:input].to_sym, user, post)
+      DiscourseNarrativeBot::NewUserNarrative.new.input(args[:input].to_sym, user, post)
     end
   end
 end

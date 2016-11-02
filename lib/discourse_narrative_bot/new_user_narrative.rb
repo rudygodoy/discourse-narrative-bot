@@ -2,7 +2,7 @@ require_relative '../dice'
 require_relative '../quote_generator'
 
 module DiscourseNarrativeBot
-  class Narrative
+  class NewUserNarrative
     TRANSITION_TABLE = {
       [:begin, :init] => {
         next_state: :waiting_reply,
@@ -538,7 +538,7 @@ module DiscourseNarrativeBot
     end
 
     def i18n_key(key)
-      "discourse_narrative_bot.narratives.#{key}"
+      "discourse_narrative_bot.new_user_narrative.#{key}"
     end
 
     def reply_to(opts)
