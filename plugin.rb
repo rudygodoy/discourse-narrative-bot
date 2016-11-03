@@ -42,6 +42,10 @@ after_initialize do
     end
   end
 
+  self.add_model_callback(User, :after_destroy) do
+    DiscourseNarrativeBot::Store.set(self.id, nil)
+  end
+
   DiscourseEvent.on(:group_user_created) do |group_user|
     user = group_user.user
 
