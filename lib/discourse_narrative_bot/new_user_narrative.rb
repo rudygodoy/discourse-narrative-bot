@@ -52,9 +52,15 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_mention, :reply] => {
+        next_state: :tutorial_flag,
+        next_instructions_key: 'flag.instructions',
+        action: :reply_to_mention
+      },
+
+      [:tutorial_flag, :flag] => {
         next_state: :tutorial_link,
         next_instructions_key: 'link.instructions',
-        action: :reply_to_mention
+        action: :reply_to_flag
       },
 
       [:tutorial_link, :reply] => {
@@ -383,7 +389,7 @@ module DiscourseNarrativeBot
         raw = <<~RAW
           #{I18n.t(i18n_key('mention.reply'))}
 
-          #{I18n.t(i18n_key(@next_instructions_key), topic_id: topic.id, slug: topic.slug)}
+          #{I18n.t(i18n_key(@next_instructions_key), base_url: Discourse.base_url)}
         RAW
 
         fake_delay
@@ -421,6 +427,32 @@ module DiscourseNarrativeBot
       end
 
       valid
+    end
+
+    def reply_to_flag
+      post_topic_id = @post.topic.id
+      return unless valid_topic?(post_topic_id)
+      return unless @post.user.id == -2
+
+      topic = welcome_topic
+      raw = <<~RAW
+        #{I18n.t(i18n_key('flag.reply'))}
+
+        #{I18n.t(i18n_key(@next_instructions_key), topic_id: topic.id, slug: topic.slug)}
+      RAW
+
+      fake_delay
+
+      reply = reply_to(
+        raw: raw,
+        topic_id: post_topic_id,
+        reply_to_post_number: @post.post_number
+      )
+
+      @post.post_actions.where(user_id: @user.id).destroy_all
+
+      enqueue_timeout_job(@user)
+      reply
     end
 
     def reply_to_link

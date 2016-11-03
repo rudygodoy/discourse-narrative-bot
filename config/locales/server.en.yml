@@ -164,6 +164,15 @@ en:
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
           @%{username} See how you got a notification when I mentioned you? You can get my attention with `@discobot`.
+      flag:
+        instructions: |-
+          In order to help keep discussions civilized, use the <kbd>&hellip;</kbd> show more button to reveal more actions. **Flag** to privately let the author, or [our staff](%{base_url}/about), know about a problem.
+
+          > I'm am writing something nasty :imp:
+
+          I guess you know what to do. Go ahead and flag this post to tell me I shouldn't write nasty things.
+        reply: |-
+          Thank you for notifying the moderators of the problem. Since I wasn't actually writing a nasty post, I've gone ahead and remove the flag.
       link:
         instructions: |-
           One handy way to refer to previous discussions is to link to them. To get a link to a reply or topic:

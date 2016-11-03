@@ -440,6 +440,56 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           #{I18n.t('discourse_narrative_bot.new_user_narrative.mention.reply')}
 
           #{I18n.t(
+            'discourse_narrative_bot.new_user_narrative.flag.instructions',
+            base_url: Discourse.base_url
+          )}
+        RAW
+
+        expect(new_post.raw).to eq(expected_raw.chomp)
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+      end
+    end
+
+    describe 'when [:tutorial_flag, :flag]' do
+      let(:post) { Fabricate(:post, user: described_class.discobot_user, topic: topic) }
+      let(:flag) { Fabricate(:flag, post: post, user: user) }
+
+      before do
+        flag
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_flag, topic_id: topic.id)
+      end
+
+      describe 'when post flagged is not for the right topic' do
+        it 'should not do anything' do
+          narrative.expects(:enqueue_timeout_job).with(user).never
+          flag.update_attributes!(post: other_post)
+
+          expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+        end
+      end
+
+      describe 'when post being flagged does not belong to discobot ' do
+        it 'should not do anything' do
+          narrative.expects(:enqueue_timeout_job).with(user).never
+          flag.update_attributes!(post: other_post)
+
+          expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+        end
+      end
+
+      it 'should create the right reply' do
+        narrative.expects(:enqueue_timeout_job).with(user)
+
+        expect  { narrative.input(:flag, user, flag.post) }.to change { PostAction.count }.by(-1)
+
+        new_post = Post.last
+
+        expected_raw = <<~RAW
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.flag.reply')}
+
+          #{I18n.t(
             'discourse_narrative_bot.new_user_narrative.link.instructions',
             topic_id: welcome_topic.id, slug: welcome_topic.slug
           )}

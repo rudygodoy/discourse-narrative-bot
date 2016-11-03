@@ -63,4 +63,16 @@ after_initialize do
       )
     end
   end
+
+  PostAction.class_eval do
+    after_create do
+      if PostActionType.flag_types.values.include?(self.post_action_type_id)
+        Jobs.enqueue(:new_user_narrative_input,
+          user_id: self.user.id,
+          post_id: self.post.id,
+          input: :flag
+        )
+      end
+    end
+  end
 end
