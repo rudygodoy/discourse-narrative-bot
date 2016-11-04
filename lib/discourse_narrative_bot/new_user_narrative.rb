@@ -692,7 +692,6 @@ module DiscourseNarrativeBot
           I18n.t(i18n_key('random_mention.message'))
         end
 
-      like_post
       fake_delay
 
       reply_to(
