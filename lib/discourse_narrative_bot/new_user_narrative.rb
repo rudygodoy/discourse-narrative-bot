@@ -578,12 +578,17 @@ module DiscourseNarrativeBot
         like_post
 
         reply = reply_to(
-          raw: I18n.t(i18n_key('search.reply')),
+          raw: I18n.t(i18n_key('search.reply'), base_url: Discourse.base_url),
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
 
         enqueue_timeout_job(@user)
+
+        first_post = @post.topic.first_post
+        first_post.revert_to(1)
+        first_post.save!
+
         reply
       else
         fake_delay
