@@ -182,7 +182,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       describe 'when post is not in the right topic' do
-        it 'should not do anyting' do
+        it 'should not do anything' do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
@@ -213,7 +213,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       describe 'when post is not in the right topic' do
-        it 'should not do anyting' do
+        it 'should not do anything' do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
