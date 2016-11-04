@@ -16,9 +16,15 @@ module DiscourseNarrativeBot
       },
 
       [:waiting_reply, :reply] => {
+        next_state: :tutorial_keyboard_shortcuts,
+        next_instructions_key: 'keyboard_shortcuts.instructions',
+        action: :react_to_reply
+      },
+
+      [:tutorial_keyboard_shortcuts, :reply] => {
         next_state: :tutorial_onebox,
         next_instructions_key: 'onebox.instructions',
-        action: :react_to_reply
+        action: :reply_to_keyboard_shortcut
       },
 
       [:tutorial_onebox, :reply] => {
@@ -114,6 +120,8 @@ module DiscourseNarrativeBot
           store_data
           reset_rate_limits
 
+          self.send("init_#{new_state}") if self.class.private_method_defined?("init_#{new_state}")
+
           if new_state == :end
             end_reply
             cancel_timeout_job(user)
@@ -135,6 +143,18 @@ module DiscourseNarrativeBot
     end
 
     private
+
+    def publish_keyboard_shortcuts(value = 'hide')
+      MessageBus.publish(
+        "/new_user_narrative",
+        keyboard_shortcuts: value,
+        user_ids: [@user.id]
+      )
+    end
+
+    def init_tutorial_keyboard_shortcuts
+      publish_keyboard_shortcuts
+    end
 
     def say_hello
       raw = I18n.t(
@@ -177,7 +197,7 @@ module DiscourseNarrativeBot
 
       raw =
         if key = @post.raw.match(/(unicorn|bacon|ninja|monkey)/i)
-          I18n.t(i18n_key("start.#{key}"))
+          I18n.t(i18n_key("start.#{key.to_s.downcase}"))
         else
           I18n.t(i18n_key("start.no_likes_message"))
         end
@@ -197,6 +217,30 @@ module DiscourseNarrativeBot
       )
 
       enqueue_timeout_job(@user)
+      reply
+    end
+
+    def reply_to_keyboard_shortcut
+      post_topic_id = @post.topic.id
+      return unless valid_topic?(post_topic_id)
+
+      fake_delay
+      like_post
+
+      raw = <<~RAW
+        #{I18n.t(i18n_key('keyboard_shortcuts.reply'))}
+
+        #{I18n.t(i18n_key(@next_instructions_key))}
+      RAW
+
+      reply = reply_to(
+        raw: raw,
+        topic_id: post_topic_id,
+        reply_to_post_number: @post.post_number
+      )
+
+      enqueue_timeout_job(@user)
+      publish_keyboard_shortcuts('show')
       reply
     end
 

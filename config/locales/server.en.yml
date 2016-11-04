@@ -188,6 +188,13 @@ en:
           Now that’s some prime linkage!
         not_found: |-
           Did you forget to link [the welcome topic](/t/%{slug}/%{topic_id}) in your reply?
+      keyboard_shortcuts:
+        instructions: |-
+          Next up, we're going to learn about keyboard shortcuts to supercharge your browsing experience. To bring up the keyboard help menu, just hit <kbd>?</kbd> on your keyboard :keyboard:
+
+          For a :mouse_three_button:-less challange, I've gone ahead and hide all the reply buttons. See if you can reply to me by using your new found knowledge :grin:
+        reply: |-
+          Execellent job :) You can know call yourself a keyboard warrior.
       end:
         message: |-
           @%{username} That’s all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
