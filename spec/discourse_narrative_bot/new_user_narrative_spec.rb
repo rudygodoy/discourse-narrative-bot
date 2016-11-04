@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe DiscourseNarrativeBot::NewUserNarrative do
   let!(:welcome_topic) { Fabricate(:topic, title: 'Welcome to Discourse') }
-  let(:topic) { Fabricate(:topic) }
-  let(:user) { Fabricate(:user) }
+  let(:topic) { Fabricate(:private_message_topic) }
+  let(:user) { topic.user }
   let(:post) { Fabricate(:post, topic: topic, user: user) }
   let(:narrative) { described_class.new }
   let(:other_topic) { Fabricate(:topic) }
@@ -68,7 +68,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           new_post = Post.last
           expect(new_post.raw).to eq(expected_raw.chomp)
-          expect(new_post.topic.id).to_not eq(topic.id)
+          expect(new_post.topic.id).to eq(topic.id)
         end
       end
     end

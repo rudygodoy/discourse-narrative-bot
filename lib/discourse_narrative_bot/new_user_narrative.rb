@@ -149,13 +149,21 @@ module DiscourseNarrativeBot
       #{I18n.t(i18n_key('hello.triggers'))}
       RAW
 
-      post = reply_to(
+      opts = {
         title: I18n.t(i18n_key("hello.title"), title: SiteSetting.title),
         raw: raw,
         target_usernames: @user.username,
         archetype: Archetype.private_message
-      )
+      }
 
+      if @post &&
+         @post.archetype == Archetype.private_message &&
+         @post.topic.topic_allowed_users.pluck(:user_id).include?(@user.id)
+
+        opts = opts.merge(topic_id: @post.topic.id)
+      end
+
+      post = reply_to(opts)
       @data[:topic_id] = post.topic.id
       post
     end
