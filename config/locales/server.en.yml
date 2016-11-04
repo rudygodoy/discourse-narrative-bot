@@ -72,7 +72,7 @@ en:
           https://www.youtube.com/watch?v=FjqfX8-L0Tk
       onebox:
         instructions: |-
-          To get things started, can you share a Wikipedia link related to something that you like? Try replying with **a link on a line by itself**, and it'll automatically expand to include a handy summary.
+          I'll like to know more about you, can you share a Wikipedia link related to something that you like? Try replying with **a link on a line by itself**, and it'll automatically expand to include a handy summary.
 
           (This also works for links from YouTube, Kickstarter, SoundCloud, WordPress and hundreds of other popular websites. But let's try Wikipedia first!)
         reply: |-
@@ -183,11 +183,11 @@ en:
 
           And you know what’s _really_ cool? A link between two topics automatically works both ways, so anyone interested in either topic can easily follow all the linked topics, too!
 
-          Can you **paste a link to [the welcome topic](/t/%{slug}/%{topic_id})** in your next reply?
+          Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
           Now that’s some prime linkage!
         not_found: |-
-          Did you forget to link [the welcome topic](/t/%{slug}/%{topic_id}) in your reply?
+          Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
       keyboard_shortcuts:
         instructions: |-
           Next up, we're going to learn about keyboard shortcuts to supercharge your browsing experience. To bring up the keyboard help menu, just hit <kbd>?</kbd> on your keyboard :keyboard:

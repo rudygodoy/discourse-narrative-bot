@@ -461,7 +461,6 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       if bot_mentioned?
-        topic = welcome_topic
         raw = <<~RAW
           #{I18n.t(i18n_key('mention.reply'))}
 
@@ -748,7 +747,8 @@ module DiscourseNarrativeBot
     end
 
     def welcome_topic
-      Topic.find_by(slug: 'welcome-to-discourse', archetype: Archetype.default)
+      Topic.find_by(slug: 'welcome-to-discourse', archetype: Archetype.default) ||
+        Topic.recent(1).first
     end
 
     def set_data(value)
