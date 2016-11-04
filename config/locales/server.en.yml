@@ -195,6 +195,23 @@ en:
           For a :mouse_three_button:-less challange, I've gone ahead and hide all the reply buttons. See if you can reply to me by using your new found knowledge :grin:
         reply: |-
           Execellent job :) You can know call yourself a keyboard warrior.
+      search:
+        instructions: |-
+          I don't know about you but my programmers didn't give me alot of memory when building me. Therefore, I'm always using the search function to dig up posts that myself and others have written in the past.
+
+          Psst... I've actually hidden an easter egg some where in a previous post. If you're up for the challenge, hit the <kbd>/</kbd> key or click on the :mag: icon to search for the post.
+
+          <small>Try searching for the term "bunny" in this topic</small>
+        hidden_message: |-
+          How did you miss this bunny? :wink:
+
+          https://media.giphy.com/media/ef61oIGVyckY8/giphy.gif
+
+          Reply to me with the `:rabbit:` emoji to continue.
+        reply: |-
+          Yay you found it :tada:. I knew I could count on you. For more complicated searches, head over to the [full page search](%{base_url}/search) and try out our advanced search options.
+        not_found: |-
+          Hmm... Looks like you might be having trouble searching for the easter egg. Did you search for the term "bunny"?
       end:
         message: |-
           As you participate here, over time we'll get to know you, and your temporary new user limitations will be lifted. Keep participating, and over time you'll gain new [trust levels](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) that include special abilities to help us manage our community together.

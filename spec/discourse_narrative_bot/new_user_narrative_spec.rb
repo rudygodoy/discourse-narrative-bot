@@ -573,10 +573,61 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.link.reply')}
+
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.search.instructions')}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
+      end
+    end
+
+    describe 'when [:tutorial_search, :reply]' do
+      before do
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_search, topic_id: topic.id)
+      end
+
+      describe 'when post is not in the right topic' do
+        it 'should not do anything' do
+          other_post
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
+        end
+      end
+
+      describe 'when post does not contain the right answer' do
+        it 'should create the right reply' do
+          narrative.expects(:enqueue_timeout_job).with(user)
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.new_user_narrative.search.not_found'
+          ))
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
+        end
+      end
+
+      describe 'when post contain the right answer' do
+        it 'should create the right reply' do
+          post.update_attributes!(
+            raw: "#{described_class::SEARCH_ANSWER} this is a rabbit"
+          )
+
+          narrative.expects(:enqueue_timeout_job).with(user)
+          post
+
+          expect { narrative.input(:reply, user, post) }.to change { Post.count }.by(2)
+          new_post = Post.offset(1).last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.new_user_narrative.search.reply'
+          ).chomp)
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+        end
       end
     end
 
