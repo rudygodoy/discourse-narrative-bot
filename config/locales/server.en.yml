@@ -197,6 +197,12 @@ en:
           Execellent job :) You can know call yourself a keyboard warrior.
       end:
         message: |-
+          As you participate here, over time we'll get to know you, and your temporary new user limitations will be lifted. Keep participating, and over time you'll gain new [trust levels](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) that include special abilities to help us manage our community together.
+
+          We believe in [civilized community behavior](%{base_url}/guidelines) at all times.
+
+          (If you need to communicate with [staff members](%{base_url}/about) as a new user, just send them a private message.)
+
           @%{username} That’s all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
 
               -----------------------------------------------------------------

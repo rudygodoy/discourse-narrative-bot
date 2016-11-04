@@ -563,7 +563,7 @@ module DiscourseNarrativeBot
       fake_delay
 
       reply_to(
-        raw: I18n.t(i18n_key('end.message'), username: @user.username),
+        raw: I18n.t(i18n_key('end.message'), username: @user.username, base_url: Discourse.base_url),
         topic_id: @data[:topic_id]
       )
     end
