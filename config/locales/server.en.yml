@@ -38,13 +38,13 @@ en:
           It’s my job to greet everyone that arrives here at %{title} and offer to help, if I can. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me and mention any of following things that I like if so!
       start:
         no_likes_message: |-
-          Awww you didn't mention any of my favorite things.
+          Awww, you didn't mention any of my favorite things.
 
           https://media.giphy.com/media/TZBED1pP5m8N2/giphy.gif
 
-          It is ok... life will still have to go on.
+          That’s OK … life will still have to go on. I guess.
         message: |-
-          Anyway, did you notice how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :clock:
+          Did you notice how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :timer:
         unicorn: |-
           Awesome! I didn't know you like :unicorn: too.
 
@@ -52,7 +52,7 @@ en:
 
           https://en.wikipedia.org/wiki/Unicorn
         ninja: |-
-          Looks like we have gotten ourselves a ninja over here.
+          Looks like we got ourselves a ninja over here.
 
           Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
 
@@ -61,22 +61,25 @@ en:
           I had bacon for breakfast today :grin:
 
           :pig: :pig: :pig: :pig: :pig: :pig:
-
-          https://media.giphy.com/media/10l8MVei2OxbuU/giphy.gif
-          https://media.giphy.com/media/qZiUOutzxgfKM/giphy.gif
         monkey: |-
-          I hope you're not up to any monkey business.
+          I hope you’re not up to any monkey business.
 
           :monkey: :fries:
 
           https://www.youtube.com/watch?v=FjqfX8-L0Tk
       onebox:
         instructions: |-
-          I'll like to know more about you, can you share a Wikipedia link related to something that you like? Try replying with **a link on a line by itself**, and it'll automatically expand to include a handy summary.
+          Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a handy summary.
 
-          (This also works for links from YouTube, Kickstarter, SoundCloud, WordPress and hundreds of other popular websites. But let's try Wikipedia first!)
+          Here are a few Wikipedia links to choose from:          
+           http://en.wikipedia.org/wiki/Inherently_funny_word
+           http://en.wikipedia.org/wiki/Death_by_coconut
+           http://en.wikipedia.org/wiki/Dusty_the_Klepto_Kitty
+           https://en.wikipedia.org/wiki/Calculator_spelling
+
+          (This also works for links from YouTube, Kickstarter, SoundCloud, WordPress and hundreds of other popular websites. But let’s try Wikipedia first!)
         reply: |-
-          That is an excellent link!
+          That’s an excellent link! Just remember, the link has to be on a line all by itself, with nothing else in front of it or after it.
 
           I pressed the like :heart: button on your post to let you know how much I appreciated it :heart_eyes:
         not_found: |-
@@ -102,15 +105,19 @@ en:
           Try uploading this next: `https://media.giphy.com/media/AI1cYf864Rtlu/giphy.gif`
       formatting:
         instructions: |-
-          Can you try adding some formatting to your post? Can you make some words **bold** and _italic_ in your reply?
+          Let’s try adding formatting to your post. Can you make some words **bold** and _italic_ in your reply?
 
-          To format, use Markdown, BBCode, or HTML, or if you’re not into typing, push the buttons on the editor toolbar:
+          To format, use Markdown, HTML, or BBCode:
 
-          `**bold** and _italic_`
-          `<b>bold</b> and <i>italic</i>`
-          `[b]bold[/b] and [i]italic[/i]`
+          ```text
+          **bold** and _italic_
+          <b>bold</b> and <i>italic</i>
+          [b]bold[/b] and [i]italic[/i]
+          ```
 
-          (There’s also [a whole tutorial on formatting](http://commonmark.org/help) you can try, too.)
+          … or if you’re not into typing, push the bold or italic toolbar button in the editor.
+
+          (If you’re interested in more advanced formatting, there’s [a whole tutorial](http://commonmark.org/help) you can try, too.)
         reply: |-
           Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
         not_found: |-
@@ -119,7 +126,7 @@ en:
           _Can you try again?_
       quoting:
         instructions: |-
-          Can you try quoting me when you reply so I know exactly what part you’re replying to? Here are three quotes:
+          Try quoting me when you reply so I know exactly what part you’re replying to. Here are three quotes:
 
           > If this is coffee, please bring me some tea; but if this is tea, please bring me some coffee.
           >
@@ -127,18 +134,18 @@ en:
           >
           > I want my children to have all the things I couldn't afford. Then I want to move in with them.
 
-          Highlight the quote you prefer, and then press the **Quote Reply** button that pops up over the selection.
+          Select the quote you prefer, and then press the **Quote Reply** button that pops up over your selection.
         reply: |-
           Nice work, you picked my favorite quote! :left_speech_bubble:
         not_found: |-
           Hmm it looks like you didn’t quote me in your reply.
 
-          Highlighting any part of my post will bring up the quote reply button. Can you try again?
+          Selecting any part of my post will bring up the quote reply button. Can you try again?
       emoji:
         instructions: |-
-          You may have seen me use these little pictures in my replies, like so: :cherries:
-
-          Those are called Emoji. Can you try **adding an emoji** to your reply?
+          You may have seen me use these little pictures in my replies, like so: :cherries: Those are called Emoji.
+          
+          Can you **add an emoji** to your reply?
 
           1. Type a traditional "smiley" like `:)` or `;)` or or `:D` or `:P`
 
@@ -146,33 +153,35 @@ en:
 
           3. Press the emoji toolbar button in the editor for a visual picker.
 
-          :race_car::dash:  Go for it!
+          :blue_car::dash:  Go for it!
         reply: |-
           That's downright :sparkles: _emojitastic!_ :sparkles:
         not_found: |-
           Be more expressive with emojis!
 
-          Can you tell what idiom this set of imoji represents?
+          Can you tell what idiom this set of emoji represents?
 
           `:sunrise: :bird: :bug:`
       mention:
         instructions: |-
-          Sometimes you might want to get a person’s attention even if you aren’t replying to them directly. Just mention their name by typing a `@` then completing their name.
+          Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. To mention someone, type `@` then complete their name.
 
-          Give it a try – reply to this private message and mention my name `@discobot` in your reply, and I’ll get notified!
+          Give it a try – mention my user name `@discobot` in your reply, and I’ll definitely get notified!
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
-          @%{username} See how you got a notification when I mentioned you? You can get my attention with `@discobot`.
+          @%{username} See how you got a notification when I mentioned your user name? You can get my attention with `@discobot`.
       flag:
         instructions: |-
-          In order to help keep discussions civilized, use the <kbd>&hellip;</kbd> show more button to reveal more actions. **Flag** to privately let the author, or [our staff](%{base_url}/about), know about a problem.
+          We like our discussions friendly here, and we need your help to [keep it civilized](%{base_url}/guidelines). :two_men_holding_hands::couple::two_women_holding_hands:
+          
+          If you see a problem, please **flag** to privately let the author, or [our staff](%{base_url}/about), know about it. Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post, including flag. 
 
-          > I'm am writing something nasty :imp:
+          > I wrote something nasty here :imp:
 
-          I guess you know what to do. Go ahead and flag this post to tell me I shouldn't write nasty things.
+           I guess you know what to do. Go ahead and flag this post!
         reply: |-
-          Thank you for notifying the moderators of the problem. Since I wasn't actually writing a nasty post, I've gone ahead and removed the flag.
+          Staff will be privately notified about your flag, and if enough community members flag a post, it will be automatically hidden as a precaution. Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag.
       link:
         instructions: |-
           One handy way to refer to previous discussions is to link to them. To get a link to a reply or topic:
@@ -181,7 +190,7 @@ en:
 
           - Copy the link from the address bar of your browser.
 
-          And you know what’s _really_ cool? A link between two topics automatically works both ways, so anyone interested in either topic can easily follow all the linked topics, too!
+          You know what’s _really_ cool? A link between two topics is visible on both posts, so anyone interested can easily follow all the linked topics, too!
 
           Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
@@ -190,18 +199,18 @@ en:
           Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
       keyboard_shortcuts:
         instructions: |-
-          Next up, we're going to learn about keyboard shortcuts to supercharge your browsing experience. To bring up the keyboard help menu, just hit <kbd>?</kbd> on your keyboard :keyboard:
+          Next up, we’re going to learn about keyboard shortcuts to supercharge your browsing experience. To bring up the keyboard help menu, just hit <kbd>?</kbd> on your keyboard.
 
-          For a :mouse_three_button:-less challange, I've gone ahead and hide all the reply buttons. See if you can reply to me by using your new found knowledge :grin:
+          As a challenge, I’ve hidden all the reply buttons. See if you can reply using your new found knowledge :grin:
 
-          <small>Don't have a keyboard :question: Hit <kbd>&hellip;</kbd> to reveal the "Reply" button.</small>
+          <small>Don’t have a keyboard :question: click or tap <kbd>&hellip;</kbd> to reveal the "Reply" button.</small>
         reply: |-
-          Execellent job :) You can now call yourself a keyboard warrior.
+          Excellent job :) You’re a keyboard warrior!
       search:
         instructions: |-
-          I don't know about you but my programmers didn't give me alot of memory when building me. Therefore, I'm always using the search function to dig up posts that myself and others have written in the past.
+          I don’t know about you but my programmers didn’t give me a lot of memory when building me. So I'm always using the search function to dig up posts that myself and others have written in the past.
 
-          Psst... I've actually hidden an easter egg some where in a previous post. If you're up for the challenge, hit the <kbd>/</kbd> key or click on the :mag: icon to search for the post.
+          Psst… I’ve hidden an easter egg somewhere in a previous post. If you’re up for the challenge, hit the <kbd>/</kbd> key or click on the :mag: icon at the top to search for it.
 
           <small>Try searching for the term "bunny" in this topic</small>
         hidden_message: |-
@@ -209,18 +218,14 @@ en:
 
           https://media.giphy.com/media/ef61oIGVyckY8/giphy.gif
 
-          Reply to me with the `:rabbit:` emoji to continue.
+          You’re now at the beginning of our personal message. Reply to me with the `:rabbit:` emoji to continue and you’ll be automatically taken to the end.
         reply: |-
-          Yay you found it :tada:. I knew I could count on you. For more complicated searches, head over to the [full page search](%{base_url}/search) and try out our advanced search options.
+          Yay you found it :tada:. I knew I could count on you! For more advanced searches, head over to the [full search page](%{base_url}/search).
         not_found: |-
-          Hmm... Looks like you might be having trouble searching for the easter egg. Did you search for the term "bunny"?
+          Hmm… Looks like you might be having trouble searching for the easter egg. Did you search for the term `bunny`?
       end:
         message: |-
-          As you participate here, over time we'll get to know you, and your temporary new user limitations will be lifted. Keep participating, and over time you'll gain new [trust levels](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) that include special abilities to help us manage our community together.
-
-          We believe in [civilized community behavior](%{base_url}/guidelines) at all times.
-
-          (If you need to communicate with [staff members](%{base_url}/about) as a new user, just send them a private message.)
+          Right now you’re a new user, and for everyone’s safety we have some new user limitations. Don’t worry, participate for just a little while and those limitations will be lifted as we get to know you. :raised_hands: Participate even more over a period of weeks or months and you’ll gain [additional trust levels](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) that include special abilities to help us manage our community together.
 
           @%{username} That’s all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
 
@@ -247,7 +252,7 @@ en:
               : + - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - + :
               -----------------------------------------------------------------
 
-          Bye for now! If you'd like to speak with me again any time, just send me a private mesage ;)
+          Bye for now! If you'd like to speak with me again any time, just send me a personal message ;)
       do_not_understand:
         first_response: |-
           Hey, thanks for the reply!
@@ -258,7 +263,7 @@ en:
         second_response: |-
           Aw, sorry. I’m still not getting it. :anguished:
 
-          It’s not you – it’s me. I blame my programmers! They're terrible!
+          It’s not you – it’s me. I blame my programmers! They’re terrible!
 
           Perhaps mention me (@discobot) in a reply with the command `/reset_bot` to start over? In the meantime, I’ll stay out of your way.
       reset:
@@ -266,11 +271,11 @@ en:
           Got it! Just mention me here to get started again!
       timeout:
         message: |-
-          Hey @%{username}, just checking in because I haven't heard from you in a while. :calendar_spiral:
+          Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
 
-          I won't bug you, but if you want to continue just go ahead and reply to me any time. Or if you got stuck and want to reset, just reply with `@discobot /reset_bot`.
+          I won’t bug you, but if you want to continue just go ahead and reply to me any time. Or if you got stuck and want to reset, just reply with `@discobot please reset`.
 
-          (If you'd rather not, that's OK too. I'm a robot. You won't hurt my feelings. Much. :sob:)
+          (If you’d rather not, that's OK too. I'm a robot. You won’t hurt my feelings. Much. :sob:)
       random_mention:
         dice: |-
           :game_die: dice roll: %{results}
