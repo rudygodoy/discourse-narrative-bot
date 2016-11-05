@@ -1,8 +1,11 @@
 en:
   site_settings:
     introbot_enabled: 'Enable intro bot'
+
   discourse_narrative_bot:
+
     new_user_narrative:
+
       hello:
         title: ":robot: I’m your friendly neighborhood discobot"
         triggers: |-
@@ -36,6 +39,7 @@ en:
           :wave: and welcome @%{username}!
 
           It’s my job to greet everyone that arrives here at %{title} and offer to help. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me and mention any of following things that I like if so!
+
       start:
         no_likes_message: |-
           Awww, you didn’t mention any of my favorite things.
@@ -67,6 +71,7 @@ en:
           :monkey: :fries:
 
           https://www.youtube.com/watch?v=FjqfX8-L0Tk
+
       onebox:
         instructions: |-
           Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a handy summary.
@@ -83,11 +88,12 @@ en:
 
           I pressed the like :heart: button on your post to let you know how much I appreciated it :heart_eyes:
         not_found: |-
-          It doesn’t look like there was a link in your reply.
+          Sorry, I couldn’t find the link in your reply! :cry:
 
-          Can you try adding the following link on its own line in your next reply?
+          Can you try adding the following Wikipedia link on its own line in your next reply?
 
-          `https://en.wikipedia.org/wiki/Exotic_Shorthair`
+           https://en.wikipedia.org/wiki/Exotic_Shorthair
+
       images:
         instructions: |-
           Here’s a picture of a unicorn:
@@ -103,6 +109,7 @@ en:
           Looks like you didn’t upload an image so I’ve choosen a picture that I’m _sure_ you will enjoy.
 
           Try uploading this next: `https://media.giphy.com/media/AI1cYf864Rtlu/giphy.gif`
+
       formatting:
         instructions: |-
           Let’s try adding formatting to your post. Can you make some words **bold** and _italic_ in your reply?
@@ -124,6 +131,7 @@ en:
           **Aww, I didn’t find any formatting in your reply.** :sweat_smile:
 
           _Can you try again?_
+
       quoting:
         instructions: |-
           Try quoting me when you reply so I know exactly what part you’re replying to. Here are some quotes:
@@ -185,6 +193,7 @@ en:
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
           @%{username} See how you got a notification when I mentioned your user name? You can get my attention with `@discobot`.
+
       flag:
         instructions: |-
           We like our discussions friendly, and we need your help to [keep it civilized](%{base_url}/guidelines). :two_men_holding_hands::couple::two_women_holding_hands:
@@ -196,6 +205,7 @@ en:
            I guess you know what to do. Go ahead and flag this post! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
         reply: |-
           [Our staff](/about) will be privately notified about your flag, and if enough community members flag a post, it will also be automatically hidden as a precaution. Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.
+
       link:
         instructions: |-
           One handy way to refer to previous discussions is to link to them. To get a link to a reply or topic:
@@ -208,18 +218,10 @@ en:
 
           Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
-          Now that’s some prime linkage!
+          Well done! The link appears in your post, as you’d expect, but it will also appear as an automatic footnote at the bottom of the post you linked, too. 
         not_found: |-
           Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
-      keyboard_shortcuts:
-        instructions: |-
-          Did you know keyboard shortcuts can supercharge your browsing experience? To bring up the keyboard help menu, just press <kbd>?</kbd> on your keyboard.
 
-          As a challenge, I’ve hidden all the reply buttons. See if you can reply using your new found knowledge :grin:
-
-          <small>Don’t have a keyboard :question: click or tap <kbd>&hellip;</kbd> to reveal the "Reply" button.</small>
-        reply: |-
-          Excellent job :) You’re a keyboard warrior!
       search:
         instructions: |-
           I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to dig up posts that myself and others have written in the past.
@@ -241,9 +243,10 @@ en:
           - To jump to the beginning or end of a topic, use the topic timeline controls on the right.
         not_found: |-
           Hmm… Looks like you might be having trouble searching for the easter egg. Did you search for the term `bunny`? And be sure to limit your search to just the current topic.
+
       end:
         message: |-
-          @%{username} That’s all I have to show you for now; thanks for sticking with me! I think after all that you deserve an award, so I made this for you:
+          @%{username} That’s all I have to show you for now; thanks for sticking with me! After all that you deserve an award, so I made this for you:
 
               -----------------------------------------------------------------
               : + - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - + :
@@ -271,6 +274,7 @@ en:
           Participate for just a little while and new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you’ll gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us manage our community together.
 
           Bye for now! If you’d like to speak with me again any time, just send me a personal message :sunglasses:
+
       do_not_understand:
         first_response: |-
           Hey, thanks for the reply!
