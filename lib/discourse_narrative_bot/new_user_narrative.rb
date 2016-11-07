@@ -99,10 +99,7 @@ module DiscourseNarrativeBot
         @post = post
         opts = {}
 
-        if reset_bot?
-          reset_rate_limits
-          return
-        end
+        return if reset_bot?
 
         begin
           opts = transition
@@ -122,10 +119,9 @@ module DiscourseNarrativeBot
         end
 
         if new_post = self.send(action)
-          @data[:state] = new_state
+          @state = @data[:state] = new_state
           @data[:last_post_id] = new_post.id
           store_data
-          reset_rate_limits
 
           self.send("init_#{new_state}") if self.class.private_method_defined?("init_#{new_state}")
 
@@ -164,8 +160,10 @@ module DiscourseNarrativeBot
       PostRevisor.new(post, topic).revise!(
         self.class.discobot_user,
         { raw: raw },
-        { skip_validations: true }
+        { skip_validations: true, force_new_version: true }
       )
+
+      set_state_data(:post_version, post.reload.version)
     end
 
     def say_hello
@@ -296,7 +294,6 @@ module DiscourseNarrativeBot
             topic_id: post.topic.id,
             reply_to_post_number: post.post_number
           )
-
           enqueue_timeout_job(@user)
           return reply
         end
@@ -581,11 +578,10 @@ module DiscourseNarrativeBot
           reply_to_post_number: @post.post_number
         )
 
-        enqueue_timeout_job(@user)
-
         first_post = @post.topic.first_post
-        first_post.revert_to(1)
+        first_post.revert_to(get_state_data(:post_version) - 1)
         first_post.save!
+        first_post.publish_change_to_clients! :revised
 
         reply
       else
@@ -641,7 +637,9 @@ module DiscourseNarrativeBot
     end
 
     def reply_to(opts)
-      PostCreator.create!(self.class.discobot_user, opts)
+      post = PostCreator.create!(self.class.discobot_user, opts)
+      reset_rate_limits if post
+      post
     end
 
     def fake_delay

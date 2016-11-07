@@ -250,62 +250,31 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
-      describe 'when post does not contain an image' do
-        it 'should create the right reply' do
-          narrative.expects(:enqueue_timeout_job).with(user)
-          PostAction.act(user, post_2, PostActionType.types[:like])
-          narrative.input(:reply, user, post)
+      it 'should create the right replies' do
+        narrative.expects(:enqueue_timeout_job).with(user)
+        narrative.input(:reply, user, post)
 
-          expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.images.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
-        end
-      end
+        expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.images.not_found'))
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
 
-      describe "when user has not liked bot's post" do
-        it 'should create the right reply' do
-          post.update_attributes!(
-            raw: "<img src='https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg'>",
-          )
-
-          narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
-
-          expect(Post.last.raw).to eq(I18n.t(
-            'discourse_narrative_bot.new_user_narrative.images.like_not_found',
-            url: post_2.url
-          ))
-
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
-
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:tutorial_images][:post_id])
-            .to eq(post.id)
-
-          PostAction.act(user, post_2, PostActionType.types[:like])
-
-          expected_raw = <<~RAW
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.images.reply')}
-
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.formatting.instructions')}
-          RAW
-
-          expect(Post.last.raw).to eq(expected_raw.chomp)
-        end
-      end
-
-      it 'should create the right reply' do
         post.update_attributes!(
           raw: "<img src='https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg'>",
         )
 
-        data = DiscourseNarrativeBot::Store.get(user.id)
-
-        DiscourseNarrativeBot::Store.set(user.id, data.merge(
-          tutorial_images: { liked: true }
-        ))
-
         narrative.expects(:enqueue_timeout_job).with(user)
         narrative.input(:reply, user, post)
-        new_post = Post.last
+
+        expect(Post.last.raw).to eq(I18n.t(
+          'discourse_narrative_bot.new_user_narrative.images.like_not_found',
+          url: post_2.url
+        ))
+
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
+
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:tutorial_images][:post_id])
+          .to eq(post.id)
+
+        PostAction.act(user, post_2, PostActionType.types[:like])
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.images.reply')}
@@ -318,7 +287,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expect(post_action.post_action_type_id).to eq(PostActionType.types[:like])
         expect(post_action.user).to eq(described_class.discobot_user)
         expect(post_action.post).to eq(post)
-        expect(new_post.raw).to eq(expected_raw.chomp)
+        expect(Post.last.raw).to eq(expected_raw.chomp)
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_formatting)
       end
     end
@@ -583,7 +552,9 @@ describe DiscourseNarrativeBot::NewUserNarrative do
             topic_id: welcome_topic.id, slug: welcome_topic.slug
           ))
 
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_link)
+          store = DiscourseNarrativeBot::Store.get(user.id)
+
+          expect(store[:state].to_sym).to eq(:tutorial_link)
         end
       end
 
@@ -606,10 +577,11 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         expect(new_post.raw).to eq(expected_raw.chomp)
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
+        expect(store[:tutorial_search][:post_version]).to eq(2)
       end
     end
 
-    describe 'when [:tutorial_search, :reply]' do
+    describe 'search tutorial' do
       before do
         DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_search, topic_id: topic.id)
       end
@@ -638,13 +610,24 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       describe 'when post contain the right answer' do
+        before do
+          PostRevisor.new(post, post.topic).revise!(
+            described_class.discobot_user,
+            { raw: 'something funny' },
+            { skip_validations: true, force_new_version: true }
+          )
+
+          DiscourseNarrativeBot::Store.set(user.id,
+            state: :tutorial_search,
+            topic_id: topic.id,
+            tutorial_search: { post_version: post.version }
+          )
+        end
+
         it 'should create the right reply' do
           post.update_attributes!(
             raw: "#{described_class::SEARCH_ANSWER} this is a rabbit"
           )
-
-          narrative.expects(:enqueue_timeout_job).with(user)
-          post
 
           expect { narrative.input(:reply, user, post) }.to change { Post.count }.by(2)
           new_post = Post.offset(1).last
@@ -654,6 +637,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
             base_url: Discourse.base_url
           ).chomp)
 
+          expect(post.raw).to eq('something funny')
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
         end
       end
