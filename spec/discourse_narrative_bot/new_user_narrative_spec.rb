@@ -514,7 +514,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           #{I18n.t(
             'discourse_narrative_bot.new_user_narrative.flag.instructions',
-            base_url: Discourse.base_url
+            guidelines_url: Discourse.base_url + '/guidelines',
+            about_url: Discourse.base_url + '/about'
           )}
         RAW
 
@@ -680,7 +681,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(new_post.raw).to eq(I18n.t(
             'discourse_narrative_bot.new_user_narrative.search.reply',
-            base_url: Discourse.base_url
+            search_url: "#{Discourse.base_url}/search"
           ).chomp)
 
           expect(first_post.reload.raw).to eq('Hello world')

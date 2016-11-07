@@ -490,7 +490,9 @@ module DiscourseNarrativeBot
         raw = <<~RAW
           #{I18n.t(i18n_key('mention.reply'))}
 
-          #{I18n.t(i18n_key(@next_instructions_key), base_url: Discourse.base_url)}
+          #{I18n.t(i18n_key(@next_instructions_key),
+              guidelines_url: url_helpers(:guidelines_url),
+              about_url: url_helpers(:about_index_url))}
         RAW
 
         fake_delay
@@ -601,7 +603,7 @@ module DiscourseNarrativeBot
         fake_delay
 
         reply = reply_to(
-          raw: I18n.t(i18n_key('search.reply'), base_url: Discourse.base_url),
+          raw: I18n.t(i18n_key('search.reply'), search_url: url_helpers(:search_url)),
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
@@ -800,7 +802,7 @@ module DiscourseNarrativeBot
       @discobot ||= User.find(-2)
     end
 
-    def url_helpers(url, opts)
+    def url_helpers(url, opts = {})
       Rails.application.routes.url_helpers.send(url, opts.merge(host: Discourse.base_url))
     end
   end

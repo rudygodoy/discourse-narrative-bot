@@ -198,9 +198,9 @@ en:
 
       flag:
         instructions: |-
-          We like our discussions friendly, and we need your help to [keep it civilized](%{base_url}/guidelines). :two_men_holding_hands::couple::two_women_holding_hands:
+          We like our discussions friendly, and we need your help to [keep it civilized](%{guidelines_url}). :two_men_holding_hands::couple::two_women_holding_hands:
 
-          If you see a problem, please **flag** to privately let the author, or [our helpful staff](%{base_url}/about), know about it.
+          If you see a problem, please **flag** to privately let the author, or [our helpful staff](%{about_url}), know about it.
 
           > I wrote something nasty here :imp:
 
@@ -240,7 +240,7 @@ en:
         reply: |-
           Yay you found it :tada:. I knew I could count on you!
 
-          - For more detailed searches, head over to the [full search page](%{base_url}/search) or expand the advanced search options.
+          - For more detailed searches, head over to the [full search page](%{search_url}) or expand the advanced search options.
 
           - To jump to the beginning or end of a topic, use the topic timeline controls on the right.
         not_found: |-
