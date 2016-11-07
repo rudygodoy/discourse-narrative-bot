@@ -196,7 +196,7 @@ module DiscourseNarrativeBot
          @post.archetype == Archetype.private_message &&
          @post.topic.topic_allowed_users.pluck(:user_id).include?(@user.id)
 
-        opts = opts.merge(topic_id: @post.topic.id)
+        opts = opts.merge(topic_id: @post.topic_id)
       end
 
       post = reply_to(opts)
@@ -205,7 +205,7 @@ module DiscourseNarrativeBot
     end
 
     def react_to_reply
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       fake_delay
@@ -249,7 +249,7 @@ module DiscourseNarrativeBot
 
       reply = reply_to(
         raw: raw,
-        topic_id: @post.topic.id,
+        topic_id: @post.topic_id,
         reply_to_post_number: @post.post_number
       )
 
@@ -258,7 +258,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_onebox
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       @post.post_analyzer.cook(@post.raw, {})
@@ -295,7 +295,7 @@ module DiscourseNarrativeBot
     end
 
     def track_like
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       post_liked = PostAction.find_by(
@@ -331,7 +331,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_image
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       @post.post_analyzer.cook(@post.raw, {})
@@ -374,7 +374,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_formatting
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       if Nokogiri::HTML.fragment(@post.cooked).css("b", "strong", "em", "i").size > 0
@@ -409,7 +409,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_quote
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       doc = Nokogiri::HTML.fragment(@post.cooked)
@@ -446,7 +446,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_emoji
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       doc = Nokogiri::HTML.fragment(@post.cooked)
@@ -483,7 +483,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_mention
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       if bot_mentioned?
@@ -532,7 +532,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_flag
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
       return unless @post.user.id == -2
 
@@ -558,7 +558,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_link
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       @post.post_analyzer.cook(@post.raw, {})
@@ -596,7 +596,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_search
-      post_topic_id = @post.topic.id
+      post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
       if @post.raw.match(/#{SEARCH_ANSWER}/)
@@ -647,7 +647,7 @@ module DiscourseNarrativeBot
 
     def transition
       if @post
-        valid_topic = valid_topic?(@post.topic.id)
+        valid_topic = valid_topic?(@post.topic_id)
 
         if !valid_topic
           raise TransitionError.new if bot_mentioned?
@@ -687,13 +687,13 @@ module DiscourseNarrativeBot
       when 0
         reply_to(
           raw: I18n.t(i18n_key('do_not_understand.first_response')),
-          topic_id: @post.topic.id,
+          topic_id: @post.topic_id,
           reply_to_post_number: @post.post_number
         )
       when 1
         reply_to(
           raw: I18n.t(i18n_key('do_not_understand.second_response')),
-          topic_id: @post.topic.id,
+          topic_id: @post.topic_id,
           reply_to_post_number: @post.post_number
         )
       else
@@ -722,7 +722,7 @@ module DiscourseNarrativeBot
 
       reply_to(
         raw: raw,
-        topic_id: @post.topic.id,
+        topic_id: @post.topic_id,
         reply_to_post_number: @post.post_number
       )
     end
@@ -742,7 +742,7 @@ module DiscourseNarrativeBot
 
         reply_to(
           raw: I18n.t(i18n_key('reset.message')),
-          topic_id: @post.topic.id,
+          topic_id: @post.topic_id,
           reply_to_post_number: @post.post_number
         )
 
