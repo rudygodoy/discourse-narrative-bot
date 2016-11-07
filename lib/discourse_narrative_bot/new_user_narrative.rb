@@ -199,7 +199,6 @@ module DiscourseNarrativeBot
       return unless valid_topic?(post_topic_id)
 
       fake_delay
-      like_post
 
       raw =
         if key = @post.raw.match(/(unicorn|bacon|ninja|monkey)/i)
@@ -240,7 +239,6 @@ module DiscourseNarrativeBot
         RAW
 
         fake_delay
-        like_post
 
         reply = reply_to(
           raw: raw,
@@ -314,7 +312,6 @@ module DiscourseNarrativeBot
         RAW
 
         fake_delay
-        like_post
 
         reply = reply_to(
           raw: raw,
@@ -352,7 +349,6 @@ module DiscourseNarrativeBot
         RAW
 
         fake_delay
-        like_post
 
         reply = reply_to(
           raw: raw,
@@ -390,7 +386,6 @@ module DiscourseNarrativeBot
         RAW
 
         fake_delay
-        like_post
 
         reply = reply_to(
           raw: raw,
@@ -426,7 +421,6 @@ module DiscourseNarrativeBot
         RAW
 
         fake_delay
-        like_post
 
         reply = reply_to(
           raw: raw,
@@ -502,7 +496,6 @@ module DiscourseNarrativeBot
         RAW
 
         fake_delay
-        like_post
 
         reply = reply_to(
           raw: raw,
@@ -533,7 +526,6 @@ module DiscourseNarrativeBot
 
       if @post.raw.match(/#{SEARCH_ANSWER}/)
         fake_delay
-        like_post
 
         reply = reply_to(
           raw: I18n.t(i18n_key('search.reply'), base_url: Discourse.base_url),

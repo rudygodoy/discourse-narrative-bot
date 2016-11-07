@@ -260,6 +260,11 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           #{I18n.t('discourse_narrative_bot.new_user_narrative.formatting.instructions')}
         RAW
 
+        post_action = PostAction.last
+
+        expect(post_action.post_action_type_id).to eq(PostActionType.types[:like])
+        expect(post_action.user).to eq(described_class.discobot_user)
+        expect(post_action.post).to eq(post)
         expect(new_post.raw).to eq(expected_raw.chomp)
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_formatting)
       end
