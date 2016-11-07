@@ -105,6 +105,8 @@ en:
           Hey, speaking of – **can you reply with a picture?** Any picture will do! You can drag and drop, press the upload button, or even copy and paste it in.
         reply: |-
           Nifty picture – well done!
+        like_not_found: |-
+          Did you forget to like :heart: my [post](%{url})? :crying_cat_face:
         not_found: |-
           Looks like you didn’t upload an image so I’ve choosen a picture that I’m _sure_ you will enjoy.
 

@@ -202,6 +202,17 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
+      describe "when user has not liked bot's post" do
+        it 'should create the right reply' do
+          narrative.expects(:enqueue_timeout_job).with(user)
+          narrative.input(:reply, user, post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.onebox.not_found'))
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
+        end
+      end
+
       it 'should create the right reply' do
         post.update_attributes!(raw: 'https://en.wikipedia.org/wiki/ROT13')
 
@@ -220,9 +231,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_images, :reply]' do
+    describe 'images tutorial' do
+      let(:post_2) { Fabricate(:post, topic: topic) }
+
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_images, topic_id: topic.id)
+        DiscourseNarrativeBot::Store.set(user.id,
+          state: :tutorial_images, topic_id: topic.id, last_post_id: post_2.id
+        )
       end
 
       describe 'when post is not in the right topic' do
@@ -238,6 +253,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post does not contain an image' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
+          PostAction.act(user, post_2, PostActionType.types[:like])
           narrative.input(:reply, user, post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.images.not_found'))
@@ -245,10 +261,47 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
+      describe "when user has not liked bot's post" do
+        it 'should create the right reply' do
+          post.update_attributes!(
+            raw: "<img src='https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg'>",
+          )
+
+          narrative.expects(:enqueue_timeout_job).with(user)
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.new_user_narrative.images.like_not_found',
+            url: post_2.url
+          ))
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:tutorial_images][:post_id])
+            .to eq(post.id)
+
+          PostAction.act(user, post_2, PostActionType.types[:like])
+
+          expected_raw = <<~RAW
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.images.reply')}
+
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.formatting.instructions')}
+          RAW
+
+          expect(Post.last.raw).to eq(expected_raw.chomp)
+        end
+      end
+
       it 'should create the right reply' do
         post.update_attributes!(
           raw: "<img src='https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg'>",
         )
+
+        data = DiscourseNarrativeBot::Store.get(user.id)
+
+        DiscourseNarrativeBot::Store.set(user.id, data.merge(
+          tutorial_images: { liked: true }
+        ))
 
         narrative.expects(:enqueue_timeout_job).with(user)
         narrative.input(:reply, user, post)

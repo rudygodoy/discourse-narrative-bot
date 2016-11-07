@@ -45,12 +45,18 @@ after_initialize do
     DiscourseNarrativeBot::Store.set(self.id, nil)
   end
 
-  self.on(:user_created) do |user|
-    if ![-1, -2].include?(user.id)
-      Jobs.enqueue_in(15, :new_user_narrative_input,
-        user_id: user.id,
-        input: :init
-      )
+  User.class_eval do
+    after_commit :enqueue_new_user_narrative, on: :create
+
+    private
+
+    def enqueue_new_user_narrative
+      if ![-1, -2].include?(self.id)
+        Jobs.enqueue(:new_user_narrative_input,
+          user_id: self.id,
+          input: :init
+        )
+      end
     end
   end
 
@@ -65,12 +71,23 @@ after_initialize do
   end
 
   PostAction.class_eval do
-    after_create do
-      if PostActionType.flag_types.values.include?(self.post_action_type_id)
+    after_commit :enqueue_new_user_narrative, on: :create
+
+    private
+
+    def enqueue_new_user_narrative
+      input =
+        if PostActionType.flag_types.values.include?(self.post_action_type_id)
+          :flag
+        elsif self.post_action_type_id == PostActionType.types[:like]
+          :like
+        end
+
+      if input
         Jobs.enqueue(:new_user_narrative_input,
           user_id: self.user.id,
           post_id: self.post.id,
-          input: :flag
+          input: input
         )
       end
     end

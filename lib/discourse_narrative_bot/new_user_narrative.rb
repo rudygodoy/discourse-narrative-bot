@@ -33,6 +33,12 @@ module DiscourseNarrativeBot
         action: :reply_to_image
       },
 
+      [:tutorial_images, :like] => {
+        next_state: :tutorial_formatting,
+        next_instructions_key: 'formatting.instructions',
+        action: :track_like
+      },
+
       [:tutorial_formatting, :reply] => {
         next_state: :tutorial_quote,
         next_instructions_key: 'quoting.instructions',
@@ -262,42 +268,84 @@ module DiscourseNarrativeBot
       end
     end
 
+    def track_like
+      post_topic_id = @post.topic.id
+      return unless valid_topic?(post_topic_id)
+
+      post_liked = PostAction.find_by(
+        post_action_type_id: PostActionType.types[:like],
+        post_id: @data[:last_post_id],
+        user_id: @user.id
+      )
+
+      if post_liked
+        set_state_data(:liked, true)
+
+        if (post_id = get_state_data(:post_id)) && (post = Post.find_by(id: post_id))
+          fake_delay
+          like_post(post)
+
+          raw = <<~RAW
+            #{I18n.t(i18n_key('images.reply'))}
+
+            #{I18n.t(i18n_key(@next_instructions_key))}
+          RAW
+
+          reply = reply_to(
+            raw: raw,
+            topic_id: post.topic.id,
+            reply_to_post_number: post.post_number
+          )
+
+          enqueue_timeout_job(@user)
+          return reply
+        end
+      end
+
+      false
+    end
+
     def reply_to_image
       post_topic_id = @post.topic.id
       return unless valid_topic?(post_topic_id)
 
       @post.post_analyzer.cook(@post.raw, {})
+      transition = true
 
       if @post.post_analyzer.image_count > 0
-        raw = <<~RAW
-          #{I18n.t(i18n_key('images.reply'))}
+        set_state_data(:post_id, @post.id)
 
-          #{I18n.t(i18n_key(@next_instructions_key))}
-        RAW
+        if get_state_data(:liked)
+          raw = <<~RAW
+            #{I18n.t(i18n_key('images.reply'))}
 
-        fake_delay
-        like_post
+            #{I18n.t(i18n_key(@next_instructions_key))}
+          RAW
 
-        reply = reply_to(
-          raw: raw,
-          topic_id: post_topic_id,
-          reply_to_post_number: @post.post_number
-        )
+          like_post(@post)
+        else
+          raw = I18n.t(
+            i18n_key('images.like_not_found'),
+            url: Post.find_by(id: @data[:last_post_id]).url
+          )
 
-        enqueue_timeout_job(@user)
-        reply
+          transition = false
+        end
       else
-        fake_delay
-
-        reply_to(
-          raw: I18n.t(i18n_key('images.not_found')),
-          topic_id: post_topic_id,
-          reply_to_post_number: @post.post_number
-        )
-
-        enqueue_timeout_job(@user)
-        false
+        raw = I18n.t(i18n_key('images.not_found'))
+        transition = false
       end
+
+      fake_delay
+
+      reply = reply_to(
+        raw: raw,
+        topic_id: post_topic_id,
+        reply_to_post_number: @post.post_number
+      )
+
+      enqueue_timeout_job(@user)
+      transition ? reply : false
     end
 
     def reply_to_formatting
@@ -600,8 +648,8 @@ module DiscourseNarrativeBot
       sleep(rand(2..3)) if Rails.env.production?
     end
 
-    def like_post
-      PostAction.act(self.class.discobot_user, @post, PostActionType.types[:like])
+    def like_post(post)
+      PostAction.act(self.class.discobot_user, post, PostActionType.types[:like])
     end
 
     def generic_replies
@@ -681,6 +729,8 @@ module DiscourseNarrativeBot
     end
 
     def enqueue_timeout_job(user)
+      return if Rails.env.test?
+
       cancel_timeout_job(user)
       Jobs.enqueue_in(TIMEOUT_DURATION, :new_user_narrative_timeout, user_id: user.id)
     end
@@ -707,6 +757,17 @@ module DiscourseNarrativeBot
 
     def set_data(value)
       DiscourseNarrativeBot::Store.set(@user.id, value)
+    end
+
+    def set_state_data(key, value)
+      @data[@state] ||= {}
+      @data[@state][key] = value
+      set_data(@data)
+    end
+
+    def get_state_data(key)
+      @data[@state] ||= {}
+      @data[@state][key]
     end
 
     def self.discobot_user
