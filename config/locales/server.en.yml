@@ -283,13 +283,13 @@ en:
 
           Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning:
 
-          You can try again, or if you’d like to start over at the beginning of the lesson, say `@discobot please reset`.
+          You can try again, or if you’d like to start over at the beginning of the lesson, say `@discobot %{reset_trigger}`.
         second_response: |-
           Aw, sorry. I’m still not getting it. :anguished:
 
           It’s not you – it’s me. I blame my programmers! They’re terrible!
 
-          Perhaps let’s start over? Say `@discobot please reset` to start over. In the meantime, I’ll stay out of your way.
+          Perhaps let’s start over? Say `@discobot %{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
       reset:
         message: |-
           Got it! Just mention me here to get started again!
@@ -297,7 +297,7 @@ en:
         message: |-
           Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
 
-          I won’t bug you, but if you want to continue just go ahead and reply to me any time. Or if you got stuck and want to reset, just reply with `@discobot please reset`.
+          I won’t bug you, but if you want to continue just go ahead and reply to me any time. Or if you got stuck and want to reset, just reply with `@discobot %{reset_trigger}`.
 
           (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. Much. :sob:)
       random_mention:

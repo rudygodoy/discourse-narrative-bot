@@ -686,13 +686,13 @@ module DiscourseNarrativeBot
       case count
       when 0
         reply_to(
-          raw: I18n.t(i18n_key('do_not_understand.first_response')),
+          raw: I18n.t(i18n_key('do_not_understand.first_response'), reset_trigger: RESET_TRIGGER),
           topic_id: @post.topic_id,
           reply_to_post_number: @post.post_number
         )
       when 1
         reply_to(
-          raw: I18n.t(i18n_key('do_not_understand.second_response')),
+          raw: I18n.t(i18n_key('do_not_understand.second_response'), reset_trigger: RESET_TRIGGER),
           topic_id: @post.topic_id,
           reply_to_post_number: @post.post_number
         )

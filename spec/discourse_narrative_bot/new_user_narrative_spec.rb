@@ -716,7 +716,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         narrative.input(:reply, user, post)
 
         expect(Post.last.raw).to eq(I18n.t(
-          'discourse_narrative_bot.new_user_narrative.do_not_understand.first_response'
+          'discourse_narrative_bot.new_user_narrative.do_not_understand.first_response',
+          reset_trigger: described_class::RESET_TRIGGER
         ))
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
@@ -728,7 +729,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         ))
 
         expect(Post.last.raw).to eq(I18n.t(
-          'discourse_narrative_bot.new_user_narrative.do_not_understand.second_response'
+          'discourse_narrative_bot.new_user_narrative.do_not_understand.second_response',
+          reset_trigger: described_class::RESET_TRIGGER
         ))
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
