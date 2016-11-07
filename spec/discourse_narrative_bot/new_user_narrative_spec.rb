@@ -2,7 +2,8 @@ require 'rails_helper'
 
 describe DiscourseNarrativeBot::NewUserNarrative do
   let!(:welcome_topic) { Fabricate(:topic, title: 'Welcome to Discourse') }
-  let(:topic) { Fabricate(:private_message_topic) }
+  let(:first_post) { Fabricate(:post) }
+  let(:topic) { Fabricate(:private_message_topic, first_post: first_post) }
   let(:user) { topic.user }
   let(:post) { Fabricate(:post, topic: topic, user: user) }
   let(:narrative) { described_class.new }
@@ -611,7 +612,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       describe 'when post contain the right answer' do
         before do
-          PostRevisor.new(post, post.topic).revise!(
+          PostRevisor.new(first_post, topic).revise!(
             described_class.discobot_user,
             { raw: 'something funny' },
             { skip_validations: true, force_new_version: true }
@@ -620,7 +621,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           DiscourseNarrativeBot::Store.set(user.id,
             state: :tutorial_search,
             topic_id: topic.id,
-            tutorial_search: { post_version: post.version }
+            tutorial_search: { post_version: first_post.version }
           )
         end
 
@@ -637,7 +638,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
             base_url: Discourse.base_url
           ).chomp)
 
-          expect(post.raw).to eq('something funny')
+          expect(first_post.reload.raw).to eq('Hello world')
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
         end
       end
