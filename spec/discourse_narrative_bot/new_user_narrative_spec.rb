@@ -110,6 +110,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
     describe 'when [:waiting_reply, :reply]' do
       let(:post) { Fabricate(:post, topic_id: topic.id) }
       let(:other_post) { Fabricate(:post) }
+      let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
 
       before do
         DiscourseNarrativeBot::Store.set(user.id, state: :waiting_reply, topic_id: topic.id)
@@ -139,14 +140,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
             #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
 
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
           RAW
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
           data = DiscourseNarrativeBot::Store.get(user.id)
 
-          expect(data[:state].to_sym).to eq(:tutorial_onebox)
+          expect(data[:state].to_sym).to eq(:tutorial_bookmark)
           expect(data[:last_post_id]).to eq(new_post.id)
         end
       end
@@ -164,16 +165,60 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
             #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
 
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
           RAW
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
           data = DiscourseNarrativeBot::Store.get(user.id)
 
-          expect(data[:state].to_sym).to eq(:tutorial_onebox)
+          expect(data[:state].to_sym).to eq(:tutorial_bookmark)
           expect(data[:last_post_id]).to eq(new_post.id)
         end
+      end
+    end
+
+    describe "bookmark tutorial" do
+      before do
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_bookmark, topic_id: topic.id)
+      end
+
+      describe 'when post is not in the right topic' do
+        it 'should not do anything' do
+          other_post.update_attributes!(user_id: -2)
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          expect { narrative.input(:bookmark, user, other_post) }.to_not change { Post.count }
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_bookmark)
+        end
+      end
+
+      describe "when bookmark is not on bot's post" do
+        it 'should not do anything' do
+          narrative.expects(:enqueue_timeout_job).with(user).never
+          post
+
+          expect { narrative.input(:bookmark, user, post) }.to_not change { Post.count }
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_bookmark)
+        end
+      end
+
+      it 'should create the right reply' do
+        post.update_attributes!(user: described_class.discobot_user)
+        narrative.expects(:enqueue_timeout_job).with(user)
+
+        narrative.input(:bookmark, user, post)
+        new_post = Post.last
+        profile_page_url = "#{Discourse.base_url}/users/#{user.username}"
+
+        expected_raw = <<~RAW
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.reply', profile_page_url: profile_page_url)}
+
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
+        RAW
+
+        expect(new_post.raw).to eq(expected_raw.chomp)
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
       end
     end
 

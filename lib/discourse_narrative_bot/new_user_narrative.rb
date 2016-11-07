@@ -16,9 +16,15 @@ module DiscourseNarrativeBot
       },
 
       [:waiting_reply, :reply] => {
+        next_state: :tutorial_bookmark,
+        next_instructions_key: 'bookmark.instructions',
+        action: :react_to_reply
+      },
+
+      [:tutorial_bookmark, :bookmark] => {
         next_state: :tutorial_onebox,
         next_instructions_key: 'onebox.instructions',
-        action: :react_to_reply
+        action: :reply_to_bookmark
       },
 
       [:tutorial_onebox, :reply] => {
@@ -216,12 +222,34 @@ module DiscourseNarrativeBot
 
         #{I18n.t(i18n_key('start.message'))}
 
-        #{I18n.t(i18n_key(@next_instructions_key))}
+        #{I18n.t(i18n_key(@next_instructions_key), profile_page_url: url_helpers(:user_url, username: @user.username))}
       RAW
 
       reply = reply_to(
         raw: raw,
         topic_id: post_topic_id,
+        reply_to_post_number: @post.post_number
+      )
+
+      enqueue_timeout_job(@user)
+      reply
+    end
+
+    def reply_to_bookmark
+      return unless valid_topic?(@post.topic_id)
+      return unless @post.user_id == -2
+
+      raw = <<~RAW
+        #{I18n.t(i18n_key('bookmark.reply'), profile_page_url: url_helpers(:user_url, username: @user.username))}
+
+        #{I18n.t(i18n_key(@next_instructions_key))}
+      RAW
+
+      fake_delay
+
+      reply = reply_to(
+        raw: raw,
+        topic_id: @post.topic.id,
         reply_to_post_number: @post.post_number
       )
 
@@ -770,6 +798,10 @@ module DiscourseNarrativeBot
 
     def self.discobot_user
       @discobot ||= User.find(-2)
+    end
+
+    def url_helpers(url, opts)
+      Rails.application.routes.url_helpers.send(url, opts.merge(host: Discourse.base_url))
     end
   end
 end

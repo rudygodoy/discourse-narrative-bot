@@ -79,10 +79,13 @@ after_initialize do
       return true if [-1, -2].include?(self.user.id)
 
       input =
-        if PostActionType.flag_types.values.include?(self.post_action_type_id)
+        case self.post_action_type_id
+        when *PostActionType.flag_types.values
           :flag
-        elsif self.post_action_type_id == PostActionType.types[:like]
+        when PostActionType.types[:like]
           :like
+        when PostActionType.types[:bookmark]
+          :bookmark
         end
 
       if input

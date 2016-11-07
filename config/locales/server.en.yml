@@ -155,11 +155,11 @@ en:
       bookmark:
         instructions: |-
           It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private to you
-          and always accessible from [your profile page](my/activity). Just click or tap on your avatar at the upper right to get to your profile, anywhere, anytime.
+          and always accessible from [your profile page](%{profile_page_url}). Just click or tap on your avatar at the upper right to get to your profile, anywhere, anytime.
 
           OK! Can you **bookmark this post** using the buttons &darr; under this post?
         reply: |-
-          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](my/activity/bookmarks).
+          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}).
 
           And remember, wherever you go… there you are. :map:
         not_found: |-
