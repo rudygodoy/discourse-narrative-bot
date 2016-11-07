@@ -138,14 +138,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
             #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
 
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.keyboard_shortcuts.instructions')}
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
           RAW
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
           data = DiscourseNarrativeBot::Store.get(user.id)
 
-          expect(data[:state].to_sym).to eq(:tutorial_keyboard_shortcuts)
+          expect(data[:state].to_sym).to eq(:tutorial_onebox)
           expect(data[:last_post_id]).to eq(new_post.id)
         end
       end
@@ -163,47 +163,16 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
             #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
 
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.keyboard_shortcuts.instructions')}
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
           RAW
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
           data = DiscourseNarrativeBot::Store.get(user.id)
 
-          expect(data[:state].to_sym).to eq(:tutorial_keyboard_shortcuts)
+          expect(data[:state].to_sym).to eq(:tutorial_onebox)
           expect(data[:last_post_id]).to eq(new_post.id)
         end
-      end
-    end
-
-    describe 'when [:tutorial_keyboard_shortcuts, :reply]' do
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_keyboard_shortcuts, topic_id: topic.id)
-      end
-
-      describe 'when post is not in the right topic' do
-        it 'should not do anything' do
-          other_post
-          narrative.expects(:enqueue_timeout_job).with(user).never
-
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_keyboard_shortcuts)
-        end
-      end
-
-      it 'should create the right reply' do
-        narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
-        new_post = Post.last
-
-        expected_raw = <<~RAW
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.keyboard_shortcuts.reply')}
-
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.instructions')}
-        RAW
-
-        expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
       end
     end
 
@@ -623,7 +592,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           new_post = Post.offset(1).last
 
           expect(new_post.raw).to eq(I18n.t(
-            'discourse_narrative_bot.new_user_narrative.search.reply'
+            'discourse_narrative_bot.new_user_narrative.search.reply',
+            base_url: Discourse.base_url
           ).chomp)
 
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)

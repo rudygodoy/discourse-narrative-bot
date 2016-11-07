@@ -26,7 +26,7 @@ en:
         message_3: |-
           Thanks for joining, @%{username}!
 
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me and mention any of following things that I like. 
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me and mention any of following things that I like.
         message_4: |-
           Well if it isn’t @%{username}!
 
@@ -76,7 +76,7 @@ en:
         instructions: |-
           Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a handy summary.
 
-          Here are a few Wikipedia links to choose from:          
+          Here are a few Wikipedia links to choose from:
            http://en.wikipedia.org/wiki/Inherently_funny_word
            http://en.wikipedia.org/wiki/Death_by_coconut
            http://en.wikipedia.org/wiki/Dusty_the_Klepto_Kitty
@@ -152,21 +152,21 @@ en:
 
       bookmark:
         instructions: |-
-          It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private to you 
+          It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private to you
           and always accessible from [your profile page](my/activity). Just click or tap on your avatar at the upper right to get to your profile, anywhere, anytime.
 
           OK! Can you **bookmark this post** using the buttons &darr; under this post?
-        reply: |-           
+        reply: |-
           Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](my/activity/bookmarks).
-          
+
           And remember, wherever you go… there you are. :map:
         not_found: |-
-          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <kbd>&hellip;</kbd> to reveal additional actions for each post as needed. 
+          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <kbd>&hellip;</kbd> to reveal additional actions for each post as needed.
 
       emoji:
         instructions: |-
           You may have seen me use little pictures in my replies, like so: :cherries: Those are called [Emoji](https://en.wikipedia.org/wiki/Emoji).
-          
+
           Can you **add an emoji** to your reply?
 
           1. Type a traditional "smiley" like `:)` or `;)` or or `:D` or `:P`
@@ -197,8 +197,8 @@ en:
       flag:
         instructions: |-
           We like our discussions friendly, and we need your help to [keep it civilized](%{base_url}/guidelines). :two_men_holding_hands::couple::two_women_holding_hands:
-          
-          If you see a problem, please **flag** to privately let the author, or [our helpful staff](%{base_url}/about), know about it.  
+
+          If you see a problem, please **flag** to privately let the author, or [our helpful staff](%{base_url}/about), know about it.
 
           > I wrote something nasty here :imp:
 
@@ -218,7 +218,7 @@ en:
 
           Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
-          Well done! The link appears in your post, as you’d expect, but it will also appear as an automatic footnote at the bottom of the post you linked, too. 
+          Well done! The link appears in your post, as you’d expect, but it will also appear as an automatic footnote at the bottom of the post you linked, too.
         not_found: |-
           Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
 
@@ -237,7 +237,7 @@ en:
           You’re now back at the beginning of our personal message. Reply to me with the `:rabbit:` emoji to continue and you’ll be automatically taken to the end.
         reply: |-
           Yay you found it :tada:. I knew I could count on you!
-          
+
           - For more detailed searches, head over to the [full search page](%{base_url}/search) or expand the advanced search options.
 
           - To jump to the beginning or end of a topic, use the topic timeline controls on the right.

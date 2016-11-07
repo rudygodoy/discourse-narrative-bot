@@ -16,15 +16,9 @@ module DiscourseNarrativeBot
       },
 
       [:waiting_reply, :reply] => {
-        next_state: :tutorial_keyboard_shortcuts,
-        next_instructions_key: 'keyboard_shortcuts.instructions',
-        action: :react_to_reply
-      },
-
-      [:tutorial_keyboard_shortcuts, :reply] => {
         next_state: :tutorial_onebox,
         next_instructions_key: 'onebox.instructions',
-        action: :reply_to_keyboard_shortcut
+        action: :react_to_reply
       },
 
       [:tutorial_onebox, :reply] => {
@@ -151,18 +145,6 @@ module DiscourseNarrativeBot
 
     private
 
-    def publish_keyboard_shortcuts(value = 'hide')
-      MessageBus.publish(
-        "/new_user_narrative",
-        keyboard_shortcuts: value,
-        user_ids: [@user.id]
-      )
-    end
-
-    def init_tutorial_keyboard_shortcuts
-      publish_keyboard_shortcuts
-    end
-
     def init_tutorial_search
       topic = @post.topic
       post = topic.first_post
@@ -241,30 +223,6 @@ module DiscourseNarrativeBot
       )
 
       enqueue_timeout_job(@user)
-      reply
-    end
-
-    def reply_to_keyboard_shortcut
-      post_topic_id = @post.topic.id
-      return unless valid_topic?(post_topic_id)
-
-      fake_delay
-      like_post
-
-      raw = <<~RAW
-        #{I18n.t(i18n_key('keyboard_shortcuts.reply'))}
-
-        #{I18n.t(i18n_key(@next_instructions_key))}
-      RAW
-
-      reply = reply_to(
-        raw: raw,
-        topic_id: post_topic_id,
-        reply_to_post_number: @post.post_number
-      )
-
-      enqueue_timeout_job(@user)
-      publish_keyboard_shortcuts('show')
       reply
     end
 
