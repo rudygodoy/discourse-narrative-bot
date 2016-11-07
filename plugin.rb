@@ -76,6 +76,8 @@ after_initialize do
     private
 
     def enqueue_new_user_narrative
+      return true if [-1, -2].include?(post.user.id)
+
       input =
         if PostActionType.flag_types.values.include?(self.post_action_type_id)
           :flag
