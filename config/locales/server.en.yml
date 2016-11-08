@@ -18,19 +18,19 @@ en:
         message_1: |-
           Hi @%{username}
 
-          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply to this post and mention any of following things that I like to get started.
+          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply and mention any of following things that I like to get started.
         message_2: |-
           Hey, it’s good to see you @%{username}!
 
-          If you’re interested, I can give you a brief tour. To begin, reply to this post and mention any of following things that I like!
+          If you’re interested, I can give you a brief tour. To begin, reply and mention any of following things that I like!
         message_3: |-
           Thanks for joining, @%{username}!
 
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply to me and mention any of following things that I like.
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply and mention any of following things that I like.
         message_4: |-
           Well if it isn’t @%{username}!
 
-          Great to have you here at %{title}. If you’d like to chat with me and learn the basics, please reply to this post and mention any of following things that I like. If not, that’s OK too!
+          Great to have you here at %{title}. If you’d like to chat with me and learn the basics, please reply and mention any of following things that I like. If not, that’s OK too!
         message_5: |-
           Look who just arrived – @%{username}!
 
@@ -38,7 +38,7 @@ en:
         message_6: |-
           :wave: and welcome @%{username}!
 
-          It’s my job to greet everyone that arrives here at %{title} and offer to help. Are you interested in a brief conversation with me to experiment and learn how this site works? Reply to me and mention any of following things that I like if so!
+          It’s my job to greet everyone that arrives here at %{title} and offer to help. Are you interested in a brief conversation with me to experiment and learn how this site works? If so, reply and mention any of following things that I like:
 
       start:
         no_likes_message: |-
@@ -136,7 +136,7 @@ en:
 
       quoting:
         instructions: |-
-          Try quoting me when you reply so I know exactly what part you’re replying to. Here are some quotes:
+          Try quoting me when you reply so I know exactly what part you’re replying to.
 
           > If this is coffee, please bring me some tea; but if this is tea, please bring me some coffee.
           >
@@ -144,7 +144,7 @@ en:
           >
           > I want my children to have all the things I couldn’t afford. Then I want to move in with them.
 
-          Select the quote you prefer, and then press the **Quote Reply** button that pops up over your selection, or the **Reply** button at the bottom of this post.
+          Select whichever &uarr; quote you prefer from the above, and then press the **Quote Reply** button that pops up over your selection, or the **Reply** button at the bottom of this post.
         reply: |-
           Nice work, you picked my favorite quote! :left_speech_bubble:
         not_found: |-
@@ -204,9 +204,9 @@ en:
 
           > I wrote something nasty here :imp:
 
-           I guess you know what to do. Go ahead and flag this post! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
+           I guess you know what to do. Go ahead and flag this post as spam, off-topic, or inappropriate! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
         reply: |-
-          [Our staff](/about) will be privately notified about your flag, and if enough community members flag a post, it will also be automatically hidden as a precaution. Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.
+          [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.
 
       link:
         instructions: |-
@@ -220,7 +220,7 @@ en:
 
           Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
-          Well done! The link appears in your post, as you’d expect, but it will also appear as an automatic footnote at the bottom of the post you linked, too.
+          Well done! The link appears in your post, _and_ it will also appear as an automatic footnote at the bottom of the post you linked, too.
         not_found: |-
           Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
 
@@ -228,7 +228,7 @@ en:
         instructions: |-
           I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to dig up posts that myself and others have written in the past.
 
-          Psst… I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, hit the <kbd>/</kbd> key or click on the :mag: icon at the top to search for it.
+          Psst… I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, hit the <kbd>/</kbd> key or click on the :mag: icon at the top right to search for it.
 
           <small>Try searching for the term "bunny" in this topic</small>
         hidden_message: |-
@@ -236,7 +236,7 @@ en:
 
           https://media.giphy.com/media/ef61oIGVyckY8/giphy.gif
 
-          You’re now back at the beginning of our personal message. Reply to me with the `:rabbit:` emoji to continue and you’ll be automatically taken to the end.
+          Did you notice you’re now back at the beginning of our private conversation topic? **Reply with the `:rabbit:` emoji** and you’ll be automatically taken to the end.
         reply: |-
           Yay you found it :tada:. I knew I could count on you!
 
@@ -244,7 +244,7 @@ en:
 
           - To jump to the beginning or end of a topic, use the topic timeline controls on the right.
         not_found: |-
-          Hmm… Looks like you might be having trouble searching for the easter egg. Did you search for the term `bunny`? And be sure to limit your search to just the current topic.
+          Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `bunny`? Be sure to limit your search to just the current topic, too!
 
       end:
         message: |-
@@ -273,7 +273,7 @@ en:
               : + - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - + :
               -----------------------------------------------------------------
 
-          Participate for just a little while and new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you’ll gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us manage our community together.
+          Participate for just a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us manage our community together.
 
           Bye for now! If you’d like to speak with me again any time, just send me a personal message :sunglasses:
 
