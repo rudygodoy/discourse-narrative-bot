@@ -216,7 +216,7 @@ en:
 
           - Copy the link from the address bar of your browser.
 
-          You know what’s _really_ cool? A link between two topics is visible on both posts, so everyone can follow all the linked topics, too!
+          You know what’s _really_ cool? A link between two topics is visible on both, so everyone can follow all the linked topics, too!
 
           Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
@@ -243,6 +243,8 @@ en:
           - For more detailed searches, head over to the [full search page](%{search_url}) or expand the advanced search options.
 
           - To jump to the beginning or end of a topic, use the topic timeline controls on the right.
+          
+          - If you have a keyboard, you can use our handy keyboard shortcuts; press <kbd>?</kbd> to view them. 
         not_found: |-
           Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `bunny`? Be sure to limit your search to just the current topic, too!
 
@@ -273,7 +275,7 @@ en:
               : + - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - + :
               -----------------------------------------------------------------
 
-          Participate for just a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us manage our community together.
+          Participate for just a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us keep our community safe and friendly.
 
           Bye for now! If you’d like to speak with me again any time, just send me a personal message :sunglasses:
 
