@@ -10,7 +10,7 @@ en:
         title: ":robot: I’m your friendly neighborhood discobot"
         triggers: |-
           - unicorns :unicorn:
-          - bacon :pig:
+          - rockets :rocket:
           - ninjas :japanese_castle:
           - monkeys :monkey_face:
 
@@ -18,7 +18,7 @@ en:
         message_1: |-
           Hi @%{username}
 
-          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Just reply and mention any of following things that I like to get started.
+          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Reply and mention any of following things that I like to get started.
         message_2: |-
           Hey, it’s good to see you @%{username}!
 
@@ -52,7 +52,7 @@ en:
         unicorn: |-
           Awesome! I didn’t know you liked :unicorn:s too.
 
-          Did you know that the unicorn is Scotland’s national animal? :unicorn:
+          Did you know that the unicorn is Scotland’s national animal?
 
           https://en.wikipedia.org/wiki/Unicorn
         ninja: |-
@@ -61,10 +61,12 @@ en:
           Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
 
           http://nerdreactor.com/wp-content/uploads/2012/12/Ninja_Gaiden_NES_02.jpg
-        bacon: |-
-          I had bacon for breakfast today :grin:
+        rocket: |-
+          Space is fascinating. If there are :alien:s, where are they? 
 
-          :pig: :pig: :pig: :pig: :pig: :pig:
+          https://mic.com/articles/122857/fermi-paradox-explained-why-alien-life-hasnt-found-us-yet
+
+          :rocket: :full_moon:
         monkey: |-
           I hope you’re not up to any monkey business.
 
@@ -74,7 +76,7 @@ en:
 
       onebox:
         instructions: |-
-          Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a handy summary.
+          Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
 
           Here are a few Wikipedia links to choose from:
            http://en.wikipedia.org/wiki/Inherently_funny_word
@@ -82,11 +84,9 @@ en:
            http://en.wikipedia.org/wiki/Dusty_the_Klepto_Kitty
            https://en.wikipedia.org/wiki/Calculator_spelling
 
-          (This also works for links from YouTube, Kickstarter, SoundCloud, WordPress and hundreds of other popular websites. But let’s try Wikipedia first!)
+          (This also works for links from YouTube, Amazon, Facebook, Twitter and hundreds of other popular websites. But let’s try Wikipedia first!)
         reply: |-
-          That’s an excellent link! Just remember, the link has to be on a line _all by itself_, with nothing else in front of it or after it.
-
-          I pressed the like :heart: button on your post to let you know how much I appreciated it :heart_eyes:
+          That’s an excellent link! Remember, the link has to be on a line _all by itself_, with nothing else in front of it or behind it.          
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
@@ -104,7 +104,7 @@ en:
 
           Hey, speaking of – **can you reply with a picture?** Any picture will do! You can drag and drop, press the upload button, or even copy and paste it in.
         reply: |-
-          Nifty picture – well done!
+          Nifty picture – I pressed the like :heart: button to let you know how much I appreciated it :heart_eyes:
         like_not_found: |-
           Did you forget to like :heart: my [post](%{url})? :crying_cat_face:
         not_found: |-
@@ -114,9 +114,9 @@ en:
 
       formatting:
         instructions: |-
-          Let’s try adding formatting to your post. Can you make some words **bold** and _italic_ in your reply?
+          Hey, can you make some words **bold** or _italic_ in your reply?
 
-          You can use Markdown, HTML, or BBCode:
+          Use Markdown, HTML, and BBCode:
 
           ```text
           **bold** and _italic_
@@ -124,19 +124,19 @@ en:
           [b]bold[/b] and [i]italic[/i]
           ```
 
-          … or if you’re not into typing, push the bold or italic toolbar button in the editor.
+          … or push the bold and italic buttons in the editor.
 
-          (If you’re interested in more advanced formatting, there’s [a whole tutorial to try](http://commonmark.org/help).)
+          (If you’re interested in advanced formatting, there’s [a whole tutorial to try](http://commonmark.org/help) :nerd:)
         reply: |-
           Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
         not_found: |-
-          **Aww, I didn’t find any formatting in your reply.** :sweat_smile:
+          Aww, I didn’t find any formatting in your reply. :sweat_smile:
 
-          _Can you try again?_
+          Can you try again? Use the <kbd><b>B</b></kbd> bold or <kbd><i>I</i></kbd> italic buttons in the editor if you get stuck.
 
       quoting:
         instructions: |-
-          Try quoting me when you reply so I know exactly what part you’re replying to.
+          Can you try quoting me when you reply so I know exactly which part you’re replying to?
 
           > If this is coffee, please bring me some tea; but if this is tea, please bring me some coffee.
           >
@@ -155,7 +155,7 @@ en:
       bookmark:
         instructions: |-
           It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private to you
-          and always accessible from [your profile page](%{profile_page_url}). Just click or tap on your avatar at the upper right to get to your profile, anywhere, anytime.
+          and always accessible from [your profile page](%{profile_page_url}). Click or tap on your avatar at the upper right &#8599; to get to your profile, anywhere, anytime.
 
           OK! Can you **bookmark this post** using the buttons &darr; under this post?
         reply: |-
@@ -163,29 +163,32 @@ en:
 
           And remember, wherever you go… there you are. :map:
         not_found: |-
-          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <kbd>&hellip;</kbd> to reveal additional actions for each post as needed.
+          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <kbd>&hellip;</kbd> to reveal additional actions if needed.
 
       emoji:
         instructions: |-
-          You may have seen me use little pictures in my replies, like so: :cherries: Those are called [Emoji](https://en.wikipedia.org/wiki/Emoji).
+          You may have seen me use little pictures in my replies, like so: :cherries: Those are called [emoji](https://en.wikipedia.org/wiki/Emoji).
 
-          Can you **add an emoji** to your reply?
+          Can you **add an emoji** to your reply? Here’s how:
 
-          1. Type a traditional "smiley" like `:)` or `;)` or or `:D` or `:P`
+          - Type a traditional "smiley" like `:)` or `;)` or or `:D` or `:P`
 
-          2. Type a colon `:` then complete the name of the emoji you want like `:tada:`
+          - Type a colon `:` then complete the emoji name like `:tada:`
 
-          3. Press the emoji toolbar button in the editor for a visual picker.
+          - Press the emoji button in the editor
 
           :blue_car::dash:  Go for it!
         reply: |-
           That’s downright :sparkles: _emojitastic!_ :sparkles:
         not_found: |-
-          Be more expressive with emojis!
+          Oops, I don’t see any Emoji in your reply? Oh no! :sob:
 
-          Can you tell what idiom this set of emoji represents?
+          Try typing a colon <kbd>:</kbd> to bring up the emoji picker, then type the first few letters of what you want, such as `:bird:`. 
 
-          `:sunrise: :bird: :bug:`
+          Or you can press the <kbd>☺</kbd> emoji button in the editor for a visual emoji picker.
+          
+          (If you are on a mobile device, you can also enter Emoji directly from your keyboard, too.)
+
       mention:
         instructions: |-
           Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. To mention someone, type `@` then complete their user name.
@@ -194,7 +197,9 @@ en:
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
-          @%{username} See how you got a notification when I mentioned your user name? You can get my attention with `@discobot`.
+          @%{username} see how you get a notification when I mention your user name? You can get my attention with `@discobot`.
+
+          And yes, my user name is spelled _disco_, as in the 1970s dance craze. I do [love the nightlife!](https://www.youtube.com/watch?v=B_wGI3_sGf8) :dancer:
 
       flag:
         instructions: |-
@@ -202,11 +207,11 @@ en:
 
           If you see a problem, please **flag** to privately let the author, or [our helpful staff](%{about_url}), know about it.
 
-          > I wrote something nasty here :imp:
+          >  :imp: I wrote something nasty here
 
-           I guess you know what to do. Go ahead and flag this post as spam, off-topic, or inappropriate! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
+          I guess you know what to do. Go ahead and **flag this post** as spam, off-topic, or inappropriate! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
         reply: |-
-          [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.
+          [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.)
 
       link:
         instructions: |-
@@ -216,11 +221,11 @@ en:
 
           - Copy the link from the address bar of your browser.
 
-          You know what’s _really_ cool? A link between two topics is visible on both, so everyone can follow all the linked topics, too!
+          You know what’s _really_ cool? A link between two topics is visible on both, so everyone can follow the links back and forth.
 
           Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
-          Well done! The link appears in your post, _and_ it will also appear as an automatic footnote at the bottom of the post you linked, too.
+          Well done! Your link will also appear as an automatic footnote at the bottom of the post you linked to.
         not_found: |-
           Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
 
@@ -228,7 +233,7 @@ en:
         instructions: |-
           I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to dig up posts that myself and others have written in the past.
 
-          Psst… I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, hit the <kbd>/</kbd> key or click on the :mag: icon at the top right to search for it.
+          _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, select the :mag: icon at the top right &#8599; to search for it.
 
           <small>Try searching for the term "bunny" in this topic</small>
         hidden_message: |-
@@ -242,15 +247,15 @@ en:
 
           - For more detailed searches, head over to the [full search page](%{search_url}) or expand the advanced search options.
 
-          - To jump to the beginning or end of a topic, use the topic timeline controls on the right.
+          - To jump to the beginning or end of a topic, try the topic timeline controls on the right &rarr;
 
-          - If you have a keyboard, you can use our handy keyboard shortcuts; press <kbd>?</kbd> to view them.
+          - If you have a physical :keyboard:, use our handy keyboard shortcuts; press <kbd>?</kbd> to view them.
         not_found: |-
           Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `bunny`? Be sure to limit your search to just the current topic, too!
 
       end:
         message: |-
-          @%{username} That’s all I have to show you for now; thanks for sticking with me! After all that you deserve an award, so I made this for you:
+          @%{username} That’s all I have to show you for now; thanks for sticking with me! I think you deserve an award, so I made this for you:
 
               -----------------------------------------------------------------
               : + - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - + :
@@ -275,9 +280,9 @@ en:
               : + - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - + :
               -----------------------------------------------------------------
 
-          Participate for just a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us keep our community safe and friendly for everyone.
+          Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us keep our community safe and friendly for everyone.
 
-          Bye for now! If you’d like to speak with me again any time, just send me a personal message :sunglasses:
+          Bye for now! If you’d like to speak with me again any time, send me a personal message :sunglasses:
 
       do_not_understand:
         first_response: |-
@@ -299,7 +304,7 @@ en:
         message: |-
           Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
 
-          I won’t bug you, but if you want to continue just go ahead and reply to me any time. Or if you got stuck and want to reset, just reply with `@discobot %{reset_trigger}`.
+          I won’t bug you, but if you want to continue go ahead and reply to me any time. Or if you got stuck and want to reset, reply with `@discobot %{reset_trigger}`.
 
           (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. Much. :sob:)
       random_mention:
