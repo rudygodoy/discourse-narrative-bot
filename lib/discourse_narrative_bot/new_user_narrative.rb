@@ -115,6 +115,9 @@ module DiscourseNarrativeBot
         rescue TransitionError
           mention_replies
           return
+        rescue InvalidTransitionError
+          # For given input, no transition for current state
+          return
         end
 
         new_state = opts[:next_state]
@@ -659,7 +662,7 @@ module DiscourseNarrativeBot
 
       TRANSITION_TABLE.fetch([@state, @input])
     rescue KeyError
-      raise InvalidTransitionError.new("No transition from state '#{@state}' for input '#{@input}'")
+      raise InvalidTransitionError.new
     end
 
     def i18n_key(key)

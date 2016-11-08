@@ -75,11 +75,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
     end
 
     describe 'when input does not have a valid transition from current state' do
+      before do
+        DiscourseNarrativeBot::Store.set(user.id, state: :begin)
+      end
+
       it 'should raise the right error' do
-        expect { narrative.input(:something, user, post) }.to raise_error(
-          described_class::InvalidTransitionError,
-          "No transition from state 'begin' for input 'something'"
-        )
+        expect(narrative.input(:something, user, post)).to eq(nil)
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:begin)
       end
     end
 
@@ -695,12 +697,6 @@ describe DiscourseNarrativeBot::NewUserNarrative do
     describe ':end state' do
       before do
         DiscourseNarrativeBot::Store.set(user.id, state: :end, topic_id: topic.id)
-      end
-
-      it 'should raise the right error when reply is not in the right topic' do
-        expect { narrative.input(:reply, user, other_post) }.to raise_error(
-          described_class::InvalidTransitionError
-        )
       end
 
       it 'should create the right generic do not understand responses' do
