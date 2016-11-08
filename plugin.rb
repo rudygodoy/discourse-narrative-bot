@@ -8,12 +8,8 @@ enabled_site_setting :introbot_enabled
 after_initialize do
   SeedFu.fixture_paths << Rails.root.join("plugins", "discourse-narrative-bot", "db", "fixtures").to_s
 
-  require_dependency 'application_controller'
-  require_dependency 'discourse_event'
-  require_dependency 'admin_constraint'
-  require_dependency File.expand_path('../jobs/new_user_narrative_input.rb', __FILE__)
-  require_dependency File.expand_path('../jobs/new_user_narrative_timeout.rb', __FILE__)
-
+  load File.expand_path('../jobs/new_user_narrative_input.rb', __FILE__)
+  load File.expand_path('../jobs/new_user_narrative_timeout.rb', __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/new_user_narrative.rb", __FILE__)
 
   module ::DiscourseNarrativeBot
