@@ -7,14 +7,13 @@ en:
     new_user_narrative:
 
       hello:
-        title: ":robot: I’m your friendly neighborhood discobot"
+        title: ":robot: Greetings!"
         triggers: |-
           - unicorns :unicorn:
           - rockets :rocket:
           - ninjas :japanese_castle:
           - monkeys :monkey_face:
 
-          (Please don’t judge me. I was programmed this way!)
         message_1: |-
           Hi @%{username}
 
@@ -32,13 +31,9 @@ en:
 
           Great to have you here at %{title}. If you’d like to chat with me and learn the basics, please reply and mention any of following things that I like. If not, that’s OK too!
         message_5: |-
-          Look who just arrived – @%{username}!
+          Welcome @%{username}!
 
-          If you’re new to %{title}, we can talk through a few things together if you reply to me and mention any of following things that I like. :sunny: It’ll be fun, I swear!
-        message_6: |-
-          :wave: and welcome @%{username}!
-
-          It’s my job to greet everyone that arrives here at %{title} and offer to help. Are you interested in a brief conversation with me to experiment and learn how this site works? If so, reply and mention any of following things that I like:
+          It’s my job to greet everyone that arrives here at %{title} and offer to help. Are you interested in a brief conversation with me to experiment and learn how this site works? If so, reply and mention any of the following things that I like:
 
       start:
         no_likes_message: |-
@@ -79,10 +74,11 @@ en:
           Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
 
           Here are a few Wikipedia links to choose from:
-           http://en.wikipedia.org/wiki/Inherently_funny_word
-           http://en.wikipedia.org/wiki/Death_by_coconut
-           http://en.wikipedia.org/wiki/Dusty_the_Klepto_Kitty
-           https://en.wikipedia.org/wiki/Calculator_spelling
+
+          - http://en.wikipedia.org/wiki/Inherently_funny_word
+          - http://en.wikipedia.org/wiki/Death_by_coconut
+          - http://en.wikipedia.org/wiki/Dusty_the_Klepto_Kitty
+          - https://en.wikipedia.org/wiki/Calculator_spelling
 
           (This also works for links from YouTube, Amazon, Facebook, Twitter and hundreds of other popular websites. But let’s try Wikipedia first!)
         reply: |-
@@ -116,7 +112,7 @@ en:
         instructions: |-
           Hey, can you make some words **bold** or _italic_ in your reply?
 
-          Use Markdown, HTML, and BBCode:
+          Use Markdown, HTML, or BBCode:
 
           ```text
           **bold** and _italic_
@@ -144,7 +140,7 @@ en:
           >
           > I want my children to have all the things I couldn’t afford. Then I want to move in with them.
 
-          Select whichever &uarr; quote you prefer from the above, and then press the **Quote Reply** button that pops up over your selection, or the **Reply** button at the bottom of this post.
+          Select the text of whichever &uarr; quote you prefer from the above, and then press the **Quote Reply** button that pops up over your selection, or the **Reply** button at the bottom of this post.
         reply: |-
           Nice work, you picked my favorite quote! :left_speech_bubble:
         not_found: |-
@@ -154,12 +150,11 @@ en:
 
       bookmark:
         instructions: |-
-          It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private to you
-          and always accessible from [your profile page](%{profile_page_url}). Click or tap on your avatar at the upper right &#8599; to get to your profile, anywhere, anytime.
+          It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private and always accessible from [your profile page](%{profile_page_url}). Click or tap on your avatar at the upper right &#8599; to get to your profile, anywhere, anytime.
 
-          OK! Can you **bookmark this post** using the buttons &darr; under this post?
+          OK! Can you **bookmark this post** using the buttons &darr; under this post? Use the show more button <kbd>&hellip;</kbd> to reveal additional actions.
         reply: |-
-          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}).
+          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks).
 
           And remember, wherever you go… there you are. :map:
         not_found: |-
@@ -193,7 +188,7 @@ en:
         instructions: |-
           Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. To mention someone, type `@` then complete their user name.
 
-          Give it a try – mention my user name `@discobot` in your reply, and I’ll definitely get notified!
+          Give it a try – mention **my user name `@discobot`** in your reply.
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
@@ -205,7 +200,7 @@ en:
         instructions: |-
           We like our discussions friendly, and we need your help to [keep it civilized](%{guidelines_url}). :two_men_holding_hands::couple::two_women_holding_hands:
 
-          If you see a problem, please **flag** to privately let the author, or [our helpful staff](%{about_url}), know about it.
+          If you see a problem, please flag to privately let the author, or [our helpful staff](%{about_url}), know about it.
 
           >  :imp: I wrote something nasty here
 
@@ -280,7 +275,7 @@ en:
               : + - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - + :
               -----------------------------------------------------------------
 
-          Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help us keep our community safe and friendly for everyone.
+          Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
 
           Bye for now! If you’d like to speak with me again any time, send me a personal message :sunglasses:
 
@@ -304,9 +299,9 @@ en:
         message: |-
           Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
 
-          I won’t bug you, but if you want to continue go ahead and reply to me any time. Or if you got stuck and want to reset, reply with `@discobot %{reset_trigger}`.
+          If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@discobot %{reset_trigger}`.
 
-          (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. Much. :sob:)
+          (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:)
       random_mention:
         dice: |-
           :game_die: dice roll: %{results}
