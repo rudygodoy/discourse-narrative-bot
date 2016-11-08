@@ -214,7 +214,7 @@ module DiscourseNarrativeBot
       fake_delay
 
       raw =
-        if key = @post.raw.match(/(unicorn|bacon|ninja|monkey)/i)
+        if key = @post.raw.match(/(unicorn|rocket|ninja|monkey)/i)
           I18n.t(i18n_key("start.#{key.to_s.downcase}"))
         else
           I18n.t(i18n_key("start.no_likes_message"))
