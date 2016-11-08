@@ -144,7 +144,7 @@ module DiscourseNarrativeBot
 
       if post = Post.find_by(id: @data[:last_post_id])
         reply_to(
-          raw: I18n.t(i18n_key("timeout.message"), username: user.username),
+          raw: I18n.t(i18n_key("timeout.message"), username: user.username, reset_trigger: RESET_TRIGGER),
           topic_id: post.topic.id,
           reply_to_post_number: post.post_number
         )
@@ -377,7 +377,7 @@ module DiscourseNarrativeBot
       post_topic_id = @post.topic_id
       return unless valid_topic?(post_topic_id)
 
-      if Nokogiri::HTML.fragment(@post.cooked).css("b", "strong", "em", "i").size > 0
+      if Nokogiri::HTML.fragment(@post.cooked).css("b", "strong", "em", "i", ".bbcode-i", ".bbcode-b").size > 0
         raw = <<~RAW
           #{I18n.t(i18n_key('formatting.reply'))}
 

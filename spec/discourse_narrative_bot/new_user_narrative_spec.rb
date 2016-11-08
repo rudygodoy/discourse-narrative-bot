@@ -24,7 +24,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       expect(Post.last.raw).to eq(I18n.t(
         'discourse_narrative_bot.new_user_narrative.timeout.message',
-        username: user.username
+        username: user.username, reset_trigger: described_class::RESET_TRIGGER
       ))
     end
   end
@@ -338,7 +338,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_formatting, :reply]' do
+    describe 'fomatting tutorial' do
       before do
         DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_formatting, topic_id: topic.id)
       end
@@ -363,21 +363,23 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
-      it 'should create the right reply' do
-        post.update_attributes!(raw: "**bold** __italic__")
+      ["**bold**", "__italic__", "[b]bold[/b]", "[i]italic[/i]"].each do |raw|
+        it 'should create the right reply' do
+          post.update_attributes!(raw: raw)
 
-        narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
-        new_post = Post.last
+          narrative.expects(:enqueue_timeout_job).with(user)
+          narrative.input(:reply, user, post)
+          new_post = Post.last
 
-        expected_raw = <<~RAW
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.formatting.reply')}
+          expected_raw = <<~RAW
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.formatting.reply')}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.quoting.instructions')}
-        RAW
+            #{I18n.t('discourse_narrative_bot.new_user_narrative.quoting.instructions')}
+          RAW
 
-        expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_quote)
+          expect(new_post.raw).to eq(expected_raw.chomp)
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_quote)
+        end
       end
     end
 
