@@ -652,10 +652,8 @@ module DiscourseNarrativeBot
       if @post
         valid_topic = valid_topic?(@post.topic_id)
 
-        if !valid_topic
+        if (!valid_topic || (valid_topic && @state == :end))
           raise TransitionError.new if bot_mentioned?
-          raise DoNotUnderstandError.new if reply_to_bot_post?
-        elsif valid_topic && @state == :end
           raise DoNotUnderstandError.new if reply_to_bot_post?
         end
       end

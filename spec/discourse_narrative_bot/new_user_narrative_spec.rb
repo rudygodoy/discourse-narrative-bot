@@ -742,6 +742,20 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expect { narrative.input(:reply, user, new_post) }.to_not change { Post.count }
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+
+        new_post = Fabricate(:post,
+          topic: topic,
+          user: user,
+          raw: "@discobot hello!"
+        )
+
+        narrative.input(:reply, user, new_post)
+
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
+
+        expect(Post.last.raw).to eq(
+          I18n.t("discourse_narrative_bot.new_user_narrative.random_mention.message")
+        )
       end
     end
 
