@@ -177,7 +177,7 @@ module DiscourseNarrativeBot
 
     def say_hello
       raw = I18n.t(
-        i18n_key("hello.message_#{Time.now.to_i % 6 + 1}"),
+        i18n_key("hello.message_#{Time.now.to_i % 5 + 1}"),
         username: @user.username,
         title: SiteSetting.title
       )
