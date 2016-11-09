@@ -759,6 +759,27 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
+    describe 'pms to discobot' do
+      let(:other_topic) do
+        topic_allowed_user = Fabricate.build(:topic_allowed_user, user: user)
+        bot = Fabricate.build(:topic_allowed_user, user: described_class.discobot_user)
+
+        Fabricate(:private_message_topic, topic_allowed_users: [topic_allowed_user, bot])
+      end
+
+      describe 'when a new message is made' do
+        it 'should create the right reply' do
+          post = Fabricate(:post, topic: other_topic)
+
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(
+            I18n.t("discourse_narrative_bot.new_user_narrative.random_mention.message")
+          )
+        end
+      end
+    end
+
     describe 'random discobot mentions' do
       let(:other_topic) { Fabricate(:topic) }
       let(:other_post) { Fabricate(:post, topic: other_topic) }

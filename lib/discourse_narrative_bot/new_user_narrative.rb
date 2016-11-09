@@ -648,11 +648,24 @@ module DiscourseNarrativeBot
       @post&.reply_to_post && @post.reply_to_post.user_id == -2
     end
 
+    def pm_to_bot?
+      topic = @post.topic
+
+      return false unless topic.archetype == Archetype.private_message
+
+      allowed_users = topic.allowed_users.pluck(:id)
+      allowed_users.delete(-2)
+      allowed_users.length == 1
+    end
+
     def transition
       if @post
         valid_topic = valid_topic?(@post.topic_id)
 
-        if (!valid_topic || (valid_topic && @state == :end))
+        if (!valid_topic)
+          raise TransitionError.new if bot_mentioned? || pm_to_bot?
+          raise DoNotUnderstandError.new if reply_to_bot_post?
+        elsif (valid_topic && @state == :end)
           raise TransitionError.new if bot_mentioned?
           raise DoNotUnderstandError.new if reply_to_bot_post?
         end
