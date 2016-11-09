@@ -148,8 +148,7 @@ module DiscourseNarrativeBot
       if post = Post.find_by(id: @data[:last_post_id])
         reply_to(
           raw: I18n.t(i18n_key("timeout.message"), username: user.username, reset_trigger: RESET_TRIGGER),
-          topic_id: post.topic.id,
-          reply_to_post_number: post.post_number
+          topic_id: post.topic.id
         )
       end
     end
