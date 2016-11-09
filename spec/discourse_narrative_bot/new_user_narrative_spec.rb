@@ -578,7 +578,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_link, :reply]' do
+    describe 'link tutorial' do
       before do
         DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_link, topic_id: topic.id)
       end
@@ -593,7 +593,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
-      describe 'when post does not contain any quotes' do
+      describe 'when post does not contain any links' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
           narrative.input(:reply, user, post)
@@ -613,7 +613,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         pending "somehow it isn't oneboxed in tests"
 
         post.update_attributes!(
-          raw: 'https://try.discourse.org/t/something-to-say/485'
+          raw: "https://#{Discourse.current_hostname}/t/something-to-say/485"
         )
 
         narrative.expects(:enqueue_timeout_job).with(user)

@@ -565,7 +565,7 @@ module DiscourseNarrativeBot
 
       @post.post_analyzer.cook(@post.raw, {})
 
-      if @post.post_analyzer.link_count > 0
+      if @post.post_analyzer.linked_hosts[Discourse.current_hostname]
         raw = <<~RAW
           #{I18n.t(i18n_key('link.reply'))}
 
