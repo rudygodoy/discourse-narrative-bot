@@ -4,8 +4,11 @@ module Jobs
     sidekiq_options queue: 'critical'
 
     def execute(args)
-      user = User.find args[:user_id]
-      post = Post.find args[:post_id] rescue nil
+      user = User.find_by(id: args[:user_id])
+
+      return unless user
+
+      post = Post.find_by(id: args[:post_id])
 
       DiscourseNarrativeBot::NewUserNarrative.new.input(args[:input].to_sym, user, post)
     end
