@@ -55,7 +55,7 @@ after_initialize do
 
           logo_group = <<~URL
           <g transform="translate(#{width / 2 - 20} 280)">
-            <image height="40px" width="40px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(open(logo_url).read)}"/>
+            <image height="40px" width="40px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(Excon.get(logo_url).body)}"/>
           </g>
           URL
         rescue URI::InvalidURIError
@@ -80,7 +80,7 @@ after_initialize do
           <clipPath id="clipCircle">
             <circle r="15" cx="15" cy="15"/>
           </clipPath>
-          <image clip-path="url(#clipCircle)" height="30px" width="30px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(open(params[:avatar_url]).read)}"/>
+          <image clip-path="url(#clipCircle)" height="30px" width="30px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(Exon.get(params[:avatar_url]).body)}"/>
         </g>
         <text x="#{width / 2}" y="240.94" text-anchor="middle" style="font-size:24px;fill:#020403;font-family:Tangerine, Tangerine">
           #{params[:name].titleize}
