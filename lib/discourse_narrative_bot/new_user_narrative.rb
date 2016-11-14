@@ -634,7 +634,7 @@ module DiscourseNarrativeBot
       fake_delay
 
       reply_to(
-        raw: I18n.t(i18n_key('end.message'), username: @user.username, base_url: Discourse.base_url),
+        raw: I18n.t(i18n_key('end.message'), username: @user.username, base_url: Discourse.base_url, certificate: certificate),
         topic_id: @data[:topic_id]
       )
     end
@@ -814,6 +814,18 @@ module DiscourseNarrativeBot
 
     def url_helpers(url, opts = {})
       Rails.application.routes.url_helpers.send(url, opts.merge(host: Discourse.base_url))
+    end
+
+    def certificate
+      src = DiscourseNarrativeBot::Engine.routes.url_helpers.certificate_url(
+        name: (@user.name || @user.username).upcase,
+        date: Time.zone.now.strftime('%b %d %Y'),
+        host: Discourse.base_url,
+        avatar_url: "#{Discourse.base_url}/#{@user.avatar_template.gsub('{size}', '250')}",
+        format: :svg
+      )
+
+      "<img class='discobot-certificate' src='#{src}'/>"
     end
   end
 end

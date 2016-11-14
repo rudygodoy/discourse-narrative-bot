@@ -57,7 +57,7 @@ en:
 
           http://nerdreactor.com/wp-content/uploads/2012/12/Ninja_Gaiden_NES_02.jpg
         rocket: |-
-          Space is fascinating. If there are :alien:s, where are they? 
+          Space is fascinating. If there are :alien:s, where are they?
 
           https://mic.com/articles/122857/fermi-paradox-explained-why-alien-life-hasnt-found-us-yet
 
@@ -82,7 +82,7 @@ en:
 
           (This also works for links from YouTube, Amazon, Facebook, Twitter and hundreds of other popular websites. But let’s try Wikipedia first!)
         reply: |-
-          That’s an excellent link! Remember, the link has to be on a line _all by itself_, with nothing else in front of it or behind it.          
+          That’s an excellent link! Remember, the link has to be on a line _all by itself_, with nothing else in front of it or behind it.
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
@@ -184,10 +184,10 @@ en:
         not_found: |-
           Oops, I don’t see any Emoji in your reply? Oh no! :sob:
 
-          Try typing a colon <kbd>:</kbd> to bring up the emoji picker, then type the first few letters of what you want, such as `:bird:`. 
+          Try typing a colon <kbd>:</kbd> to bring up the emoji picker, then type the first few letters of what you want, such as `:bird:`.
 
           Or you can press the <kbd>☺</kbd> emoji button in the editor for a visual emoji picker.
-          
+
           (If you are on a mobile device, you can also enter Emoji directly from your keyboard, too.)
 
       mention:
@@ -258,28 +258,7 @@ en:
         message: |-
           @%{username} That’s all I have to show you for now; thanks for sticking with me! I think you deserve an award, so I made this for you:
 
-              -----------------------------------------------------------------
-              : + - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - + :
-              : | <-------------------------------------------------------> | :
-              : \ :        ,-.         .                   .              : / :
-              : | :       /            |   o  ,- o         |              : | :
-              : / :       |    ,-. ;-. |-  .  |  . ,-. ,-: |-  ,-.        : \ :
-              : - :       \    |-' |   |   |  |- | |   | | |   |-'        : - :
-              : \ :        `-' `-' '   `-' '  |  ' `-' `-` `-' `-'        : / :
-              : | :                          -'                           : | :
-              : / :                            ,-                         : \ :
-              : - :                       ,-.  |                          : - :
-              : \ :                       | |  |-                         : / :
-              : | :                       `-'  |                          : | :
-              : / :                           -'                          : \ :
-              : - :     ,.                                                : - :
-              : \ :    /  \                                               : / :
-              : | :    |--| , , , ,-. ,-. ,-. ;-.-. ,-. ;-. ,-. ,-. ,-.   : | :
-              : / :    |  | |/|/  |-' `-. | | | | | |-' | | |-' `-. `-.   : \ :
-              : - :    '  ' ' '   `-' `-' `-' ' ' ' `-' ' ' `-' `-' `-'   : - :
-              : | <-------------------------------------------------------> | :
-              : + - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - / | \ - + :
-              -----------------------------------------------------------------
+          %{certificate}
 
           Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
 
