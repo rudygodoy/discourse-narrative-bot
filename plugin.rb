@@ -52,7 +52,7 @@ after_initialize do
         begin
           uri = URI(SiteSetting.logo_small_url)
 
-          logo_url
+          logo_url =
             if uri.host.empty? || uri.scheme.empty?
               "#{Discourse.base_url}/#{uri.path}"
             else
