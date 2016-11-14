@@ -51,7 +51,13 @@ after_initialize do
 
         begin
           uri = URI(SiteSetting.logo_small_url)
-          logo_url = "#{Discourse.base_url}/#{uri.path}"
+
+          logo_url
+            if uri.host.empty? || uri.scheme.empty?
+              "#{Discourse.base_url}/#{uri.path}"
+            else
+              uri.to_s
+            end
 
           logo_group = <<~URL
           <g transform="translate(#{width / 2 - 20} 280)">
