@@ -80,7 +80,7 @@ after_initialize do
           <clipPath id="clipCircle">
             <circle r="15" cx="15" cy="15"/>
           </clipPath>
-          <image clip-path="url(#clipCircle)" height="30px" width="30px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(Exon.get(params[:avatar_url]).body)}"/>
+          <image clip-path="url(#clipCircle)" height="30px" width="30px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(Excon.get(params[:avatar_url]).body)}"/>
         </g>
         <text x="#{width / 2}" y="240.94" text-anchor="middle" style="font-size:24px;fill:#020403;font-family:Tangerine, Tangerine">
           #{params[:name].titleize}
