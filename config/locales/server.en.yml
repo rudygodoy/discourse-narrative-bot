@@ -118,7 +118,7 @@ en:
 
           … or push the bold <kbd><b>B</b></kbd> or <kbd><i>I</i></kbd> italic buttons in the editor.
 
-          (HTML and BBCode will also work. If you’re interested in advanced formatting, there’s [a whole tutorial to try](http://commonmark.org/help) :nerd:)
+          (HTML and BBCode also work. If you’re interested in advanced formatting, there’s [a whole tutorial to try](http://commonmark.org/help) :nerd:)
         reply: |-
           Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
         not_found: |-
@@ -222,7 +222,7 @@ en:
 
           Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
         reply: |-
-          Well done! Your link will also appear as an automatic footnote at the bottom of the post you linked to.
+          Well done! Your link will also appear as a footnote on the post you linked to.
         not_found: |-
           Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
 
