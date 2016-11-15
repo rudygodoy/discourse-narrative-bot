@@ -43,11 +43,22 @@ after_initialize do
       skip_before_filter :check_xhr
 
       def generate
-        raise Discourse::InvalidParameters.new('name must be present') unless params[:name]&.present?
+        raise Discourse::InvalidParameters.new('user_id must be present') unless params[:user_id]&.present?
+
+        user = User.find_by(id: params[:user_id])
+        raise Discourse::NotFound if user.blank?
+
         raise Discourse::InvalidParameters.new('date must be present') unless params[:date]&.present?
-        raise Discourse::InvalidParameters.new('avatar_url must be present') unless params[:avatar_url]&.present?
 
         width = 538.583 # Default width for the SVG
+        avatar_url = UrlHelper.absolute(user.avatar_template.gsub('{size}', '250'))
+
+        name =
+          if user.name && !user.name.blank?
+            user.name
+          else
+            user.username
+          end
 
         begin
           uri = URI(SiteSetting.logo_small_url)
@@ -90,10 +101,10 @@ after_initialize do
           <clipPath id="clipCircle">
             <circle r="15" cx="15" cy="15"/>
           </clipPath>
-          <image clip-path="url(#clipCircle)" height="30px" width="30px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(URI(params[:avatar_url]).open('rb', redirect: true, allow_redirections: :all).read)}"/>
+          <image clip-path="url(#clipCircle)" height="30px" width="30px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(URI(avatar_url).open('rb', redirect: true, allow_redirections: :all).read)}"/>
         </g>
         <text x="#{width / 2}" y="240.94" text-anchor="middle" style="font-size:24px;fill:#020403;font-family:Tangerine, Tangerine">
-          #{params[:name].titleize}
+          #{name.titleize}
         </text>
         #{logo_group}
         </g><g id="Layer_1-2" data-name="Layer 1"><path d="M339.328,47.187c-.034,1.193,3.249,2.2,6.511,3.383,5.5,1.994,13.1,3.73,17.68,3.112,5.049-.549,4.981-2.217,4.053-4.8-.1-4.647.258-9.493.156-14.142L340.6,34.282C341.1,38.98,338.822,42.489,339.328,47.187Z" transform="translate(-0.108)" style="fill-rule:evenodd;fill:url(#GradientFill_24)"/><path d="M368.07,50.106s-.121-12.222,0-15.164-4.35-4.153-8.7-4.514-11.721.361-24.89,5.073c-20.048,7.173-20.465,8.171-32.418.2,0,0-.725,10.616-1.651,15.006-.242,3.987,7.973,4.954,16.431,4.107,5.431-.542,17.277-3.866,29.478-7.007S367.829,46.724,368.07,50.106Z" transform="translate(-0.108)" style="fill:url(#GradientFill_25)"/><path d="M330.257,43.1c.166,3.219-2.095,6.927-14.176,5.074s-15.386.08-15.666,2.538l.927-9.625,24.163-8.362S330.013,38.428,330.257,43.1Z" transform="translate(-0.108)" style="fill:url(#GradientFill_26)"/><path d="M199.713,47.187c.034,1.193-3.25,2.2-6.511,3.383-5.5,1.994-13.1,3.73-17.679,3.112-5.05-.549-4.982-2.217-4.053-4.8.1-4.647-.257-9.493-.157-14.142l27.131-.455C197.939,38.98,200.218,42.489,199.713,47.187Z" transform="translate(-0.108)" style="fill-rule:evenodd;fill:url(#GradientFill_24-2)"/><path d="M170.97,50.106s.121-12.222,0-15.164,4.35-4.153,8.7-4.514,11.721.361,24.89,5.073c20.048,7.173,20.464,8.171,32.418.2,0,0,.725,10.616,1.652,15.006.242,3.987-7.973,4.954-16.432,4.106-5.431-.542-17.277-3.866-29.477-7.007S171.212,46.724,170.97,50.106Z" transform="translate(-0.108)" style="fill:url(#GradientFill_25-2)"/><path d="M208.784,43.1c-.166,3.219,2.095,6.927,14.176,5.074s15.385.08,15.666,2.538l-.927-9.625-24.163-8.361S209.027,38.428,208.784,43.1Z" transform="translate(-0.108)" style="fill:url(#GradientFill_26-2)"/><path d="M213.049,47.722c-2.03-.524-4.163-1.966-3.825-4.034.268-2,2.574-2.965,4.46-3.4,4.064-1.095,7.935.69,11.643,1.622,7.383,2.148,14.106,4.267,20.15,4.957A159.029,159.029,0,0,0,266.7,48.384c2.285.01,3.49-.022,3.49-.037s-1.16-.042-3.359-.1c-3.424-.112-9.342-.3-17.137-1.254a91.531,91.531,0,0,1-17.011-3.549c-3.13-.919-6.4-1.933-9.841-2.926-3.331-1.109-7.363-1.973-11.115-.371-1.415.552-3.038,1.666-3.242,3.506-.3,1.821,1.1,3.432,2.589,4.118,3.056,1.475,6.533,1.475,9.875,1.087a65.445,65.445,0,0,1,10.108-.97,16.5,16.5,0,0,1,5.032.652c1.6.423,2.736,2.091,1.778,3.455-1.6,2.007-4.849,2.275-7.472,2.573a44.847,44.847,0,0,1-8.218-.135c-5.334-.836-10.507-2.238-15.476-3.419-8.217-1.9-15.812-4.508-23.144-4.944a24.062,24.062,0,0,0-10.292,1.261c-1.456.7-2.917,2.21-2.456,3.969.591,1.674,2.329,2.207,3.666,2.5,9.1.958,15.61-2.2,19.294-3.29,2.369-.887,3.609-1.472,3.6-1.486s-.918.368-2.675,1l-.519.186a74.6,74.6,0,0,1-8.1,2.393c-3.443.679-7.892,1.759-12.606.463a3.138,3.138,0,0,1-2.271-2.117,3.126,3.126,0,0,1,1.645-2.792c2.1-1.174,4.873-1.452,7.56-1.566,5.509-.164,11.337,1.278,17.439,2.915,6.151,1.6,12.637,3.286,19.453,4.817a40.206,40.206,0,0,0,10.647,1.165c3.508-.291,7.68.046,10.6-3.064a2.888,2.888,0,0,0-.694-3.859,7.9,7.9,0,0,0-3.653-1.3,33.93,33.93,0,0,0-7.374.013C222.031,47.742,217.384,49.034,213.049,47.722Z" transform="translate(-0.108)" style="fill:url(#GradientFill_27)"/><path d="M330.094,43.1c.166,3.219-2.095,6.927-14.176,5.074s-15.385.08-15.666,2.538l.927-9.625,24.163-8.361S329.851,38.428,330.094,43.1Z" transform="translate(-0.108)" style="fill:url(#GradientFill_28)"/><path d="M269.229,31.972c19.556,0,36.853-4.187,46.125-6.336,11.115-2.577,15.1,1.973,14.979,4.672-.258,5.814-.361,8.352-.239,13.184,0,0-1.871-6.321-13.29-2.93-12.912,3.837-23.3,7.747-47.242,7.783h-.333c-24.517-.036-34.329-3.946-47.243-7.784-11.416-3.392-13.289,2.93-13.289,2.93.121-4.831.019-7.37-.24-13.184-.122-2.7,3.864-7.248,14.98-4.672C232.653,27.772,249.817,31.925,269.229,31.972Z" transform="translate(-0.108)" style="fill:url(#GradientFill_29)"/></g></svg>

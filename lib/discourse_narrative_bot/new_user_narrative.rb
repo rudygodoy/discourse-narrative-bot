@@ -818,10 +818,9 @@ module DiscourseNarrativeBot
 
     def certificate
       src = DiscourseNarrativeBot::Engine.routes.url_helpers.certificate_url(
-        name: (@user.name || @user.username).upcase,
+        user_id: @user.id,
         date: Time.zone.now.strftime('%b %d %Y'),
         host: Discourse.base_url,
-        avatar_url: UrlHelper.absolute(@user.avatar_template.gsub('{size}', '250')),
         format: :svg
       )
 
