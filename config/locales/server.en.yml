@@ -112,17 +112,13 @@ en:
         instructions: |-
           Hey, can you make some words **bold** or _italic_ in your reply?
 
-          Use Markdown, HTML, or BBCode:
-
           ```text
           **bold** and _italic_
-          <b>bold</b> and <i>italic</i>
-          [b]bold[/b] and [i]italic[/i]
           ```
 
-          … or push the bold and italic buttons in the editor.
+          … or push the bold <kbd><b>B</b></kbd> or <kbd><i>I</i></kbd> italic buttons in the editor.
 
-          (If you’re interested in advanced formatting, there’s [a whole tutorial to try](http://commonmark.org/help) :nerd:)
+          (HTML and BBCode will also work. If you’re interested in advanced formatting, there’s [a whole tutorial to try](http://commonmark.org/help) :nerd:)
         reply: |-
           Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
         not_found: |-
@@ -158,7 +154,7 @@ en:
         instructions: |-
           It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private and always accessible from [your profile page](%{profile_page_url}). Click or tap on your avatar at the upper right &#8599; to get to your profile, anywhere, anytime.
 
-          OK! Can you **bookmark this post** using the buttons &darr; under this post? Use the show more button <kbd>&hellip;</kbd> to reveal additional actions.
+          OK! Can you **bookmark this post** using the bookmark :bookmark: button under this post? Use the show more button <kbd>&hellip;</kbd> to reveal additional actions.
         reply: |-
           Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks).
 
