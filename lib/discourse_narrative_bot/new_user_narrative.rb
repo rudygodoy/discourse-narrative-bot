@@ -821,7 +821,7 @@ module DiscourseNarrativeBot
         name: (@user.name || @user.username).upcase,
         date: Time.zone.now.strftime('%b %d %Y'),
         host: Discourse.base_url,
-        avatar_url: "#{Discourse.base_url}/#{@user.avatar_template.gsub('{size}', '250')}",
+        avatar_url: UrlHelper.absolute(@user.avatar_template.gsub('{size}', '250')),
         format: :svg
       )
 
