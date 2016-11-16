@@ -801,7 +801,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         describe 'when discobot is asked to roll dice' do
           it 'should create the right reply' do
-            other_post.update_attributes!(raw: '@discobot roll dice 2d1')
+            other_post.update_attributes!(raw: '@discobot roll 2d1')
             narrative.input(:reply, user, other_post)
             new_post = Post.last
 

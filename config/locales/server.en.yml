@@ -297,7 +297,7 @@ en:
 
           I currently know how to do the following things:
 
-          `@discobot roll dice 2d6`
+          `@discobot roll 2d6`
           > :game_die: dice roll: 3, 6
 
           `@discobot show me a quote`

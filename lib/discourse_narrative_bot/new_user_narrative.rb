@@ -718,7 +718,7 @@ module DiscourseNarrativeBot
       post_raw = @post.raw
 
       raw =
-        if match_data = post_raw.match(/roll dice (\d+)d(\d+)/i)
+        if match_data = post_raw.match(/roll (\d+)d(\d+)/i)
           I18n.t(i18n_key('random_mention.dice'),
             results: Dice.new(match_data[1].to_i, match_data[2].to_i).roll.join(", ")
           )
