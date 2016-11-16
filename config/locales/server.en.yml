@@ -43,7 +43,7 @@ en:
 
           That’s OK … life will still have to go on. I guess.
         message: |-
-          Did you notice how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :timer:
+          See how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :timer:
         unicorn: |-
           Awesome! I didn’t know you liked :unicorn:s too.
 
@@ -76,13 +76,11 @@ en:
         instructions: |-
           Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
 
-          Here are a few Wikipedia links to choose from:
+          To copy these Wikipedia links, tap and hold on mobile, or right click your mouse.
 
           - https://en.wikipedia.org/wiki/Inherently_funny_word
           - https://en.wikipedia.org/wiki/Death_by_coconut
-          - https://en.wikipedia.org/wiki/Calculator_spelling
-          
-          To copy a link, tap and hold on mobile, or right click your mouse.
+          - https://en.wikipedia.org/wiki/Calculator_spelling                  
 
           (This also works for links from YouTube, Amazon, Facebook, Twitter and hundreds of other popular websites. But let’s try Wikipedia first!)
         reply: |-
@@ -90,7 +88,7 @@ en:
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
-          Can you try adding the following Wikipedia link on its own line in your next reply?
+          Can you try adding the following Wikipedia link, on its own line, in your next reply?
 
           - https://en.wikipedia.org/wiki/Exotic_Shorthair
 
@@ -110,7 +108,9 @@ en:
         not_found: |-
           Looks like you didn’t upload an image so I’ve choosen a picture that I’m _sure_ you will enjoy.
 
-          Try uploading this next: `https://discourse.org/images/discobot-newuser/dog-walk.gif`
+          `https://discourse.org/images/discobot-newuser/dog-walk.gif`
+
+          Try uploading that one next!
 
       formatting:
         instructions: |-
@@ -120,9 +120,8 @@ en:
           **bold** and _italic_
           ```
 
-          … or push the bold <kbd><b>B</b></kbd> or <kbd><i>I</i></kbd> italic buttons in the editor.
+          … or push the <kbd><b>B</b></kbd> bold or <kbd><i>I</i></kbd> italic buttons in the editor.
 
-          (HTML and BBCode also work. If you’re interested in advanced formatting, there’s [a whole tutorial to try](http://commonmark.org/help) :nerd:)
         reply: |-
           Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
         not_found: |-
@@ -132,7 +131,7 @@ en:
 
       quoting:
         instructions: |-
-          Can you try quoting me when you reply so I know exactly which part you’re replying to?
+          Can you try quoting me when you reply, so I know exactly which part you’re replying to?
 
           > If this is coffee, please bring me some tea; but if this is tea, please bring me some coffee.
           >
@@ -156,15 +155,11 @@ en:
 
       bookmark:
         instructions: |-
-          It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private and always accessible from [your profile page](%{profile_page_url}). Click or tap on your avatar at the upper right &#8599; to get to your profile, anywhere, anytime.
 
-          OK! Can you **bookmark this post** using the bookmark <img src="https://discourse.org/images/discobot-newuser/font-awesome-bookmark.png" width="16" height="16"> button under this post? Use the show more button <kbd>&hellip;</kbd> to reveal additional actions.
+          Can you **bookmark this post** using the bookmark button <img src="https://discourse.org/images/discobot-newuser/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipse.png" width="16" height="16"> to reveal additional actions.
         reply: |-
-          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks).
-
-          And remember, wherever you go… there you are. :map:
         not_found: |-
-          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <kbd>&hellip;</kbd> to reveal additional actions if needed.
+          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipse.png" width="16" height="16"> to reveal additional actions if needed.
 
       emoji:
         instructions: |-
@@ -210,7 +205,7 @@ en:
 
           >  :imp: I wrote something nasty here
 
-          I guess you know what to do. Go ahead and **flag this post** <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> as spam, off-topic, or inappropriate! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
+          I guess you know what to do. Go ahead and **flag this post** <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> as spam, off-topic, or inappropriate! Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipse.png" width="16" height="16"> to reveal more actions for each post.
         reply: |-
           [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.)
 
@@ -240,9 +235,9 @@ en:
         hidden_message: |-
           How did you miss this capybara? :wink:
 
-          https://discourse.org/images/discobot-newuser/capybara-eating.jpg
+          https://discourse.org/images/discobot-newuser/capybara-eating.gif
 
-          Did you notice you’re now back at the beginning of our private conversation topic? **Reply with the `:herb:` emoji** and you’ll be automatically taken to the end.
+          Did you notice you’re now back at the beginning of our private conversation topic? Feed this poor hungry capybara by **replying with the `:herb:` emoji** and you’ll be automatically taken to the end.
         reply: |-
           Yay you found it :tada:. I knew I could count on you!
 
