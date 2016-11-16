@@ -677,7 +677,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         it 'should create the right reply' do
           post.update_attributes!(
-            raw: "#{described_class::SEARCH_ANSWER} this is a rabbit"
+            raw: "#{described_class::SEARCH_ANSWER} this is a capybara"
           )
 
           expect { narrative.input(:reply, user, post) }.to change { Post.count }.by(2)

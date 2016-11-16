@@ -88,7 +88,7 @@ module DiscourseNarrativeBot
     }
 
     RESET_TRIGGER = 'start over'.freeze
-    SEARCH_ANSWER = ':rabbit:'.freeze
+    SEARCH_ANSWER = ':herb:'.freeze
     DICE_TRIGGER = 'roll'.freeze
     TIMEOUT_DURATION = 900 # 15 mins
 

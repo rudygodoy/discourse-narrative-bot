@@ -252,7 +252,7 @@ en:
 
           - If you have a physical :keyboard:, use our handy keyboard shortcuts; press <kbd>?</kbd> to view them.
         not_found: |-
-          Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `bunny`? Be sure to limit your search to just the current topic, too!
+          Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `capybara`? Be sure to limit your search to just the current topic, too!
 
       end:
         message: |-
