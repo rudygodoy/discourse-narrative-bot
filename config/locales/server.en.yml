@@ -39,7 +39,7 @@ en:
         no_likes_message: |-
           Awww, you didn’t mention any of my favorite things.
 
-          https://media.giphy.com/media/TZBED1pP5m8N2/giphy.gif
+          https://discourse.org/images/discobot-newuser/sad-cat.gif
 
           That’s OK … life will still have to go on. I guess.
         message: |-
@@ -50,18 +50,21 @@ en:
           Did you know that the unicorn is Scotland’s national animal?
 
           https://en.wikipedia.org/wiki/Unicorn
+          
         ninja: |-
           Looks like we got ourselves a ninja over here.
+          
+          https://discourse.org/images/discobot-newuser/bitdance.gif
 
-          Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
-
-          http://nerdreactor.com/wp-content/uploads/2012/12/Ninja_Gaiden_NES_02.jpg
+          Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?          
+          
         rocket: |-
           Space is fascinating. If there are :alien:s, where are they?
 
           https://mic.com/articles/122857/fermi-paradox-explained-why-alien-life-hasnt-found-us-yet
 
           :rocket: :full_moon:
+          
         monkey: |-
           I hope you’re not up to any monkey business.
 
@@ -89,13 +92,13 @@ en:
 
           Can you try adding the following Wikipedia link on its own line in your next reply?
 
-           https://en.wikipedia.org/wiki/Exotic_Shorthair
+          - https://en.wikipedia.org/wiki/Exotic_Shorthair
 
       images:
         instructions: |-
           Here’s a picture of a unicorn:
 
-          <img src="http://i.imgur.com/awlYmzR.jpg" width="500" height="367">
+          <img src="https://discourse.org/images/discobot-newuser/unicorn.jpg" width="520" height="381">
 
           If you like it (and who wouldn’t!) go ahead and press the like :heart: button below this post to let me know.
 
@@ -107,7 +110,7 @@ en:
         not_found: |-
           Looks like you didn’t upload an image so I’ve choosen a picture that I’m _sure_ you will enjoy.
 
-          Try uploading this next: `https://media.giphy.com/media/AI1cYf864Rtlu/giphy.gif`
+          Try uploading this next: `https://discourse.org/images/discobot-newuser/dog-walk.gif`
 
       formatting:
         instructions: |-
@@ -233,13 +236,13 @@ en:
 
           _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, select the search :mag: icon at the top right &#8599; to search for it.
 
-          <small>Try searching for the term "bunny" in this topic</small>
+          <small>Try searching for the term "capybara" in this topic</small>
         hidden_message: |-
-          How did you miss this bunny? :wink:
+          How did you miss this capybara? :wink:
 
-          https://media.giphy.com/media/ef61oIGVyckY8/giphy.gif
+          https://discourse.org/images/discobot-newuser/capybara-eating.jpg
 
-          Did you notice you’re now back at the beginning of our private conversation topic? **Reply with the `:rabbit:` emoji** and you’ll be automatically taken to the end.
+          Did you notice you’re now back at the beginning of our private conversation topic? **Reply with the `:herb:` emoji** and you’ll be automatically taken to the end.
         reply: |-
           Yay you found it :tada:. I knew I could count on you!
 
