@@ -158,7 +158,7 @@ en:
         instructions: |-
           It’s handy to bookmark any posts or topics you may want to refer to later. Bookmarks are private and always accessible from [your profile page](%{profile_page_url}). Click or tap on your avatar at the upper right &#8599; to get to your profile, anywhere, anytime.
 
-          OK! Can you **bookmark this post** using the bookmark :bookmark: button under this post? Use the show more button <kbd>&hellip;</kbd> to reveal additional actions.
+          OK! Can you **bookmark this post** using the bookmark <img src="https://discourse.org/images/discobot-newuser/font-awesome-bookmark.png" width="16" height="16"> button under this post? Use the show more button <kbd>&hellip;</kbd> to reveal additional actions.
         reply: |-
           Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks).
 
@@ -210,7 +210,7 @@ en:
 
           >  :imp: I wrote something nasty here
 
-          I guess you know what to do. Go ahead and **flag this post** as spam, off-topic, or inappropriate! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
+          I guess you know what to do. Go ahead and **flag this post** <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> as spam, off-topic, or inappropriate! Use the show more button <kbd>&hellip;</kbd> to reveal more actions for each post.
         reply: |-
           [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.)
 
