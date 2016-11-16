@@ -218,7 +218,7 @@ en:
         instructions: |-
           One handy way to refer to previous discussions is to link to them. To get a link to a reply or topic:
 
-          - Use the link :link: button on the post.
+          - Use the link <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> button on the post.
 
           - Copy the link from the address bar of your browser.
 
