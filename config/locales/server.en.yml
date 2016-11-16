@@ -122,6 +122,7 @@ en:
 
           … or push the <kbd><b>B</b></kbd> bold or <kbd><i>I</i></kbd> italic buttons in the editor.
 
+          (HTML and BBCode also work. To learn more, try [this tutorial](http://commonmark.org/help) :nerd:)
         reply: |-
           Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
         not_found: |-
@@ -155,9 +156,11 @@ en:
 
       bookmark:
         instructions: |-
+          It’s handy to bookmark any posts or topics you may want to refer to later. 
 
           Can you **bookmark this post** using the bookmark button <img src="https://discourse.org/images/discobot-newuser/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipse.png" width="16" height="16"> to reveal additional actions.
         reply: |-
+          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). Click or tap on your avatar at the upper right &#8599; any time.
         not_found: |-
           Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipse.png" width="16" height="16"> to reveal additional actions if needed.
 
@@ -229,7 +232,7 @@ en:
         instructions: |-
           I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to dig up posts that myself and others have written in the past.
 
-          _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, select the search :mag: icon at the top right &#8599; to search for it.
+          _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, **select the search icon** <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> at the top right &#8599; to search for it.
 
           <small>Try searching for the term "capybara" in this topic</small>
         hidden_message: |-
