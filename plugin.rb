@@ -63,16 +63,16 @@ after_initialize do
         begin
           uri = URI(SiteSetting.logo_small_url)
 
-          logo_url =
-            if uri.host.empty? || uri.scheme.empty?
-              "#{Discourse.base_url}/#{uri.path}"
+          logo_uri =
+            if uri.host.blank? || uri.scheme.blank?
+              URI("#{Discourse.base_url}/#{uri.path}")
             else
               uri
             end
 
           logo_group = <<~URL
           <g transform="translate(#{width / 2 - 20} 280)">
-            <image height="40px" width="40px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(uri.open('rb', redirect: true, allow_redirections: :all).read)}"/>
+            <image height="40px" width="40px" xlink:href="data:image/png;base64,#{Base64.strict_encode64(logo_uri.open('rb', redirect: true, allow_redirections: :all).read)}"/>
           </g>
           URL
         rescue URI::InvalidURIError
