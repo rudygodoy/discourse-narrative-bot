@@ -1,7 +1,7 @@
 module Jobs
   class NewUserNarrativeInput < Jobs::Base
 
-    sidekiq_options queue: 'critical'
+    sidekiq_options queue: 'critical', retry: false
 
     def execute(args)
       user = User.find_by(id: args[:user_id])
