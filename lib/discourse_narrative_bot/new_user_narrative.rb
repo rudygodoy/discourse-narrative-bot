@@ -166,6 +166,8 @@ module DiscourseNarrativeBot
       topic = @post.topic
       post = topic.first_post
 
+      MessageBus.publish('/new_user_narrative/tutorial_search', {}, user_ids: [@user.id])
+
       raw = <<~RAW
       #{post.raw}
 

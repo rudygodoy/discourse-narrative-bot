@@ -1,3 +1,4 @@
 plugins:
   introbot_enabled:
-    true
+    default: true
+    client: true
