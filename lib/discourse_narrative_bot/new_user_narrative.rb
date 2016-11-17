@@ -831,7 +831,7 @@ module DiscourseNarrativeBot
         format: :svg
       )
 
-      "<img class='discobot-certificate' src='#{src}'/>"
+      "<img class='discobot-certificate' src='#{src}' width='650' height='464' alt='Certificate of Achievement'>"
     end
   end
 end
