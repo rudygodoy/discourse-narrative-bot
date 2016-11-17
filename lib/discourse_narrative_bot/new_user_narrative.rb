@@ -127,17 +127,24 @@ module DiscourseNarrativeBot
           @next_instructions_key = next_instructions_key
         end
 
-        if new_post = self.send(action)
-          @state = @data[:state] = new_state
-          @data[:last_post_id] = new_post.id
-          store_data
+        begin
+          if new_post = self.send(action)
+            old_data = @data.dup
+            @state = @data[:state] = new_state
+            @data[:last_post_id] = new_post.id
+            store_data
 
-          self.send("init_#{new_state}") if self.class.private_method_defined?("init_#{new_state}")
+            self.send("init_#{new_state}") if self.class.private_method_defined?("init_#{new_state}")
 
-          if new_state == :end
-            end_reply
-            cancel_timeout_job(user)
+            if new_state == :end
+              end_reply
+              cancel_timeout_job(user)
+            end
           end
+        rescue => e
+          @data = old_data
+          store_data
+          raise e
         end
       end
     end
@@ -171,7 +178,7 @@ module DiscourseNarrativeBot
         { skip_validations: true, force_new_version: true }
       )
 
-      set_state_data(:post_version, post.reload.version)
+      set_state_data(:post_version, post.reload.version || 0)
     end
 
     def say_hello

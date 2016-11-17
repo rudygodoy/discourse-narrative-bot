@@ -35,6 +35,20 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       DiscourseNarrativeBot::Store.set(user.id, state: :begin)
     end
 
+    describe 'when an error occurs' do
+      before do
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_link, topic_id: topic.id)
+      end
+
+      it 'should revert to the previous state' do
+        narrative.expects(:send).with('init_tutorial_search').raises(StandardError.new('some error'))
+        narrative.expects(:send).with(:reply_to_link).returns(post)
+
+        expect { narrative.input(:reply, user, post) }.to raise_error(StandardError, 'some error')
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_link)
+      end
+    end
+
     describe 'when post contains the right reset trigger' do
       before do
         DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_images, topic_id: topic.id)
