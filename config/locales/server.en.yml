@@ -243,7 +243,7 @@ en:
 
       end:
         message: |-
-          @%{username} That’s all I have to show you for now; thanks for sticking with me! After all that I think you deserve an award, so I made this for you:
+          That’s all I have to show you for now @%{username} – thanks for sticking with me! I think you deserve an award, so I made this for you:
 
           %{certificate}
 
