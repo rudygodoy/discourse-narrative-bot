@@ -14,6 +14,8 @@ en:
           - ninjas :japanese_castle:
           - monkeys :monkey_face:
 
+          Don’t be shy! This is a personal message, so nobody can see it except you and me. 
+
         message_1: |-
           Hi @%{username}
 
@@ -41,9 +43,9 @@ en:
 
           https://discourse.org/images/discobot-newuser/sad-cat.gif
 
-          That’s OK … life will still have to go on. I guess.
+          That’s all right … life will still have to go on. I guess.
         message: |-
-          See how my reply appeared automatically, without refreshing the page? Everything updates here in real time. :timer:
+          See how my reply appeared automatically, without refreshing the page? Everything updates here in real time as it happens. :clock1: :clock2: :clock3:  
         unicorn: |-
           Awesome! I didn’t know you liked :unicorn:s too.
 
@@ -74,9 +76,9 @@ en:
 
       onebox:
         instructions: |-
-          Can you share a Wikipedia link with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
+          Next, can you share one of these Wikipedia links with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
 
-          To copy these Wikipedia links, tap and hold on mobile, or right click your mouse.
+          To copy a link, tap and hold on mobile, or right click your mouse:
 
           - https://en.wikipedia.org/wiki/Inherently_funny_word
           - https://en.wikipedia.org/wiki/Death_by_coconut
@@ -116,15 +118,10 @@ en:
         instructions: |-
           Hey, can you make some words **bold** or _italic_ in your reply?
 
-          ```text
-          **bold** and _italic_
-          ```
-
-          … or push the <kbd><b>B</b></kbd> bold or <kbd><i>I</i></kbd> italic buttons in the editor.
-
-          (HTML and BBCode also work. To learn more, try [this tutorial](http://commonmark.org/help) :nerd:)
+          Just type `**bold**` or `_italic_` or push the <kbd><b>B</b></kbd> bold or <kbd><i>I</i></kbd> italic buttons in the editor.
+          
         reply: |-
-          Posts are so much more _**exciting**_ with a little formatting, don’t you agree?
+          Great job! Note that HTML and BBCode also work for formatting – to learn more, [try this tutorial](http://commonmark.org/help) :nerd:
         not_found: |-
           Aww, I didn’t find any formatting in your reply. :sweat_smile:
 
@@ -138,13 +135,9 @@ en:
           >
           > One advantage of talking to yourself is that you know at least somebody’s listening.
           >
-          > I want my children to have all the things I couldn’t afford. Then I want to move in with them.
-          >
-          > Whenever you find yourself on the side of the majority, it is time to pause and reflect.
-          >
           > Some people have a way with words, and other people… oh, uh, not have way.
 
-          Select the text of whichever &uarr; quote you prefer, and then press the **Quote Reply** button that pops up over your selection – or the **Reply** button at the bottom of this post.
+          Select the text of whichever &uarr; quote you prefer, and then press the **Quote** button that pops up over your selection – or the **Reply** button at the bottom of this post.
 
           Below the quote, type a word or two about why you picked that one, because I’m curious :thinking:
         reply: |-
@@ -156,27 +149,23 @@ en:
 
       bookmark:
         instructions: |-
-          It’s handy to bookmark any posts or topics you may want to refer to later. 
-
-          Can you **bookmark this post** using the bookmark button <img src="https://discourse.org/images/discobot-newuser/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
+          First, can you **bookmark this post** using the bookmark button <img src="https://discourse.org/images/discobot-newuser/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
         reply: |-
-          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). Click or tap on your avatar at the upper right &#8599; any time.
+          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). To get there, just select your avatar at the upper right &#8599;
         not_found: |-
           Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions if needed.
 
       emoji:
         instructions: |-
-          You may have seen me use little pictures in my replies, like so: :cherries: Those are called [emoji](https://en.wikipedia.org/wiki/Emoji).
+          You may have seen me use little pictures in my replies, like so: :blue_car::dash: Those are called [emoji](https://en.wikipedia.org/wiki/Emoji).
 
-          Can you **add an emoji** to your reply? Here’s how:
+          Can you **add an emoji** to your reply? Any of these will work:
 
           - Type a traditional "smiley" like `:)` or `;)` or or `:D` or `:P`
 
           - Type a colon `:` then complete the emoji name like `:tada:`
 
-          - Press the emoji button in the editor
-
-          :blue_car::dash:  Go for it!
+          - Press the emoji button <img src="https://discourse.org/images/discobot-newuser/font-awesome-smile.png" width="16" height="16"> in the editor
         reply: |-
           That’s downright :sparkles: _emojitastic!_ :sparkles:
         not_found: |-
@@ -192,7 +181,7 @@ en:
         instructions: |-
           Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. To mention someone, type `@` then complete their user name.
 
-          Give it a try – mention **my user name `@discobot`** in your reply.
+          Give it a try – mention **`@discobot`** in your reply.
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
@@ -210,7 +199,7 @@ en:
 
           I guess you know what to do. Go ahead and **flag this post** <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> as spam, off-topic, or inappropriate! Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
         reply: |-
-          [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post, I’ve gone ahead and removed the flag for now.)
+          [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post :angel:, I’ve gone ahead and removed the flag for now.)
 
       link:
         instructions: |-
@@ -230,7 +219,7 @@ en:
 
       search:
         instructions: |-
-          I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to dig up posts that myself and others have written in the past.
+          I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to find posts that myself and others have written in the past.
 
           _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, **select the search icon** <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> at the top right &#8599; to search for it.
 
@@ -246,15 +235,15 @@ en:
 
           - For more detailed searches, head over to the [full search page](%{search_url}) or expand the advanced search options.
 
-          - To jump to the beginning or end of a topic, try the topic timeline controls on the right &rarr;
+          - To jump anywhere in a long discussion, try the topic timeline controls on the right &rarr;
 
-          - If you have a physical :keyboard:, use our handy keyboard shortcuts; press <kbd>?</kbd> to view them.
+          - If you have a physical :keyboard:, press <kbd>?</kbd> to view our handy keyboard shortcuts.
         not_found: |-
           Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `capybara`? Be sure to limit your search to just the current topic, too!
 
       end:
         message: |-
-          @%{username} That’s all I have to show you for now; thanks for sticking with me! I think you deserve an award, so I made this for you:
+          @%{username} That’s all I have to show you for now; thanks for sticking with me! After all that I think you deserve an award, so I made this for you:
 
           %{certificate}
 
