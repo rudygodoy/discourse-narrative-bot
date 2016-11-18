@@ -75,20 +75,14 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_flag, :flag] => {
-        next_state: :tutorial_link,
-        next_instructions_key: 'link.instructions',
+        next_state: :tutorial_search,
+        next_instructions_key: 'search.instructions',
         action: :reply_to_flag
       },
 
       [:tutorial_flag, :reply] => {
         next_state: :tutorial_flag,
         action: :missing_flag
-      },
-
-      [:tutorial_link, :reply] => {
-        next_state: :tutorial_search,
-        next_instructions_key: 'search.instructions',
-        action: :reply_to_link
       },
 
       [:tutorial_search, :reply] => {
@@ -602,44 +596,6 @@ module DiscourseNarrativeBot
 
       enqueue_timeout_job(@user)
       reply
-    end
-
-    def reply_to_link
-      post_topic_id = @post.topic_id
-      return unless valid_topic?(post_topic_id)
-
-      @post.post_analyzer.cook(@post.raw, {})
-
-      if @post.post_analyzer.linked_hosts[Discourse.current_hostname]
-        raw = <<~RAW
-          #{I18n.t(i18n_key('link.reply'))}
-
-          #{I18n.t(i18n_key(@next_instructions_key))}
-        RAW
-
-        fake_delay
-
-        reply = reply_to(
-          raw: raw,
-          topic_id: post_topic_id,
-          reply_to_post_number: @post.post_number
-        )
-
-        enqueue_timeout_job(@user)
-        reply
-      else
-        fake_delay
-
-        topic = welcome_topic
-        reply_to(
-          raw: I18n.t(i18n_key('link.not_found'), topic_id: topic.id, slug: topic.slug),
-          topic_id: post_topic_id,
-          reply_to_post_number: @post.post_number
-        )
-
-        enqueue_timeout_job(@user)
-        false
-      end
     end
 
     def reply_to_search

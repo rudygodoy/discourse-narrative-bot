@@ -37,15 +37,15 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
     describe 'when an error occurs' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_link, topic_id: topic.id)
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_flag, topic_id: topic.id)
       end
 
       it 'should revert to the previous state' do
         narrative.expects(:send).with('init_tutorial_search').raises(StandardError.new('some error'))
-        narrative.expects(:send).with(:reply_to_link).returns(post)
+        narrative.expects(:send).with(:reply_to_flag).returns(post)
 
-        expect { narrative.input(:reply, user, post) }.to raise_error(StandardError, 'some error')
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_link)
+        expect { narrative.input(:flag, user, post) }.to raise_error(StandardError, 'some error')
+        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
       end
     end
 
@@ -603,67 +603,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           #{I18n.t('discourse_narrative_bot.new_user_narrative.flag.reply')}
 
           #{I18n.t(
-            'discourse_narrative_bot.new_user_narrative.link.instructions',
+            'discourse_narrative_bot.new_user_narrative.search.instructions',
             topic_id: welcome_topic.id, slug: welcome_topic.slug
           )}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_link)
-      end
-    end
-
-    describe 'link tutorial' do
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_link, topic_id: topic.id)
-      end
-
-      describe 'when post is not in the right topic' do
-        it 'should not do anything' do
-          other_post
-          narrative.expects(:enqueue_timeout_job).with(user).never
-
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_link)
-        end
-      end
-
-      describe 'when post does not contain any links' do
-        it 'should create the right reply' do
-          narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
-
-          expect(Post.last.raw).to eq(I18n.t(
-            'discourse_narrative_bot.new_user_narrative.link.not_found',
-            topic_id: welcome_topic.id, slug: welcome_topic.slug
-          ))
-
-          store = DiscourseNarrativeBot::Store.get(user.id)
-
-          expect(store[:state].to_sym).to eq(:tutorial_link)
-        end
-      end
-
-      it 'should create the right reply' do
-        pending "somehow it isn't oneboxed in tests"
-
-        post.update_attributes!(
-          raw: "https://#{Discourse.current_hostname}/t/something-to-say/485"
-        )
-
-        narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
-        new_post = Post.last
-
-        expected_raw = <<~RAW
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.link.reply')}
-
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.search.instructions')}
-        RAW
-
-        expect(new_post.raw).to eq(expected_raw.chomp)
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
-        expect(store[:tutorial_search][:post_version]).to eq(2)
       end
     end
 
@@ -820,7 +766,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       let(:other_post) { Fabricate(:post, topic: other_topic) }
 
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_link, topic_id: topic.id)
+        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_flag, topic_id: topic.id)
       end
 
       describe 'when discobot is mentioned' do
