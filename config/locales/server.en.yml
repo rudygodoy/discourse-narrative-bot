@@ -239,7 +239,9 @@ en:
 
           - If you have a physical :keyboard:, press <kbd>?</kbd> to view our handy keyboard shortcuts.
         not_found: |-
-          Hmm… Looks like you might be having trouble. Sorry about that. Did you search <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> for the term **capy&#8203;bara**? Be sure to limit your search to just the current topic, too!
+          Hmm… Looks like you might be having trouble. Sorry about that. Did you search <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> for the term **capy&#8203;bara**?
+          
+          (Be sure to limit your search to just the current topic, too!)
 
       end:
         message: |-
