@@ -76,21 +76,19 @@ en:
 
       onebox:
         instructions: |-
-          Next, can you share one of these Wikipedia links with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
+          Next, can you share one of these links with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
 
           To copy a link, tap and hold on mobile, or right click your mouse:
 
           - https://en.wikipedia.org/wiki/Inherently_funny_word
           - https://en.wikipedia.org/wiki/Death_by_coconut
           - https://en.wikipedia.org/wiki/Calculator_spelling
-
-          (This also works for links from YouTube, Amazon, Facebook, Twitter and hundreds of other popular websites. But let’s try Wikipedia first!)
         reply: |-
           That’s an excellent link! Remember, the link has to be on a line _all by itself_, with nothing else in front of it or behind it.
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
-          Can you try adding the following Wikipedia link, on its own line, in your next reply?
+          Can you try adding the following link, on its own line, in your next reply?
 
           - https://en.wikipedia.org/wiki/Exotic_Shorthair
 
@@ -145,7 +143,7 @@ en:
         not_found: |-
           Hmm it looks like you didn’t quote me in your reply.
 
-          Selecting any text in my post will bring up the **Quote Reply** button. Can you try again?
+          Selecting any text in my post will bring up the **Quote** button. And pressing **Reply** with any text selected will work, too! Can you try again?
 
       bookmark:
         instructions: |-
@@ -157,13 +155,13 @@ en:
 
       emoji:
         instructions: |-
-          You may have seen me use little pictures in my replies, like so: :blue_car::dash: Those are called [emoji](https://en.wikipedia.org/wiki/Emoji).
+          You may have seen me use little pictures in my replies :blue_car::dash: Those are called [emoji](https://en.wikipedia.org/wiki/Emoji).
 
           Can you **add an emoji** to your reply? Any of these will work:
 
-          - Type a traditional "smiley" like `:)` or `;)` or or `:D` or `:P`
+          - Type a traditional "smiley" `:) ;) :D :P`
 
-          - Type a colon `:` then complete the emoji name like `:tada:`
+          - Type a colon `:` then complete the emoji name `:tada:`
 
           - Press the emoji button <img src="https://discourse.org/images/discobot-newuser/font-awesome-smile.png" width="16" height="16"> in the editor
         reply: |-
@@ -171,9 +169,9 @@ en:
         not_found: |-
           Oops, I don’t see any Emoji in your reply? Oh no! :sob:
 
-          Try typing a colon <kbd>:</kbd> to bring up the emoji picker, then type the first few letters of what you want, such as `:bird:`.
+          Try typing a colon <kbd>:</kbd> to bring up the emoji picker, then type the first few letters of what you want, such as `:bird:`
 
-          Or you can press the <kbd>☺</kbd> emoji button in the editor for a visual emoji picker.
+          Or you can press the emoji button <img src="https://discourse.org/images/discobot-newuser/font-awesome-smile.png" width="16" height="16"> in the editor for a visual emoji picker.
 
           (If you are on a mobile device, you can also enter Emoji directly from your keyboard, too.)
 
@@ -185,9 +183,9 @@ en:
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
-          @%{username} see how you get a notification when I mention your user name? You can get my attention with `@discobot`.
+          See how you get a notification when I mention you as @%{username}? You can get my attention with `@discobot`. Can you try again?
 
-          And yes, my user name is spelled _disco_, as in the 1970s dance craze. I do [love the nightlife!](https://www.youtube.com/watch?v=B_wGI3_sGf8) :dancer:
+          (And yes, my user name is spelled _disco_, as in the 1970s dance craze. I do [love the nightlife!](https://www.youtube.com/watch?v=B_wGI3_sGf8) :dancer:)
 
       flag:
         instructions: |-
@@ -223,7 +221,7 @@ en:
 
           _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, **select the search icon** <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> at the top right &#8599; to search for it.
 
-          <small>Try searching for the term "capybara" in this topic</small>
+          <small>Try searching for the term "capy&#8203;bara" in this topic</small>
         hidden_message: |-
           How did you miss this capybara? :wink:
 
@@ -239,7 +237,7 @@ en:
 
           - If you have a physical :keyboard:, press <kbd>?</kbd> to view our handy keyboard shortcuts.
         not_found: |-
-          Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `capybara`? Be sure to limit your search to just the current topic, too!
+          Hmm… Looks like you might be having trouble. Sorry about that. Did you search for the term `capy&#8203;bara`? Be sure to limit your search to just the current topic, too!
 
       end:
         message: |-
