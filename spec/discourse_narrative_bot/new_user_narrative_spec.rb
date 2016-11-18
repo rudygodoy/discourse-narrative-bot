@@ -552,9 +552,10 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_flag, :flag]' do
+    describe 'flag tutorial' do
       let(:post) { Fabricate(:post, user: described_class.discobot_user, topic: topic) }
       let(:flag) { Fabricate(:flag, post: post, user: user) }
+      let(:other_post) { Fabricate(:post, user: user, topic: topic) }
 
       before do
         flag
@@ -577,6 +578,16 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           flag.update_attributes!(post: other_post)
 
           expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+        end
+      end
+
+      describe 'when user replies to the topic' do
+        it 'should create the right reply' do
+          narrative.input(:reply, user, other_post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.flag.not_found'))
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
         end
       end

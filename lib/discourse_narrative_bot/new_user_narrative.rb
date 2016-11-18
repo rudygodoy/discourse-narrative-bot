@@ -80,6 +80,11 @@ module DiscourseNarrativeBot
         action: :reply_to_flag
       },
 
+      [:tutorial_flag, :reply] => {
+        next_state: :tutorial_flag,
+        action: :missing_flag
+      },
+
       [:tutorial_link, :reply] => {
         next_state: :tutorial_search,
         next_instructions_key: 'search.instructions',
@@ -558,6 +563,19 @@ module DiscourseNarrativeBot
       end
 
       valid
+    end
+
+    def missing_flag
+      return unless valid_topic?(@post.topic_id)
+      return if @post.user_id == -2
+
+      fake_delay
+
+      reply = reply_to(
+        raw: I18n.t(i18n_key('flag.not_found')),
+        topic_id: @post.topic_id,
+        reply_to_post_number: @post.post_number
+      )
     end
 
     def reply_to_flag
