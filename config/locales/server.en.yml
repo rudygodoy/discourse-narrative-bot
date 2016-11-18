@@ -84,7 +84,7 @@ en:
           - https://en.wikipedia.org/wiki/Death_by_coconut
           - https://en.wikipedia.org/wiki/Calculator_spelling
         reply: |-
-          That’s an excellent link! Remember, the link has to be on a line _all by itself_, with nothing else in front of it or behind it.
+          Cool! This will work for most <img src="https://discourse.org/images/discobot-newuser/font-awesome-link.png" width="16" height="16"> links — just remember, it must be on a line _all by itself_, with nothing else in front of it, or behind it.
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
@@ -116,10 +116,12 @@ en:
         instructions: |-
           Hey, can you make some words **bold** or _italic_ in your reply?
 
-          Just type `**bold**` or `_italic_` or push the <kbd><b>B</b></kbd> bold or <kbd><i>I</i></kbd> italic buttons in the editor.
+          - type `**bold**` or `_italic_`
+          
+          - or, push the <kbd><b>B</b></kbd> or <kbd><i>I</i></kbd> buttons in the editor
 
         reply: |-
-          Great job! Note that HTML and BBCode also work for formatting – to learn more, [try this tutorial](http://commonmark.org/help) :nerd:
+          Great job! HTML and BBCode also work for formatting – to learn more, [try this tutorial](http://commonmark.org/help) :nerd:
         not_found: |-
           Aww, I didn’t find any formatting in your reply. :sweat_smile:
 
@@ -159,9 +161,9 @@ en:
 
           Can you **add an emoji** to your reply? Any of these will work:
 
-          - Type a traditional "smiley" `:) ;) :D :P`
+          - Type `:) ;) :D :P :O`
 
-          - Type a colon `:` then complete the emoji name `:tada:`
+          - Type colon <kbd>:</kbd> then complete the emoji name `:tada:`
 
           - Press the emoji button <img src="https://discourse.org/images/discobot-newuser/font-awesome-smile.png" width="16" height="16"> in the editor
         reply: |-
@@ -177,7 +179,7 @@ en:
 
       mention:
         instructions: |-
-          Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. To mention someone, type `@` then complete their user name.
+          Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. Type `@` then complete their user name to mention them.
 
           Give it a try – mention **`@discobot`** in your reply.
         reply: |-
@@ -195,7 +197,7 @@ en:
 
           >  :imp: I wrote something nasty here
 
-          I guess you know what to do. Go ahead and **flag this post** <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> as spam, off-topic, or inappropriate! Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
+          I guess you know what to do. Go ahead and **flag this post** <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> as inappropriate! Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
         reply: |-
           [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post :angel:, I’ve gone ahead and removed the flag for now.)
         not_found: |-
@@ -203,8 +205,6 @@ en:
 
       search:
         instructions: |-
-          I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to find posts that myself and others have written in the past.
-
           _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, **select the search icon** <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> at the top right &#8599; to search for it.
 
           <small>Try searching for the term "capy&#8203;bara" in this topic</small>
@@ -213,7 +213,7 @@ en:
 
           https://discourse.org/images/discobot-newuser/capybara-eating.gif
 
-          Did you notice you’re now back at the beginning of our private conversation topic? Feed this poor hungry capybara by **replying with the `:herb:` emoji** and you’ll be automatically taken to the end.
+          Did you notice you’re now back at the beginning? Feed this poor hungry capybara by **replying with the `:herb:` emoji** and you’ll be automatically taken to the end.
         reply: |-
           Yay you found it :tada:. I knew I could count on you!
 
