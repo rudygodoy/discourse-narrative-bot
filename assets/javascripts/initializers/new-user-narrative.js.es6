@@ -1,5 +1,4 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
-import HeaderWidget from 'discourse/widgets/header';
 
 function initialize(api) {
   const messageBus = api.container.lookup('message-bus:main');
@@ -15,7 +14,11 @@ function initialize(api) {
   });
 
   api.attachWidgetAction('header', 'headerSearchContextTrigger', function() {
-    this.state.contextEnabled = true;
+    if (this.site.mobileView) {
+      this.state.skipSearchContext = false;
+    } else {
+      this.state.contextEnabled = true;
+    }
   });
 
   if (messageBus && currentUser) {
