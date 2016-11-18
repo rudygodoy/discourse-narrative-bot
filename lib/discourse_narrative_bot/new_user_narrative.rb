@@ -27,6 +27,11 @@ module DiscourseNarrativeBot
         action: :reply_to_bookmark
       },
 
+      [:tutorial_bookmark, :reply] => {
+        next_state: :tutorial_bookmark,
+        action: :missing_bookmark
+      },
+
       [:tutorial_onebox, :reply] => {
         next_state: :tutorial_images,
         next_instructions_key: 'images.instructions',
@@ -244,6 +249,19 @@ module DiscourseNarrativeBot
 
       enqueue_timeout_job(@user)
       reply
+    end
+
+    def missing_bookmark
+      return unless valid_topic?(@post.topic_id)
+      return if @post.user_id == -2
+
+      fake_delay
+
+      reply = reply_to(
+        raw: I18n.t(i18n_key('bookmark.not_found')),
+        topic_id: @post.topic_id,
+        reply_to_post_number: @post.post_number
+      )
     end
 
     def reply_to_bookmark

@@ -219,6 +219,16 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
+      describe 'when user replies to the topic' do
+        it 'should create the right reply' do
+          narrative.input(:reply, user, post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.not_found'))
+          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_bookmark)
+        end
+      end
+
       it 'should create the right reply' do
         post.update_attributes!(user: described_class.discobot_user)
         narrative.expects(:enqueue_timeout_job).with(user)
