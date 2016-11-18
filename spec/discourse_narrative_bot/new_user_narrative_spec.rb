@@ -748,6 +748,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         Fabricate(:private_message_topic, topic_allowed_users: [topic_allowed_user, bot])
       end
 
+      describe 'when a new like is made' do
+        it 'should not do anything' do
+          post = Fabricate(:post, topic: other_topic)
+
+          expect { narrative.input(:like, user, post) }.to_not change { Post.count }
+        end
+      end
+
       describe 'when a new message is made' do
         it 'should create the right reply' do
           post = Fabricate(:post, topic: other_topic)
