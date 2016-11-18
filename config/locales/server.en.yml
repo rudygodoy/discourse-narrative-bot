@@ -201,22 +201,6 @@ en:
         not_found: |-
           Oh no, my nasty post hasn’t been flagged yet. :worried: Can you flag it as inappropriate using the flag button <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16">? Don’t forget to use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
 
-      link:
-        instructions: |-
-          One handy way to refer to previous discussions is to link to them. To get a link to a reply or topic:
-
-          - Use the link <img src="https://discourse.org/images/discobot-newuser/font-awesome-link.png" width="16" height="16"> button on the post.
-
-          - Copy the link from the address bar of your browser.
-
-          You know what’s _really_ cool? A link between two topics is visible on both, so everyone can follow the links back and forth.
-
-          Can you **paste a link to [this topic](/t/%{slug}/%{topic_id})** in your next reply?
-        reply: |-
-          Well done! Your link will also appear as a footnote on the post you linked to.
-        not_found: |-
-          Did you forget to link [this topic](/t/%{slug}/%{topic_id}) in your reply?
-
       search:
         instructions: |-
           I don’t know about you but my programmers didn’t give me a lot of memory. I’m always using search to find posts that myself and others have written in the past.
