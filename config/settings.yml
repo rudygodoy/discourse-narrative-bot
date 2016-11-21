@@ -1,4 +1,4 @@
 plugins:
-  introbot_enabled:
+  discourse_narratibe_bot_enabled:
     default: true
     client: true

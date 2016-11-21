@@ -3,7 +3,7 @@
 # version: 0.0.1
 # authors: Nick Sahler (@nicksahler)
 
-enabled_site_setting :introbot_enabled
+enabled_site_setting :discourse_narratibe_bot_enabled
 
 after_initialize do
   SeedFu.fixture_paths << Rails.root.join("plugins", "discourse-narrative-bot", "db", "fixtures").to_s

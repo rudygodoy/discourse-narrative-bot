@@ -1,6 +1,6 @@
 en:
   site_settings:
-    introbot_enabled: 'Enable intro bot'
+    discourse_narratibe_bot_enabled: 'Enable Discourse Narrative Bot'
 
   discourse_narrative_bot:
 
@@ -117,7 +117,7 @@ en:
           Hey, can you make some words **bold** or _italic_ in your reply?
 
           - type `**bold**` or `_italic_`
-          
+
           - or, push the <kbd><b>B</b></kbd> or <kbd><i>I</i></kbd> buttons in the editor
 
         reply: |-
