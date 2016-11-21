@@ -1,6 +1,6 @@
 en:
   site_settings:
-    discourse_narratibe_bot_enabled: 'Enable Discourse Narrative Bot'
+    discourse_narrative_bot_enabled: 'Enable Discourse Narrative Bot'
 
   discourse_narrative_bot:
 
