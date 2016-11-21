@@ -214,6 +214,10 @@ module DiscourseNarrativeBot
         opts = opts.merge(topic_id: @post.topic_id)
       end
 
+      if @data[:topic_id]
+        opts = opts.merge(topic_id: @data[:topic_id])
+      end
+
       post = reply_to(opts)
       @data[:topic_id] = post.topic.id
       post
@@ -740,22 +744,16 @@ module DiscourseNarrativeBot
 
     def reset_bot?
       reset = false
-      topic_id = @data[:topic_id]
 
       if @post &&
          bot_mentioned? &&
-         valid_topic?(topic_id) &&
          @post.raw.match(/#{RESET_TRIGGER}/)
 
         reset_data
-        set_data({ topic_id: topic_id })
+        set_data(topic_id: @post.topic_id)
         fake_delay
 
-        reply_to(
-          raw: I18n.t(i18n_key('reset.message')),
-          topic_id: @post.topic_id,
-          reply_to_post_number: @post.post_number
-        )
+        Jobs.enqueue(:new_user_narrative_input, user_id: @user.id, input: :init)
 
         reset = true
       end

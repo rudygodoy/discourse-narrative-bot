@@ -250,9 +250,6 @@ en:
           It’s not you – it’s me. I blame my programmers! They’re terrible!
 
           Perhaps let’s start over? Say `@discobot %{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
-      reset:
-        message: |-
-          Got it! Just mention me here to get started again!
       timeout:
         message: |-
           Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:

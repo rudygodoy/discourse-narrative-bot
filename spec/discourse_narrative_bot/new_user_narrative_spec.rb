@@ -55,16 +55,10 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       it 'should reset the bot' do
-        post.update_attributes!(raw: "@discobot something #{described_class::RESET_TRIGGER}")
-        narrative.input(:reply, user, post)
-
-        expect(DiscourseNarrativeBot::Store.get(user.id)).to eq({ "topic_id" => topic.id })
-
-        expect(Post.last.raw).to eq(I18n.t(
-          'discourse_narrative_bot.new_user_narrative.reset.message'
-        ))
-
         Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
+          post.update_attributes!(raw: "@discobot something #{described_class::RESET_TRIGGER}")
+          narrative.input(:reply, user, post)
+
           expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
             username: user.username, title: SiteSetting.title
           )
@@ -75,13 +69,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
           RAW
 
-          narrative.input(
-            :reply,
-            user,
-            Fabricate(:post, topic: topic, raw: '@discobot hi there!!')
-          )
-
           new_post = Post.last
+
+          expect(DiscourseNarrativeBot::Store.get(user.id)).to eq({
+            "topic_id" => topic.id,
+            "state" => "waiting_reply",
+            "last_post_id" => new_post.id
+          })
+
           expect(new_post.raw).to eq(expected_raw.chomp)
           expect(new_post.topic.id).to eq(topic.id)
         end
