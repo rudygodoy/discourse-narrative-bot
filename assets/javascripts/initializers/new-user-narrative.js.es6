@@ -33,6 +33,6 @@ export default {
 
   initialize(container) {
     const siteSettings = container.lookup('site-settings:main');
-    if (siteSettings.discourse_narratibe_bot_enabled) withPluginApi('0.5', initialize);
+    if (siteSettings.discourse_narrative_bot_enabled) withPluginApi('0.5', initialize);
   }
 };
