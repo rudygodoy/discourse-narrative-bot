@@ -149,7 +149,7 @@ en:
 
       bookmark:
         instructions: |-
-          First, can you **bookmark this post** using the bookmark button <img src="/assets/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
+          First, can you **bookmark this post** using the bookmark button <img src="/assets/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="/assets/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
         reply: |-
           Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). To get there, just select your avatar at the upper right &#8599;
         not_found: |-
