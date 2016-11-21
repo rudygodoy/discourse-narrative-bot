@@ -131,18 +131,12 @@ after_initialize do
     DiscourseNarrativeBot::Store.set(self.id, nil)
   end
 
-  User.class_eval do
-    after_commit :enqueue_new_user_narrative, on: :create
-
-    private
-
-    def enqueue_new_user_narrative
-      if ![-1, -2].include?(self.id)
-        Jobs.enqueue(:new_user_narrative_input,
-          user_id: self.id,
-          input: :init
-        )
-      end
+  self.add_model_callback(User, :after_commit, on: :create) do
+    if ![-1, -2].include?(self.id)
+      Jobs.enqueue(:new_user_narrative_input,
+        user_id: self.id,
+        input: :init
+      )
     end
   end
 
@@ -156,31 +150,25 @@ after_initialize do
     end
   end
 
-  PostAction.class_eval do
-    after_commit :enqueue_new_user_narrative, on: :create
+  self.add_model_callback(PostAction, :after_commit, on: :create) do
+    return true if [-1, -2].include?(self.user.id)
 
-    private
-
-    def enqueue_new_user_narrative
-      return true if [-1, -2].include?(self.user.id)
-
-      input =
-        case self.post_action_type_id
-        when *PostActionType.flag_types.values
-          :flag
-        when PostActionType.types[:like]
-          :like
-        when PostActionType.types[:bookmark]
-          :bookmark
-        end
-
-      if input
-        Jobs.enqueue(:new_user_narrative_input,
-          user_id: self.user.id,
-          post_id: self.post.id,
-          input: input
-        )
+    input =
+      case self.post_action_type_id
+      when *PostActionType.flag_types.values
+        :flag
+      when PostActionType.types[:like]
+        :like
+      when PostActionType.types[:bookmark]
+        :bookmark
       end
+
+    if input
+      Jobs.enqueue(:new_user_narrative_input,
+        user_id: self.user.id,
+        post_id: self.post.id,
+        input: input
+      )
     end
   end
 end
