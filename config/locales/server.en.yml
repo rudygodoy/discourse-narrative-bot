@@ -41,7 +41,7 @@ en:
         no_likes_message: |-
           Awww, you didn’t mention any of my favorite things.
 
-          https://discourse.org/images/discobot-newuser/sad-cat.gif
+          <img src='/assets/images/sad-cat.gif'>
 
           That’s all right … life will still have to go on. I guess.
         message: |-
@@ -56,7 +56,7 @@ en:
         ninja: |-
           Looks like we got ourselves a ninja over here.
 
-          https://discourse.org/images/discobot-newuser/bitdance.gif
+          <img src='/assets/images/bitdance.gif'>
 
           Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
 
@@ -84,7 +84,7 @@ en:
           - https://en.wikipedia.org/wiki/Death_by_coconut
           - https://en.wikipedia.org/wiki/Calculator_spelling
         reply: |-
-          Cool! This will work for most <img src="https://discourse.org/images/discobot-newuser/font-awesome-link.png" width="16" height="16"> links — just remember, it must be on a line _all by itself_, with nothing else in front of it, or behind it.
+          Cool! This will work for most <img src="/assets/images/font-awesome-link.png" width="16" height="16"> links — just remember, it must be on a line _all by itself_, with nothing else in front of it, or behind it.
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
@@ -96,7 +96,7 @@ en:
         instructions: |-
           Here’s a picture of a unicorn:
 
-          <img src="https://discourse.org/images/discobot-newuser/unicorn.jpg" width="520" height="381">
+          <img src="/assets/images/unicorn.jpg" width="520" height="381">
 
           If you like it (and who wouldn’t!) go ahead and press the like :heart: button below this post to let me know.
 
@@ -149,11 +149,11 @@ en:
 
       bookmark:
         instructions: |-
-          First, can you **bookmark this post** using the bookmark button <img src="https://discourse.org/images/discobot-newuser/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
+          First, can you **bookmark this post** using the bookmark button <img src="/assets/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
         reply: |-
           Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). To get there, just select your avatar at the upper right &#8599;
         not_found: |-
-          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions if needed.
+          Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <img src="/assets/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions if needed.
 
       emoji:
         instructions: |-
@@ -165,7 +165,7 @@ en:
 
           - Type colon <kbd>:</kbd> then complete the emoji name `:tada:`
 
-          - Press the emoji button <img src="https://discourse.org/images/discobot-newuser/font-awesome-smile.png" width="16" height="16"> in the editor
+          - Press the emoji button <img src="/assets/images/font-awesome-smile.png" width="16" height="16"> in the editor
         reply: |-
           That’s downright :sparkles: _emojitastic!_ :sparkles:
         not_found: |-
@@ -173,7 +173,7 @@ en:
 
           Try typing a colon <kbd>:</kbd> to bring up the emoji picker, then type the first few letters of what you want, such as `:bird:`
 
-          Or you can press the emoji button <img src="https://discourse.org/images/discobot-newuser/font-awesome-smile.png" width="16" height="16"> in the editor for a visual emoji picker.
+          Or you can press the emoji button <img src="/assets/images/font-awesome-smile.png" width="16" height="16"> in the editor for a visual emoji picker.
 
           (If you are on a mobile device, you can also enter Emoji directly from your keyboard, too.)
 
@@ -197,21 +197,21 @@ en:
 
           >  :imp: I wrote something nasty here
 
-          I guess you know what to do. Go ahead and **flag this post** <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16"> as inappropriate! Use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
+          I guess you know what to do. Go ahead and **flag this post** <img src="/assets/images/font-awesome-flag.png" width="16" height="16"> as inappropriate! Use the show more button <img src="/assets/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
         reply: |-
           [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post :angel:, I’ve gone ahead and removed the flag for now.)
         not_found: |-
-          Oh no, my nasty post hasn’t been flagged yet. :worried: Can you flag it as inappropriate using the flag button <img src="https://discourse.org/images/discobot-newuser/font-awesome-flag.png" width="16" height="16">? Don’t forget to use the show more button <img src="https://discourse.org/images/discobot-newuser/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
+          Oh no, my nasty post hasn’t been flagged yet. :worried: Can you flag it as inappropriate using the flag button <img src="/assets/images/font-awesome-flag.png" width="16" height="16">? Don’t forget to use the show more button <img src="/assets/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
 
       search:
         instructions: |-
-          _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, **select the search icon** <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> at the top right &#8599; to search for it.
+          _psst_ … I’ve hidden a surprise in one of my previous replies. If you’re up for the challenge, **select the search icon** <img src="/assets/images/font-awesome-search.png" width="16" height="16"> at the top right &#8599; to search for it.
 
           <small>Try searching for the term "capy&#8203;bara" in this topic</small>
         hidden_message: |-
           How did you miss this capybara? :wink:
 
-          https://discourse.org/images/discobot-newuser/capybara-eating.gif
+          <img src="/assets/images/capybara-eating.gif"/>
 
           Did you notice you’re now back at the beginning? Feed this poor hungry capybara by **replying with the `:herb:` emoji** and you’ll be automatically taken to the end.
         reply: |-
@@ -223,7 +223,7 @@ en:
 
           - If you have a physical :keyboard:, press <kbd>?</kbd> to view our handy keyboard shortcuts.
         not_found: |-
-          Hmm… Looks like you might be having trouble. Sorry about that. Did you search <img src="https://discourse.org/images/discobot-newuser/font-awesome-search.png" width="16" height="16"> for the term **capy&#8203;bara**?
+          Hmm… Looks like you might be having trouble. Sorry about that. Did you search <img src="/assets/images/font-awesome-search.png" width="16" height="16"> for the term **capy&#8203;bara**?
 
           (Be sure to limit your search to just the current topic, too!)
 
