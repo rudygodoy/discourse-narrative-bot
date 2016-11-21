@@ -10,11 +10,6 @@ module DiscourseNarrativeBot
         action: :say_hello
       },
 
-      [:begin, :reply] => {
-        next_state: :waiting_reply,
-        action: :say_hello
-      },
-
       [:waiting_reply, :reply] => {
         next_state: :tutorial_bookmark,
         next_instructions_key: 'bookmark.instructions',
