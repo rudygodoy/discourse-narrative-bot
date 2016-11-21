@@ -9,6 +9,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
   let(:narrative) { described_class.new }
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
+  let(:discobot_user) { User.find(-2) }
 
   describe '#notify_timeout' do
     before do
@@ -24,7 +25,9 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       expect(Post.last.raw).to eq(I18n.t(
         'discourse_narrative_bot.new_user_narrative.timeout.message',
-        username: user.username, reset_trigger: described_class::RESET_TRIGGER
+        username: user.username,
+        reset_trigger: described_class::RESET_TRIGGER,
+        discobot_username: discobot_user.username
       ))
     end
   end
@@ -486,7 +489,9 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.emoji.reply')}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.mention.instructions')}
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.mention.instructions',
+            discobot_username: discobot_user.username
+          )}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
@@ -516,7 +521,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(Post.last.raw).to eq(I18n.t(
             'discourse_narrative_bot.new_user_narrative.mention.not_found',
-            username: user.username
+            username: user.username,
+            discobot_username: discobot_user.username
           ))
 
           expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_mention)
@@ -691,7 +697,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         expect(Post.last.raw).to eq(I18n.t(
           'discourse_narrative_bot.new_user_narrative.do_not_understand.first_response',
-          reset_trigger: described_class::RESET_TRIGGER
+          reset_trigger: described_class::RESET_TRIGGER,
+          discobot_username: discobot_user.username
         ))
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
@@ -704,7 +711,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         expect(Post.last.raw).to eq(I18n.t(
           'discourse_narrative_bot.new_user_narrative.do_not_understand.second_response',
-          reset_trigger: described_class::RESET_TRIGGER
+          reset_trigger: described_class::RESET_TRIGGER,
+          discobot_username: discobot_user.username
         ))
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
@@ -729,9 +737,10 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
 
-        expect(Post.last.raw).to eq(
-          I18n.t("discourse_narrative_bot.new_user_narrative.random_mention.message")
-        )
+        expect(Post.last.raw).to eq(I18n.t(
+          "discourse_narrative_bot.new_user_narrative.random_mention.message",
+          discobot_username: discobot_user.username
+        ))
       end
     end
 
@@ -757,9 +766,10 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           narrative.input(:reply, user, post)
 
-          expect(Post.last.raw).to eq(
-            I18n.t("discourse_narrative_bot.new_user_narrative.random_mention.message")
-          )
+          expect(Post.last.raw).to eq(I18n.t(
+            "discourse_narrative_bot.new_user_narrative.random_mention.message",
+            discobot_username: discobot_user.username
+          ))
         end
       end
     end
@@ -778,9 +788,10 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.input(:reply, user, other_post)
           new_post = Post.last
 
-          expect(new_post.raw).to eq(
-            I18n.t("discourse_narrative_bot.new_user_narrative.random_mention.message")
-          )
+          expect(new_post.raw).to eq(I18n.t(
+            "discourse_narrative_bot.new_user_narrative.random_mention.message",
+            discobot_username: discobot_user.username
+          ))
         end
 
         describe 'when discobot is asked to roll dice' do

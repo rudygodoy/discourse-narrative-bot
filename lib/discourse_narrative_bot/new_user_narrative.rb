@@ -153,7 +153,11 @@ module DiscourseNarrativeBot
 
       if post = Post.find_by(id: @data[:last_post_id])
         reply_to(
-          raw: I18n.t(i18n_key("timeout.message"), username: user.username, reset_trigger: RESET_TRIGGER),
+          raw: I18n.t(i18n_key("timeout.message"),
+            username: user.username,
+            reset_trigger: RESET_TRIGGER,
+            discobot_username: self.class.discobot_user.username
+          ),
           topic_id: post.topic.id
         )
       end
@@ -482,7 +486,7 @@ module DiscourseNarrativeBot
         raw = <<~RAW
           #{I18n.t(i18n_key('emoji.reply'))}
 
-          #{I18n.t(i18n_key(@next_instructions_key))}
+          #{I18n.t(i18n_key(@next_instructions_key), discobot_username: self.class.discobot_user.username)}
         RAW
 
         fake_delay
@@ -536,7 +540,7 @@ module DiscourseNarrativeBot
         fake_delay
 
         reply_to(
-          raw: I18n.t(i18n_key('mention.not_found'), username: @user.username),
+          raw: I18n.t(i18n_key('mention.not_found'), username: @user.username, discobot_username: self.class.discobot_user.username),
           topic_id: post_topic_id,
           reply_to_post_number: @post.post_number
         )
@@ -696,13 +700,19 @@ module DiscourseNarrativeBot
       case count
       when 0
         reply_to(
-          raw: I18n.t(i18n_key('do_not_understand.first_response'), reset_trigger: RESET_TRIGGER),
+          raw: I18n.t(i18n_key('do_not_understand.first_response'),
+            reset_trigger: RESET_TRIGGER,
+            discobot_username: self.class.discobot_user.username
+          ),
           topic_id: @post.topic_id,
           reply_to_post_number: @post.post_number
         )
       when 1
         reply_to(
-          raw: I18n.t(i18n_key('do_not_understand.second_response'), reset_trigger: RESET_TRIGGER),
+          raw: I18n.t(i18n_key('do_not_understand.second_response'),
+            reset_trigger: RESET_TRIGGER,
+            discobot_username: self.class.discobot_user.username
+          ),
           topic_id: @post.topic_id,
           reply_to_post_number: @post.post_number
         )
@@ -725,7 +735,7 @@ module DiscourseNarrativeBot
         elsif match_data = post_raw.match(/show me a quote/i)
           I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
         else
-          I18n.t(i18n_key('random_mention.message'))
+          I18n.t(i18n_key('random_mention.message'), discobot_username: self.class.discobot_user.username)
         end
 
       fake_delay

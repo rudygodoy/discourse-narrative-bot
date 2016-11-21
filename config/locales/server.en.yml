@@ -181,11 +181,11 @@ en:
         instructions: |-
           Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. Type `@` then complete their user name to mention them.
 
-          Give it a try – mention **`@discobot`** in your reply.
+          Give it a try – mention **`@%{discobot_username}`** in your reply.
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
-          See how you get a notification when I mention you as @%{username}? You can get my attention with `@discobot`. Can you try again?
+          See how you get a notification when I mention you as @%{username}? You can get my attention with `@%{discobot_username}`. Can you try again?
 
           (And yes, my user name is spelled _disco_, as in the 1970s dance craze. I do [love the nightlife!](https://www.youtube.com/watch?v=B_wGI3_sGf8) :dancer:)
 
@@ -243,18 +243,18 @@ en:
 
           Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning:
 
-          You can try again, or if you’d like to start over at the beginning of the lesson, say `@discobot %{reset_trigger}`.
+          You can try again, or if you’d like to start over at the beginning of the lesson, say `@%{discobot_username} %{reset_trigger}`.
         second_response: |-
           Aw, sorry. I’m still not getting it. :anguished:
 
           It’s not you – it’s me. I blame my programmers! They’re terrible!
 
-          Perhaps let’s start over? Say `@discobot %{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
+          Perhaps let’s start over? Say `@%{discobot_username} %{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
       timeout:
         message: |-
           Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
 
-          If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@discobot %{reset_trigger}`.
+          If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@%{discobot_username} %{reset_trigger}`.
 
           (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:)
       random_mention:
@@ -267,10 +267,10 @@ en:
 
           I currently know how to do the following things:
 
-          `@discobot roll 2d6`
+          `@%{discobot_username} roll 2d6`
           > :game_die: dice roll: 3, 6
 
-          `@discobot show me a quote`
+          `@%{discobot_username} show me a quote`
           > :left_speech_bubble: _Carry out a random act of kindness, with no expectation of reward, safe in the knowledge that one day someone might do the same for you_ &mdash; Princess Diana
       certificate:
         alt: 'Certificate of Achievement'
