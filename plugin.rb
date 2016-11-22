@@ -33,7 +33,7 @@ after_initialize do
 
       if Rails.env.production?
         Dir[Rails.root.join("plugins/discourse-narrative-bot/public/images/*")].each do |src|
-          dest = Rails.root.join("public/images/#{File.basename(image)}")
+          dest = Rails.root.join("public/images/#{File.basename(src)}")
           File.symlink(src, dest) if !File.exists?(dest)
         end
       end
