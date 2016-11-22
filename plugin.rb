@@ -32,8 +32,9 @@ after_initialize do
       isolate_namespace DiscourseNarrativeBot
 
       if Rails.env.production?
-        Dir[Rails.root.join("plugins/discourse-narrative-bot/public/images/*")].each do |image|
-          File.symlink(image, Rails.root.join("public/images/#{File.basename(image)}"))
+        Dir[Rails.root.join("plugins/discourse-narrative-bot/public/images/*")].each do |src|
+          dest = Rails.root.join("public/images/#{File.basename(image)}")
+          File.symlink(src, dest) if !File.exists?(dest)
         end
       end
     end
