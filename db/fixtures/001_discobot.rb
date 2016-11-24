@@ -19,10 +19,18 @@ User.seed do |u|
   u.trust_level = TrustLevel[4]
 end
 
-UserOption.where(user_id: -2).update_all(
+bot = User.find(-2)
+
+bot.user_option.update_attributes!(
   email_private_messages: false,
   email_direct: false
 )
+
+if !bot.user_profile.bio_raw
+  bot.user_profile.update_attributes!(
+    bio_raw: I18n.t('discourse_narrative_bot.bio', site_title: SiteSetting.title, discobot_username: bot.username)
+  )
+end
 
 Group.user_trust_level_change!(-2, TrustLevel[4])
 
