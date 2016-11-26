@@ -20,9 +20,12 @@ after_initialize do
 
   Mime::Type.register "image/svg+xml", :svg
 
-  load File.expand_path('../jobs/new_user_narrative_input.rb', __FILE__)
+  load File.expand_path('../jobs/bot_input.rb', __FILE__)
   load File.expand_path('../jobs/new_user_narrative_timeout.rb', __FILE__)
+  load File.expand_path('../jobs/new_user_narrative_init.rb', __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/actions.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/new_user_narrative.rb", __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/track_selector.rb", __FILE__)
 
   module ::DiscourseNarrativeBot
     PLUGIN_NAME = "discourse-narrative-bot".freeze
@@ -40,18 +43,12 @@ after_initialize do
     end
 
     class Store
-      def self.set(user_id, value)
-        ::PluginStore.set(PLUGIN_NAME, key(user_id), value)
+      def self.set(key, value)
+        ::PluginStore.set(PLUGIN_NAME, key, value)
       end
 
-      def self.get(user_id)
-        ::PluginStore.get(PLUGIN_NAME, key(user_id))
-      end
-
-      private
-
-      def self.key(user_id)
-        "narrative_state_#{user_id}"
+      def self.get(key)
+        ::PluginStore.get(PLUGIN_NAME, key)
       end
     end
 
@@ -150,16 +147,13 @@ after_initialize do
 
   self.add_model_callback(User, :after_commit, on: :create) do
     if ![-1, -2].include?(self.id)
-      Jobs.enqueue(:new_user_narrative_input,
-        user_id: self.id,
-        input: :init
-      )
+      Jobs.enqueue(:new_user_narrative_init, user_id: self.id)
     end
   end
 
   self.on(:post_created) do |post|
     if ![-1, -2].include?(post.user.id)
-      Jobs.enqueue(:new_user_narrative_input,
+      Jobs.enqueue(:bot_input,
         user_id: post.user.id,
         post_id: post.id,
         input: :reply
@@ -181,7 +175,7 @@ after_initialize do
       end
 
     if input
-      Jobs.enqueue(:new_user_narrative_input,
+      Jobs.enqueue(:bot_input,
         user_id: self.user.id,
         post_id: self.post.id,
         input: input

@@ -1,5 +1,5 @@
 module Jobs
-  class NewUserNarrativeInput < Jobs::Base
+  class BotInput < Jobs::Base
 
     sidekiq_options queue: 'critical', retry: false
 
@@ -10,7 +10,7 @@ module Jobs
 
       post = Post.find_by(id: args[:post_id])
 
-      DiscourseNarrativeBot::NewUserNarrative.new.input(args[:input].to_sym, user, post)
+      DiscourseNarrativeBot::TrackSelector.new(args[:input].to_sym, user, post).select
     end
   end
 end

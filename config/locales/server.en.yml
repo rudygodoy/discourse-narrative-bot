@@ -5,6 +5,40 @@ en:
   discourse_narrative_bot:
     bio: "Offical bot of %{site_title}. To interact with me, send me a private message or mention me **`@%{discobot_username}`** anywhere in your reply."
 
+    track_selector:
+      random_mention:
+        dice: |-
+          :game_die: dice roll: %{results}
+        quote: |-
+          > :left_speech_bubble: _%{quote}_ &mdash; %{author}
+        message: |-
+          You rang? :telephone: :ear:
+
+          I currently know how to do the following things:
+
+          `@%{discobot_username} %{new_user_track}`
+          > Starts the new user narrative track
+
+          `@%{discobot_username} roll 2d6`
+          > :game_die: dice roll: 3, 6
+
+          `@%{discobot_username} show me a quote`
+          > :left_speech_bubble: _Carry out a random act of kindness, with no expectation of reward, safe in the knowledge that one day someone might do the same for you_ &mdash; Princess Diana
+
+      do_not_understand:
+        first_response: |-
+          Hey, thanks for the reply!
+
+          Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning:
+
+          You can try again, or if you’d like to start over at the beginning of the lesson, say `@%{discobot_username} %{reset_trigger}`.
+        second_response: |-
+          Aw, sorry. I’m still not getting it. :anguished:
+
+          It’s not you – it’s me. I blame my programmers! They’re terrible!
+
+          Perhaps let’s start over? Say `@%{discobot_username} %{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
+
     new_user_narrative:
 
       hello:
@@ -238,19 +272,6 @@ en:
 
           Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:
 
-      do_not_understand:
-        first_response: |-
-          Hey, thanks for the reply!
-
-          Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning:
-
-          You can try again, or if you’d like to start over at the beginning of the lesson, say `@%{discobot_username} %{reset_trigger}`.
-        second_response: |-
-          Aw, sorry. I’m still not getting it. :anguished:
-
-          It’s not you – it’s me. I blame my programmers! They’re terrible!
-
-          Perhaps let’s start over? Say `@%{discobot_username} %{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
       timeout:
         message: |-
           Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
@@ -258,20 +279,5 @@ en:
           If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@%{discobot_username} %{reset_trigger}`.
 
           (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:)
-      random_mention:
-        dice: |-
-          :game_die: dice roll: %{results}
-        quote: |-
-          > :left_speech_bubble: _%{quote}_ &mdash; %{author}
-        message: |-
-          You rang? :telephone: :ear:
-
-          I currently know how to do the following things:
-
-          `@%{discobot_username} roll 2d6`
-          > :game_die: dice roll: 3, 6
-
-          `@%{discobot_username} show me a quote`
-          > :left_speech_bubble: _Carry out a random act of kindness, with no expectation of reward, safe in the knowledge that one day someone might do the same for you_ &mdash; Princess Diana
       certificate:
         alt: 'Certificate of Achievement'

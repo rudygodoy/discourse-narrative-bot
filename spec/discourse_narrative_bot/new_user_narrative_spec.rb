@@ -13,7 +13,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
   describe '#notify_timeout' do
     before do
-      DiscourseNarrativeBot::Store.set(user.id,
+      narrative.set_data(user,
         state: :tutorial_images,
         topic_id: topic.id,
         last_post_id: post.id
@@ -32,35 +32,25 @@ describe DiscourseNarrativeBot::NewUserNarrative do
     end
   end
 
-  describe '#input' do
+  describe '#reset_bot' do
     before do
-      SiteSetting.title = "This is an awesome site!"
-      DiscourseNarrativeBot::Store.set(user.id, state: :begin)
+      narrative.set_data(user, state: :tutorial_images, topic_id: topic.id)
     end
 
-    describe 'when an error occurs' do
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_flag, topic_id: topic.id)
+    context 'when trigger is initiated in a PM' do
+      let(:user) { Fabricate(:user) }
+
+      let(:topic) do
+        topic_allowed_user = Fabricate.build(:topic_allowed_user, user: user)
+        bot = Fabricate.build(:topic_allowed_user, user: discobot_user)
+        Fabricate(:private_message_topic, topic_allowed_users: [topic_allowed_user, bot])
       end
 
-      it 'should revert to the previous state' do
-        narrative.expects(:send).with('init_tutorial_search').raises(StandardError.new('some error'))
-        narrative.expects(:send).with(:reply_to_flag).returns(post)
-
-        expect { narrative.input(:flag, user, post) }.to raise_error(StandardError, 'some error')
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
-      end
-    end
-
-    describe 'when post contains the right reset trigger' do
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_images, topic_id: topic.id)
-      end
+      let(:post) { Fabricate(:post, topic: topic) }
 
       it 'should reset the bot' do
         Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-          post.update_attributes!(raw: "@discobot something #{described_class::RESET_TRIGGER}")
-          narrative.input(:reply, user, post)
+          narrative.reset_bot(user, post)
 
           expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
             username: user.username, title: SiteSetting.title
@@ -74,7 +64,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           new_post = Post.last
 
-          expect(DiscourseNarrativeBot::Store.get(user.id)).to eq({
+          expect(narrative.get_data(user)).to eq({
             "topic_id" => topic.id,
             "state" => "waiting_reply",
             "last_post_id" => new_post.id
@@ -86,14 +76,64 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
+    context 'when trigger is not initiated in a PM' do
+      it 'should start the new track in a PM' do
+        Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
+          narrative.reset_bot(user, other_post)
+
+          expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
+            username: user.username, title: SiteSetting.title
+          )
+
+          expected_raw = <<~RAW
+          #{expected_raw}
+
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
+          RAW
+
+          new_post = Post.last
+
+          expect(narrative.get_data(user)).to eq({
+            "topic_id" => new_post.topic.id,
+            "state" => "waiting_reply",
+            "last_post_id" => new_post.id
+          })
+
+          expect(new_post.raw).to eq(expected_raw.chomp)
+          expect(new_post.topic.id).to_not eq(topic.id)
+        end
+      end
+    end
+  end
+
+  describe '#input' do
+    before do
+      SiteSetting.title = "This is an awesome site!"
+      narrative.set_data(user, state: :begin)
+    end
+
+    describe 'when an error occurs' do
+      before do
+        narrative.set_data(user, state: :tutorial_flag, topic_id: topic.id)
+      end
+
+      it 'should revert to the previous state' do
+        narrative.expects(:send).with('init_tutorial_search').raises(StandardError.new('some error'))
+        narrative.expects(:send).with(:reply_to_flag).returns(post)
+
+        expect { narrative.input(:flag, user, post) }.to raise_error(StandardError, 'some error')
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
+      end
+    end
+
     describe 'when input does not have a valid transition from current state' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :begin)
+        narrative.set_data(user, state: :begin)
       end
 
       it 'should raise the right error' do
         expect(narrative.input(:something, user, post)).to eq(nil)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:begin)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:begin)
       end
     end
 
@@ -115,7 +155,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym)
+          expect(narrative.get_data(user)[:state].to_sym)
             .to eq(:waiting_reply)
         end
       end
@@ -127,7 +167,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
 
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :waiting_reply, topic_id: topic.id)
+        narrative.set_data(user, state: :waiting_reply, topic_id: topic.id)
       end
 
       describe 'when post is not from the right topic' do
@@ -137,7 +177,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           narrative.expects(:enqueue_timeout_job).with(user).never
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:waiting_reply)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:waiting_reply)
         end
       end
 
@@ -159,7 +199,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
-          data = DiscourseNarrativeBot::Store.get(user.id)
+          data = narrative.get_data(user)
 
           expect(data[:state].to_sym).to eq(:tutorial_bookmark)
           expect(data[:last_post_id]).to eq(new_post.id)
@@ -184,7 +224,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
-          data = DiscourseNarrativeBot::Store.get(user.id)
+          data = narrative.get_data(user)
 
           expect(data[:state].to_sym).to eq(:tutorial_bookmark)
           expect(data[:last_post_id]).to eq(new_post.id)
@@ -194,7 +234,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
     describe "bookmark tutorial" do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_bookmark, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_bookmark, topic_id: topic.id)
       end
 
       describe 'when post is not in the right topic' do
@@ -203,7 +243,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:bookmark, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_bookmark)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_bookmark)
         end
       end
 
@@ -213,7 +253,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           post
 
           expect { narrative.input(:bookmark, user, post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_bookmark)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_bookmark)
         end
       end
 
@@ -223,7 +263,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_bookmark)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_bookmark)
         end
       end
 
@@ -242,13 +282,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_onebox)
       end
     end
 
     describe 'when [:tutorial_onebox, :reply]' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_onebox, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_onebox, topic_id: topic.id)
       end
 
       describe 'when post is not in the right topic' do
@@ -257,7 +297,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_onebox)
         end
       end
 
@@ -268,7 +308,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.onebox.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_onebox)
         end
       end
 
@@ -279,7 +319,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.onebox.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_onebox)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_onebox)
         end
       end
 
@@ -297,7 +337,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
       end
     end
 
@@ -305,7 +345,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       let(:post_2) { Fabricate(:post, topic: topic) }
 
       before do
-        DiscourseNarrativeBot::Store.set(user.id,
+        narrative.set_data(user,
           state: :tutorial_images, topic_id: topic.id, last_post_id: post_2.id
         )
       end
@@ -316,7 +356,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
         end
       end
 
@@ -325,7 +365,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         narrative.input(:reply, user, post)
 
         expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.images.not_found'))
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
 
         post.update_attributes!(
           raw: "<img src='https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg'>",
@@ -339,9 +379,9 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           url: post_2.url
         ))
 
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_images)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
 
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:tutorial_images][:post_id])
+        expect(narrative.get_data(user)[:tutorial_images][:post_id])
           .to eq(post.id)
 
         PostAction.act(user, post_2, PostActionType.types[:like])
@@ -358,13 +398,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expect(post_action.user).to eq(described_class.discobot_user)
         expect(post_action.post).to eq(post)
         expect(Post.last.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_formatting)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
       end
     end
 
     describe 'fomatting tutorial' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_formatting, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_formatting, topic_id: topic.id)
       end
 
       describe 'when post is not in the right topic' do
@@ -373,7 +413,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_formatting)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
         end
       end
 
@@ -383,7 +423,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.input(:reply, user, post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.formatting.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_formatting)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
         end
       end
 
@@ -402,14 +442,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           RAW
 
           expect(new_post.raw).to eq(expected_raw.chomp)
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_quote)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_quote)
         end
       end
     end
 
     describe 'when [:tutorial_quote, :reply]' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_quote, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_quote, topic_id: topic.id)
       end
 
       describe 'when post is not in the right topic' do
@@ -418,7 +458,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_quote)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_quote)
         end
       end
 
@@ -428,7 +468,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.input(:reply, user, post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.quoting.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_quote)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_quote)
         end
       end
 
@@ -448,13 +488,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_emoji)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
       end
     end
 
     describe 'when [:tutorial_emoji, :reply]' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_emoji, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_emoji, topic_id: topic.id)
       end
 
       describe 'when post is not in the right topic' do
@@ -463,7 +503,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_emoji)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
         end
       end
 
@@ -473,7 +513,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.input(:reply, user, post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.emoji.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_emoji)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
         end
       end
 
@@ -495,13 +535,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_mention)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_mention)
       end
     end
 
     describe 'when [:tutorial_mention, :reply]' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_mention, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_mention, topic_id: topic.id)
       end
 
       describe 'when post is not in the right topic' do
@@ -510,7 +550,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_mention)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_mention)
         end
       end
 
@@ -525,7 +565,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
             discobot_username: discobot_user.username
           ))
 
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_mention)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_mention)
         end
       end
 
@@ -549,7 +589,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
       end
     end
 
@@ -560,7 +600,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       before do
         flag
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_flag, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_flag, topic_id: topic.id)
       end
 
       describe 'when post flagged is not for the right topic' do
@@ -569,7 +609,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           flag.update_attributes!(post: other_post)
 
           expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
         end
       end
 
@@ -579,7 +619,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           flag.update_attributes!(post: other_post)
 
           expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
         end
       end
 
@@ -589,7 +629,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.flag.not_found'))
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_flag)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
         end
       end
 
@@ -610,13 +650,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_search)
       end
     end
 
     describe 'search tutorial' do
       before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_search, topic_id: topic.id)
+        narrative.set_data(user, state: :tutorial_search, topic_id: topic.id)
       end
 
       describe 'when post is not in the right topic' do
@@ -625,7 +665,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_search)
         end
       end
 
@@ -638,7 +678,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
             'discourse_narrative_bot.new_user_narrative.search.not_found'
           ))
 
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:tutorial_search)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_search)
         end
       end
 
@@ -650,7 +690,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
             { skip_validations: true, force_new_version: true }
           )
 
-          DiscourseNarrativeBot::Store.set(user.id,
+          narrative.set_data(user,
             state: :tutorial_search,
             topic_id: topic.id,
             tutorial_search: { post_version: first_post.version }
@@ -671,157 +711,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           ).chomp)
 
           expect(first_post.reload.raw).to eq('Hello world')
-          expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
-        end
-      end
-    end
-
-    describe ':end state' do
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :end, topic_id: topic.id)
-      end
-
-      it 'should create the right generic do not understand responses' do
-        discobot_post = Fabricate(:post,
-          topic: topic,
-          user: described_class.discobot_user
-        )
-
-        post = Fabricate(:post,
-          topic: topic,
-          user: user,
-          reply_to_post_number: discobot_post.post_number
-        )
-
-        narrative.input(:reply, user, post)
-
-        expect(Post.last.raw).to eq(I18n.t(
-          'discourse_narrative_bot.new_user_narrative.do_not_understand.first_response',
-          reset_trigger: described_class::RESET_TRIGGER,
-          discobot_username: discobot_user.username
-        ))
-
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
-
-        narrative.input(:reply, user, Fabricate(:post,
-          topic: topic,
-          user: user,
-          reply_to_post_number: Post.last.post_number
-        ))
-
-        expect(Post.last.raw).to eq(I18n.t(
-          'discourse_narrative_bot.new_user_narrative.do_not_understand.second_response',
-          reset_trigger: described_class::RESET_TRIGGER,
-          discobot_username: discobot_user.username
-        ))
-
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
-
-        new_post = Fabricate(:post,
-          topic: topic,
-          user: user,
-          reply_to_post_number: Post.last.post_number
-        )
-
-        expect { narrative.input(:reply, user, new_post) }.to_not change { Post.count }
-
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
-
-        new_post = Fabricate(:post,
-          topic: topic,
-          user: user,
-          raw: "@discobot hello!"
-        )
-
-        narrative.input(:reply, user, new_post)
-
-        expect(DiscourseNarrativeBot::Store.get(user.id)[:state].to_sym).to eq(:end)
-
-        expect(Post.last.raw).to eq(I18n.t(
-          "discourse_narrative_bot.new_user_narrative.random_mention.message",
-          discobot_username: discobot_user.username
-        ))
-      end
-    end
-
-    describe 'pms to discobot' do
-      let(:other_topic) do
-        topic_allowed_user = Fabricate.build(:topic_allowed_user, user: user)
-        bot = Fabricate.build(:topic_allowed_user, user: described_class.discobot_user)
-
-        Fabricate(:private_message_topic, topic_allowed_users: [topic_allowed_user, bot])
-      end
-
-      describe 'when a new like is made' do
-        it 'should not do anything' do
-          post = Fabricate(:post, topic: other_topic)
-
-          expect { narrative.input(:like, user, post) }.to_not change { Post.count }
-        end
-      end
-
-      describe 'when a new message is made' do
-        it 'should create the right reply' do
-          post = Fabricate(:post, topic: other_topic)
-
-          narrative.input(:reply, user, post)
-
-          expect(Post.last.raw).to eq(I18n.t(
-            "discourse_narrative_bot.new_user_narrative.random_mention.message",
-            discobot_username: discobot_user.username
-          ))
-        end
-      end
-    end
-
-    describe 'random discobot mentions' do
-      let(:other_topic) { Fabricate(:topic) }
-      let(:other_post) { Fabricate(:post, topic: other_topic) }
-
-      before do
-        DiscourseNarrativeBot::Store.set(user.id, state: :tutorial_flag, topic_id: topic.id)
-      end
-
-      describe 'when discobot is mentioned' do
-        it 'should create the right reply' do
-          other_post.update_attributes!(raw: 'Show me what you can do @discobot')
-          narrative.input(:reply, user, other_post)
-          new_post = Post.last
-
-          expect(new_post.raw).to eq(I18n.t(
-            "discourse_narrative_bot.new_user_narrative.random_mention.message",
-            discobot_username: discobot_user.username
-          ))
-        end
-
-        describe 'when discobot is asked to roll dice' do
-          it 'should create the right reply' do
-            other_post.update_attributes!(raw: '@discobot roll 2d1')
-            narrative.input(:reply, user, other_post)
-            new_post = Post.last
-
-            expect(new_post.raw).to eq(
-              I18n.t("discourse_narrative_bot.new_user_narrative.random_mention.dice",
-              results: '1, 1'
-            ))
-          end
-        end
-
-        describe 'when a quote is requested' do
-          it 'should create the right reply' do
-            QuoteGenerator.expects(:generate).returns(
-              quote: "Be Like Water", author: "Bruce Lee"
-            )
-
-            other_post.update_attributes!(raw: '@discobot show me a quote')
-            narrative.input(:reply, user, other_post)
-            new_post = Post.last
-
-            expect(new_post.raw).to eq(
-              I18n.t("discourse_narrative_bot.new_user_narrative.random_mention.quote",
-              quote: "Be Like Water", author: "Bruce Lee"
-            ))
-          end
+          expect(narrative.get_data(user)).to eq(nil)
         end
       end
     end
