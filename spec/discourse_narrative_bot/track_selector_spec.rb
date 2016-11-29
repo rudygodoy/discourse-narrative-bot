@@ -74,6 +74,24 @@ describe DiscourseNarrativeBot::TrackSelector do
           ))
         end
 
+        context 'when discobot is mentioned at the end of a track' do
+          before do
+            narrative.set_data(user, state: :end, topic_id: post.topic.id)
+          end
+
+          it 'should create the right reply' do
+            post.update_attributes!(raw: 'Show me what you can do @discobot')
+            described_class.new(:reply, user, post).select
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              "discourse_narrative_bot.track_selector.random_mention.message",
+              discobot_username: described_class.discobot_user.username,
+              new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER
+            ))
+          end
+        end
+
         describe 'when discobot is asked to roll dice' do
           it 'should create the right reply' do
             post.update_attributes!(raw: '@discobot roll 2d1')
@@ -136,6 +154,10 @@ describe DiscourseNarrativeBot::TrackSelector do
     end
 
     context 'generic replies' do
+      before do
+        narrative.set_data(user, state: :end, topic_id: post.topic.id)
+      end
+
       after do
         $redis.del("#{described_class::GENERIC_REPLIEX_COUNT_PREFIX}#{user.id}")
       end

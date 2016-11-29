@@ -711,7 +711,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           ).chomp)
 
           expect(first_post.reload.raw).to eq('Hello world')
-          expect(narrative.get_data(user)).to eq(nil)
+          expect(narrative.get_data(user)).to eq({ "state" => "end", "topic_id" => new_post.topic_id })
         end
       end
     end

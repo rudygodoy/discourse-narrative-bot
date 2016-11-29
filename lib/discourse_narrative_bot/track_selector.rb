@@ -26,15 +26,22 @@ module DiscourseNarrativeBot
             track.reset_bot(@user, @post)
             return
           elsif (data && data[:topic_id] == topic_id)
-            track.input(@input, @user, @post)
+            if (data[:state].to_sym == :end && @input == :reply)
+              if reply_to_bot_post?(@post)
+                generic_replies(klass::RESET_TRIGGER)
+              elsif bot_mentioned?(@post)
+                mention_replies
+              end
+            else
+              track.input(@input, @user, @post)
+            end
+
             return
           end
         end
 
-        if bot_mentioned?(@post) || (@input == :reply && pm_to_bot?(@post))
+        if (@input == :reply) && (bot_mentioned?(@post) || pm_to_bot?(@post) || reply_to_bot_post?(@post))
           mention_replies
-        elsif reply_to_bot_post?(@post)
-          generic_replies
         end
       end
     end
@@ -68,20 +75,20 @@ module DiscourseNarrativeBot
       reply_to(@post, raw)
     end
 
-    def generic_replies
+    def generic_replies(reset_trigger)
       key = "#{GENERIC_REPLIEX_COUNT_PREFIX}#{@user.id}"
       count = ($redis.get(key) || $redis.setex(key, 900, 0)).to_i
 
       case count
       when 0
         reply_to(@post, I18n.t(i18n_key('do_not_understand.first_response'),
-          reset_trigger: NewUserNarrative::RESET_TRIGGER,
+          reset_trigger: reset_trigger,
           discobot_username: self.class.discobot_user.username
         ))
       when 1
         reply_to(@post, I18n.t(i18n_key('do_not_understand.second_response'),
-            reset_trigger: NewUserNarrative::RESET_TRIGGER,
-            discobot_username: self.class.discobot_user.username
+          reset_trigger: reset_trigger,
+          discobot_username: self.class.discobot_user.username
         ))
       else
         # Stay out of the user's way
