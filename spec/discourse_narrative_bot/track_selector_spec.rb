@@ -163,8 +163,6 @@ describe DiscourseNarrativeBot::TrackSelector do
       end
 
       it 'should create the right generic do not understand responses' do
-        post.update_attributes!(reply_to_post_number: bot_post.post_number)
-
         described_class.new(:reply, user, post).select
         new_post = Post.last
 

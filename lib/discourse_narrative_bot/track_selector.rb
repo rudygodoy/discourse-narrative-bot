@@ -27,10 +27,10 @@ module DiscourseNarrativeBot
             return
           elsif (data && data[:topic_id] == topic_id)
             if (data[:state].to_sym == :end && @input == :reply)
-              if reply_to_bot_post?(@post)
-                generic_replies(klass::RESET_TRIGGER)
-              elsif bot_mentioned?(@post)
+              if bot_mentioned?(@post)
                 mention_replies
+              else
+                generic_replies(klass::RESET_TRIGGER)
               end
             else
               track.input(@input, @user, @post)
