@@ -70,7 +70,8 @@ describe DiscourseNarrativeBot::TrackSelector do
           expect(new_post.raw).to eq(I18n.t(
             "discourse_narrative_bot.track_selector.random_mention.message",
             discobot_username: described_class.discobot_user.username,
-            new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER
+            new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
+            advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
           ))
         end
 
@@ -87,7 +88,8 @@ describe DiscourseNarrativeBot::TrackSelector do
             expect(new_post.raw).to eq(I18n.t(
               "discourse_narrative_bot.track_selector.random_mention.message",
               discobot_username: described_class.discobot_user.username,
-              new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER
+              new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
+              advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
             ))
           end
         end
@@ -147,7 +149,8 @@ describe DiscourseNarrativeBot::TrackSelector do
           expect(Post.last.raw).to eq(I18n.t(
             "discourse_narrative_bot.track_selector.random_mention.message",
             discobot_username: discobot_user.username,
-            new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER
+            new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
+            advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
           ))
         end
       end

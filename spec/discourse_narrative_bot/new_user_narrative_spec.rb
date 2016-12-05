@@ -24,7 +24,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       expect { narrative.notify_timeout(user) }.to change { Post.count }.by(1)
 
       expect(Post.last.raw).to eq(I18n.t(
-        'discourse_narrative_bot.new_user_narrative.timeout.message',
+        'discourse_narrative_bot.timeout.message',
         username: user.username,
         reset_trigger: described_class::RESET_TRIGGER,
         discobot_username: discobot_user.username

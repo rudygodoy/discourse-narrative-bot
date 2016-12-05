@@ -5,6 +5,14 @@ en:
   discourse_narrative_bot:
     bio: "Offical bot of %{site_title}. To interact with me, send me a private message or mention me **`@%{discobot_username}`** anywhere in your reply."
 
+    timeout:
+      message: |-
+        Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
+
+        If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@%{discobot_username} %{reset_trigger}`.
+
+        (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:)
+
     track_selector:
       random_mention:
         dice: |-
@@ -272,12 +280,45 @@ en:
 
           Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:
 
-      timeout:
-        message: |-
-          Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
-
-          If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@%{discobot_username} %{reset_trigger}`.
-
-          (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:)
       certificate:
         alt: 'Certificate of Achievement'
+
+    advanced_user_narrative:
+      title: ':arrow_up: Advanced user features'
+      start_message: |-
+        Hi @%{username}, I'm glad you're looking to learn more about the advanced features of Discourse. We've alot to learn here so let's jump right into it.
+
+      poll:
+        instructions: |-
+          Once in awhile, you'll have a burning question which you'll like to ask the community and solicit for their response. To help you with that, we have polls built into Discourse that can be created with the following markup:
+
+              What is your favorite fruit?
+
+              [poll]
+              * Apple
+              * Durian
+              * Bananas
+              [/poll]
+
+          Why don't you go ahead and create your first poll. Simpliy click on the :gear: icon in the composer and select the poll builder.
+        not_found: |-
+          Looks like you didn't include a poll in your reply. Can you try including the following poll in your next reply?
+
+              [poll]
+              * :cat:
+              * :cat2:
+              * :dog:
+              * :dog2:
+              [/poll]
+        reply: |-
+          Great job in creating the poll. Let me know if I did well in teaching you about polls :smile:
+
+          [poll]
+          * :+1:
+          * :-1:
+          [/poll]
+      end:
+        message: |-
+          That is all I have for you in the advanced user track.
+
+          Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:

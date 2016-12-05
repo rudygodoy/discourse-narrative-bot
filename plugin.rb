@@ -23,8 +23,12 @@ after_initialize do
   load File.expand_path('../jobs/bot_input.rb', __FILE__)
   load File.expand_path('../jobs/new_user_narrative_timeout.rb', __FILE__)
   load File.expand_path('../jobs/new_user_narrative_init.rb', __FILE__)
+  load File.expand_path('../jobs/advanced_user_narrative_init.rb', __FILE__)
+  load File.expand_path('../jobs/advanced_user_narrative_timeout.rb', __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/actions.rb", __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/base.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/new_user_narrative.rb", __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/advanced_user_narrative.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/track_selector.rb", __FILE__)
 
   module ::DiscourseNarrativeBot

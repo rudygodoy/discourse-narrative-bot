@@ -5,7 +5,8 @@ module DiscourseNarrativeBot
     GENERIC_REPLIEX_COUNT_PREFIX = 'discourse-narrative-bot:track-selector-count:'.freeze
 
     TRACKS = [
-      NewUserNarrative
+      NewUserNarrative,
+      AdvancedUserNarrative
     ]
 
     def initialize(input, user, post)
@@ -26,7 +27,9 @@ module DiscourseNarrativeBot
             track.reset_bot(@user, @post)
             return
           elsif (data && data[:topic_id] == topic_id)
-            if (data[:state].to_sym == :end && @input == :reply)
+            state = data[:state]
+
+            if ((state && state.to_sym == :end) && @input == :reply)
               if bot_mentioned?(@post)
                 mention_replies
               else
@@ -66,7 +69,8 @@ module DiscourseNarrativeBot
           I18n.t(
             i18n_key('random_mention.message'),
             discobot_username: self.class.discobot_user.username,
-            new_user_track: NewUserNarrative::RESET_TRIGGER
+            new_user_track: NewUserNarrative::RESET_TRIGGER,
+            advanced_user_track: AdvancedUserNarrative::RESET_TRIGGER
           )
         end
 

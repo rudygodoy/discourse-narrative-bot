@@ -3,9 +3,7 @@ require_relative '../quote_generator'
 require 'distributed_mutex'
 
 module DiscourseNarrativeBot
-  class NewUserNarrative
-    include Actions
-
+  class NewUserNarrative < Base
     TRANSITION_TABLE = {
       [:begin, :init] => {
         next_state: :waiting_reply,
@@ -90,69 +88,19 @@ module DiscourseNarrativeBot
 
     RESET_TRIGGER = 'new user track'.freeze
     SEARCH_ANSWER = ':herb:'.freeze
-    DICE_TRIGGER = 'roll'.freeze
     TIMEOUT_DURATION = 900 # 15 mins
-
-    class InvalidTransitionError < StandardError; end
-
-    def input(input, user, post = nil)
-      synchronize(user) do
-        @user = user
-        @data = get_data(user) || {}
-        @state = (@data[:state] && @data[:state].to_sym) || :begin
-        @input = input
-        @post = post
-        opts = {}
-
-        begin
-          opts = transition
-        rescue InvalidTransitionError
-          # For given input, no transition for current state
-          return
-        end
-
-        new_state = opts[:next_state]
-        action = opts[:action]
-
-        if next_instructions_key = opts[:next_instructions_key]
-          @next_instructions_key = next_instructions_key
-        end
-
-        begin
-          if new_post = self.send(action)
-            old_data = @data.dup
-            @state = @data[:state] = new_state
-            @data[:last_post_id] = new_post.id
-            set_data(@user, @data)
-
-            self.send("init_#{new_state}") if self.class.private_method_defined?("init_#{new_state}")
-
-            if new_state == :end
-              end_reply
-              cancel_timeout_job(user)
-              set_data(@user, topic_id: new_post.topic_id, state: :end)
-            end
-          end
-        rescue => e
-          @data = old_data
-          set_data(@user, @data)
-          raise e
-        end
-      end
-    end
 
     def reset_bot(user, post)
       reset_data(user)
       set_data(user, topic_id: post.topic_id) if pm_to_bot?(post)
-      fake_delay
-      Jobs.enqueue(:new_user_narrative_init, user_id: user.id)
+      Jobs.enqueue_in(2.seconds, :new_user_narrative_init, user_id: user.id)
     end
 
     def notify_timeout(user)
       @data = get_data(user) || {}
 
       if post = Post.find_by(id: @data[:last_post_id])
-        reply_to(post, I18n.t(i18n_key("timeout.message"),
+        reply_to(post, I18n.t("discourse_narrative_bot.timeout.message",
           username: user.username,
           reset_trigger: RESET_TRIGGER,
           discobot_username: self.class.discobot_user.username
@@ -160,12 +108,8 @@ module DiscourseNarrativeBot
       end
     end
 
-    def set_data(user, value)
-      DiscourseNarrativeBot::Store.set(store_key(user), value)
-    end
-
-    def get_data(user)
-      DiscourseNarrativeBot::Store.get(store_key(user))
+    def store_key(user)
+      "new_user_narrative_#{user.id}"
     end
 
     private
@@ -592,17 +536,9 @@ module DiscourseNarrativeBot
       Jobs.enqueue_in(TIMEOUT_DURATION, :new_user_narrative_timeout, user_id: user.id)
     end
 
-    def reset_data(user)
-      set_data(user, nil)
-    end
-
     def welcome_topic
       Topic.find_by(slug: 'welcome-to-discourse', archetype: Archetype.default) ||
         Topic.recent(1).first
-    end
-
-    def store_key(user)
-      "new_user_narrative_#{user.id}"
     end
 
     def set_state_data(key, value)
