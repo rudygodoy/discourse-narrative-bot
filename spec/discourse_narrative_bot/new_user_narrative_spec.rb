@@ -286,7 +286,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_onebox, :reply]' do
+    describe 'onebox tutorial' do
       before do
         narrative.set_data(user, state: :tutorial_onebox, topic_id: topic.id)
       end
@@ -333,11 +333,11 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.onebox.reply')}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.images.instructions')}
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.emoji.instructions')}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
       end
     end
 
@@ -389,7 +389,11 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.images.reply')}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.formatting.instructions')}
+          #{I18n.t(
+            'discourse_narrative_bot.new_user_narrative.flag.instructions',
+            guidelines_url: Discourse.base_url + '/guidelines',
+            about_url: Discourse.base_url + '/about'
+          )}
         RAW
 
         post_action = PostAction.last
@@ -398,7 +402,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expect(post_action.user).to eq(described_class.discobot_user)
         expect(post_action.post).to eq(post)
         expect(Post.last.raw).to eq(expected_raw.chomp)
-        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
       end
     end
 
@@ -447,7 +451,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_quote, :reply]' do
+    describe 'quote tutorial' do
       before do
         narrative.set_data(user, state: :tutorial_quote, topic_id: topic.id)
       end
@@ -484,11 +488,11 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.quoting.reply')}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.emoji.instructions')}
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.images.instructions')}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
       end
     end
 
@@ -539,7 +543,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_mention, :reply]' do
+    describe 'mention tutorial' do
       before do
         narrative.set_data(user, state: :tutorial_mention, topic_id: topic.id)
       end
@@ -582,14 +586,12 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           #{I18n.t('discourse_narrative_bot.new_user_narrative.mention.reply')}
 
           #{I18n.t(
-            'discourse_narrative_bot.new_user_narrative.flag.instructions',
-            guidelines_url: Discourse.base_url + '/guidelines',
-            about_url: Discourse.base_url + '/about'
+            'discourse_narrative_bot.new_user_narrative.formatting.instructions'
           )}
         RAW
 
         expect(new_post.raw).to eq(expected_raw.chomp)
-        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
       end
     end
 

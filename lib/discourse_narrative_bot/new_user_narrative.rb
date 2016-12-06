@@ -30,33 +30,9 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_onebox, :reply] => {
-        next_state: :tutorial_images,
-        next_instructions_key: 'images.instructions',
-        action: :reply_to_onebox
-      },
-
-      [:tutorial_images, :reply] => {
-        next_state: :tutorial_formatting,
-        next_instructions_key: 'formatting.instructions',
-        action: :reply_to_image
-      },
-
-      [:tutorial_images, :like] => {
-        next_state: :tutorial_formatting,
-        next_instructions_key: 'formatting.instructions',
-        action: :track_like
-      },
-
-      [:tutorial_formatting, :reply] => {
-        next_state: :tutorial_quote,
-        next_instructions_key: 'quoting.instructions',
-        action: :reply_to_formatting
-      },
-
-      [:tutorial_quote, :reply] => {
         next_state: :tutorial_emoji,
         next_instructions_key: 'emoji.instructions',
-        action: :reply_to_quote
+        action: :reply_to_onebox
       },
 
       [:tutorial_emoji, :reply] => {
@@ -66,9 +42,33 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_mention, :reply] => {
+        next_state: :tutorial_formatting,
+        next_instructions_key: 'formatting.instructions',
+        action: :reply_to_mention
+      },
+
+      [:tutorial_formatting, :reply] => {
+        next_state: :tutorial_quote,
+        next_instructions_key: 'quoting.instructions',
+        action: :reply_to_formatting
+      },
+
+      [:tutorial_quote, :reply] => {
+        next_state: :tutorial_images,
+        next_instructions_key: 'images.instructions',
+        action: :reply_to_quote
+      },
+
+      [:tutorial_images, :reply] => {
         next_state: :tutorial_flag,
         next_instructions_key: 'flag.instructions',
-        action: :reply_to_mention
+        action: :reply_to_image
+      },
+
+      [:tutorial_images, :like] => {
+        next_state: :tutorial_flag,
+        next_instructions_key: 'flag.instructions',
+        action: :track_like
       },
 
       [:tutorial_flag, :flag] => {
@@ -333,7 +333,9 @@ module DiscourseNarrativeBot
           raw = <<~RAW
             #{I18n.t(i18n_key('images.reply'))}
 
-            #{I18n.t(i18n_key(@next_instructions_key))}
+            #{I18n.t(i18n_key(@next_instructions_key),
+              guidelines_url: url_helpers(:guidelines_url),
+              about_url: url_helpers(:about_index_url))}
           RAW
 
           reply = reply_to(@post, raw)
@@ -359,7 +361,9 @@ module DiscourseNarrativeBot
           raw = <<~RAW
             #{I18n.t(i18n_key('images.reply'))}
 
-            #{I18n.t(i18n_key(@next_instructions_key))}
+            #{I18n.t(i18n_key(@next_instructions_key),
+              guidelines_url: url_helpers(:guidelines_url),
+              about_url: url_helpers(:about_index_url))}
           RAW
 
           like_post(@post)
@@ -418,7 +422,9 @@ module DiscourseNarrativeBot
         raw = <<~RAW
           #{I18n.t(i18n_key('quoting.reply'))}
 
-          #{I18n.t(i18n_key(@next_instructions_key))}
+          #{I18n.t(i18n_key(@next_instructions_key),
+            guidelines_url: url_helpers(:guidelines_url),
+            about_url: url_helpers(:about_index_url))}
         RAW
 
         fake_delay
@@ -470,9 +476,7 @@ module DiscourseNarrativeBot
         raw = <<~RAW
           #{I18n.t(i18n_key('mention.reply'))}
 
-          #{I18n.t(i18n_key(@next_instructions_key),
-              guidelines_url: url_helpers(:guidelines_url),
-              about_url: url_helpers(:about_index_url))}
+          #{I18n.t(i18n_key(@next_instructions_key))}
         RAW
 
         fake_delay
