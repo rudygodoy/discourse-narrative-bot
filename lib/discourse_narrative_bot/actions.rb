@@ -57,8 +57,10 @@ module DiscourseNarrativeBot
       return false unless topic.archetype == Archetype.private_message
 
       allowed_users = topic.allowed_users.pluck(:id)
-      allowed_users.delete(-2)
-      allowed_users.length == 1 && topic.allowed_groups.length == 0
+
+      allowed_users.delete(-2) &&
+        allowed_users.length == 1 &&
+        topic.allowed_groups.length == 0
     end
   end
 end

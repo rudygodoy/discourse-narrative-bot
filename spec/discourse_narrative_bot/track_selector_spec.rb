@@ -126,6 +126,24 @@ describe DiscourseNarrativeBot::TrackSelector do
       end
     end
 
+    context 'pm to self' do
+      let(:other_topic) do
+        topic_allowed_user = Fabricate.build(:topic_allowed_user, user: user)
+        Fabricate(:private_message_topic, topic_allowed_users: [topic_allowed_user])
+      end
+
+      let(:other_post) { Fabricate(:post, topic: other_topic) }
+
+      describe 'when a new message is made' do
+        it 'should not do anything' do
+          other_post
+
+          expect { described_class.new(:reply, user, other_post).select }
+            .to_not change { Post.count }
+        end
+      end
+    end
+
     context 'pms to bot' do
       let(:other_topic) do
         topic_allowed_user = Fabricate.build(:topic_allowed_user, user: user)
