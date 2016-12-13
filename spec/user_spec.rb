@@ -16,6 +16,21 @@ describe User do
         expect(Post.last.raw).to include(expected_raw.chomp)
       end
     end
+
+    context 'when welcome post is disabled' do
+      before do
+        @original_value = SiteSetting.disable_discourse_narrative_bot_welcome_post
+        SiteSetting.disable_discourse_narrative_bot_welcome_post = true
+      end
+
+      after do
+        SiteSetting.disable_discourse_narrative_bot_welcome_post = @original_value
+      end
+
+      it 'should not initiate the bot' do
+        expect { user }.to_not change { Post.count }
+      end
+    end
   end
 
   describe 'when a user has been destroyed' do

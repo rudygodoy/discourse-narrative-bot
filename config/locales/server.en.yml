@@ -1,6 +1,7 @@
 en:
   site_settings:
     discourse_narrative_bot_enabled: 'Enable Discourse Narrative Bot'
+    disable_discourse_narrative_bot_welcome_post: "Disable the welcome post by Discourse Narrative Bot"
 
   discourse_narrative_bot:
     bio: "Offical bot of %{site_title}. To interact with me, send me a private message or mention me **`@%{discobot_username}`** anywhere in your reply."

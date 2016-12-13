@@ -150,6 +150,8 @@ after_initialize do
   end
 
   self.add_model_callback(User, :after_commit, on: :create) do
+    return if SiteSetting.disable_discourse_narrative_bot_welcome_post
+
     if ![-1, -2].include?(self.id)
       Jobs.enqueue(:new_user_narrative_init, user_id: self.id)
     end
