@@ -10,6 +10,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
   let(:discobot_user) { User.find(-2) }
+  let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
 
   describe '#notify_timeout' do
     before do
@@ -59,14 +60,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expected_raw = <<~RAW
           #{expected_raw}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
           RAW
 
           new_post = Post.last
 
           expect(narrative.get_data(user)).to eq({
             "topic_id" => topic.id,
-            "state" => "waiting_reply",
+            "state" => "tutorial_bookmark",
             "last_post_id" => new_post.id
           })
 
@@ -88,14 +89,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expected_raw = <<~RAW
           #{expected_raw}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
           RAW
 
           new_post = Post.last
 
           expect(narrative.get_data(user)).to eq({
             "topic_id" => new_post.topic.id,
-            "state" => "waiting_reply",
+            "state" => "tutorial_bookmark",
             "last_post_id" => new_post.id
           })
 
@@ -150,84 +151,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expected_raw = <<~RAW
           #{expected_raw}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
+          #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
           RAW
 
           expect(new_post.raw).to eq(expected_raw.chomp)
 
           expect(narrative.get_data(user)[:state].to_sym)
-            .to eq(:waiting_reply)
-        end
-      end
-    end
-
-    describe 'when [:waiting_reply, :reply]' do
-      let(:post) { Fabricate(:post, topic_id: topic.id) }
-      let(:other_post) { Fabricate(:post) }
-      let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
-
-      before do
-        narrative.set_data(user, state: :waiting_reply, topic_id: topic.id)
-      end
-
-      describe 'when post is not from the right topic' do
-        it 'should not do anything' do
-          post
-          other_post
-
-          narrative.expects(:enqueue_timeout_job).with(user).never
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
-          expect(narrative.get_data(user)[:state].to_sym).to eq(:waiting_reply)
-        end
-      end
-
-      describe 'when post contains the right text' do
-        it 'should create the right reply' do
-          narrative.expects(:enqueue_timeout_job).with(user)
-          post.update_attributes!(raw: 'omg this is a UnicoRn!')
-
-          narrative.input(:reply, user, post)
-          new_post = Post.last
-
-          expected_raw = <<~RAW
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.unicorn')}
-
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
-
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
-          RAW
-
-          expect(new_post.raw).to eq(expected_raw.chomp)
-
-          data = narrative.get_data(user)
-
-          expect(data[:state].to_sym).to eq(:tutorial_bookmark)
-          expect(data[:last_post_id]).to eq(new_post.id)
-        end
-      end
-
-      describe 'when post does not contain the right text' do
-        it 'should create the right reply' do
-          narrative.expects(:enqueue_timeout_job).with(user)
-          post.update_attributes!(raw: 'omg this is a horse!')
-
-          narrative.input(:reply, user, post)
-          new_post = Post.last
-
-          expected_raw = <<~RAW
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.no_likes_message')}
-
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.start.message')}
-
-            #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
-          RAW
-
-          expect(new_post.raw).to eq(expected_raw.chomp)
-
-          data = narrative.get_data(user)
-
-          expect(data[:state].to_sym).to eq(:tutorial_bookmark)
-          expect(data[:last_post_id]).to eq(new_post.id)
+            .to eq(:tutorial_bookmark)
         end
       end
     end

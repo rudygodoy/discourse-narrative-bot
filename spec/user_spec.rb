@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe User do
   let(:user) { Fabricate(:user) }
+  let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
 
   describe 'when a user is created' do
     it 'should initiate the bot' do
@@ -12,13 +13,7 @@ describe User do
           username: user.username, title: SiteSetting.title
         )
 
-        expected_raw = <<~RAW
-        #{expected_raw}
-
-        #{I18n.t('discourse_narrative_bot.new_user_narrative.hello.triggers')}
-        RAW
-
-        expect(Post.last.raw).to eq(expected_raw.chomp)
+        expect(Post.last.raw).to include(expected_raw.chomp)
       end
     end
   end

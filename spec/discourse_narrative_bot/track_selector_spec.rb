@@ -55,7 +55,7 @@ describe DiscourseNarrativeBot::TrackSelector do
           described_class.new(:reply, user, post).select
 
           expect(DiscourseNarrativeBot::NewUserNarrative.new.get_data(user)['state'])
-            .to eq("waiting_reply")
+            .to eq("tutorial_bookmark")
         end
       end
     end

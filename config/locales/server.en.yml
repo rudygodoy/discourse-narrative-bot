@@ -62,60 +62,23 @@ en:
         message_1: |-
           Hi @%{username}
 
-          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time. Reply and mention any of following things that I like to get started.
+          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time.
         message_2: |-
           Hey, it’s good to see you @%{username}!
 
-          If you’re interested, I can give you a brief tour. To begin, reply and mention any of following things that I like!
+          If you’re interested, I can give you a brief tour.
         message_3: |-
           Thanks for joining, @%{username}!
 
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works. If that sounds like something you’d be into, reply and mention any of following things that I like.
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
         message_4: |-
           Well if it isn’t @%{username}!
 
-          Great to have you here at %{title}. If you’d like to chat with me and learn the basics, please reply and mention any of following things that I like. If not, that’s OK too!
+          Great to have you here at %{title}. Without further ado, let's get started right way.
         message_5: |-
           Welcome @%{username}!
 
-          It’s my job to greet everyone that arrives here at %{title} and offer to help. Are you interested in a brief conversation with me to experiment and learn how this site works? If so, reply and mention any of the following things that I like:
-
-      start:
-        no_likes_message: |-
-          Awww, you didn’t mention any of my favorite things.
-
-          <img src='/images/sad-cat.gif'>
-
-          That’s all right … life will still have to go on. I guess.
-        message: |-
-          See how my reply appeared automatically, without refreshing the page? Everything updates here in real time as it happens. :clock1: :clock2: :clock3:
-        unicorn: |-
-          Awesome! I didn’t know you liked :unicorn:s too.
-
-          Did you know that the unicorn is Scotland’s national animal?
-
-          https://en.wikipedia.org/wiki/Unicorn
-
-        ninja: |-
-          Looks like we got ourselves a ninja over here.
-
-          <img src='/images/bitdance.gif'>
-
-          Did you know that ninjas used to hide in the same spot for days, disguised as inanimate objects like rocks and trees :leaves:?
-
-        rocket: |-
-          Space is fascinating. If there are :alien:s, where are they?
-
-          https://mic.com/articles/122857/fermi-paradox-explained-why-alien-life-hasnt-found-us-yet
-
-          :rocket: :full_moon:
-
-        monkey: |-
-          I hope you’re not up to any monkey business.
-
-          :monkey: :fries:
-
-          https://www.youtube.com/watch?v=FjqfX8-L0Tk
+          It’s my job to greet everyone that arrives here at %{title} and offer to help.
 
       onebox:
         instructions: |-

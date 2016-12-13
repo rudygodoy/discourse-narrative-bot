@@ -6,14 +6,9 @@ module DiscourseNarrativeBot
   class NewUserNarrative < Base
     TRANSITION_TABLE = {
       [:begin, :init] => {
-        next_state: :waiting_reply,
-        action: :say_hello
-      },
-
-      [:waiting_reply, :reply] => {
         next_state: :tutorial_bookmark,
         next_instructions_key: 'bookmark.instructions',
-        action: :react_to_reply
+        action: :say_hello
       },
 
       [:tutorial_bookmark, :bookmark] => {
@@ -153,7 +148,7 @@ module DiscourseNarrativeBot
       raw = <<~RAW
       #{raw}
 
-      #{I18n.t(i18n_key('hello.triggers'))}
+      #{I18n.t(i18n_key(@next_instructions_key), profile_page_url: url_helpers(:user_url, username: @user.username))}
       RAW
 
       opts = {
@@ -175,33 +170,8 @@ module DiscourseNarrativeBot
 
       post = reply_to(@post, raw, opts)
       @data[:topic_id] = post.topic.id
-      post
-    end
-
-    def react_to_reply
-      post_topic_id = @post.topic_id
-      return unless valid_topic?(post_topic_id)
-
-      fake_delay
-
-      raw =
-        if key = @post.raw.match(/(unicorn|rocket|ninja|monkey)/i)
-          I18n.t(i18n_key("start.#{key.to_s.downcase}"))
-        else
-          I18n.t(i18n_key("start.no_likes_message"))
-        end
-
-      raw = <<~RAW
-        #{raw}
-
-        #{I18n.t(i18n_key('start.message'))}
-
-        #{I18n.t(i18n_key(@next_instructions_key), profile_page_url: url_helpers(:user_url, username: @user.username))}
-      RAW
-
-      reply = reply_to(@post, raw)
       enqueue_timeout_job(@user)
-      reply
+      post
     end
 
     def missing_bookmark
