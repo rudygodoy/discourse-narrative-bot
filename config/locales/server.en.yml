@@ -249,11 +249,11 @@ en:
     advanced_user_narrative:
       title: ':arrow_up: Advanced user features'
       start_message: |-
-        Hi @%{username}, I'm glad you're looking to learn more about the advanced features of Discourse. We've alot to learn here so let's jump right into it.
+        Hi @%{username}, I’m glad you’re looking to learn more about advanced features!
 
       poll:
         instructions: |-
-          Once in awhile, you'll have a burning question which you'll like to ask the community and solicit for their response. To help you with that, we have polls built into Discourse that can be created with the following markup:
+          Did you know you can add a poll to any reply, like so:
 
               What is your favorite fruit?
 
@@ -263,18 +263,16 @@ en:
               * Bananas
               [/poll]
 
-          Why don't you go ahead and create your first poll. Simpliy click on the :gear: icon in the composer and select the poll builder.
+          Can you use the :gear: icon in the editor to build a poll?
         not_found: |-
-          Looks like you didn't include a poll in your reply. Can you try including the following poll in your next reply?
+          Looks like you didn’t include a poll in your reply. Can you try including the following poll in your next reply?
 
               [poll]
               * :cat:
-              * :cat2:
               * :dog:
-              * :dog2:
               [/poll]
         reply: |-
-          Great job in creating the poll. Let me know if I did well in teaching you about polls :smile:
+          Hey nice poll! How’d I do in teaching you about polls :smile:
 
           [poll]
           * :+1:
@@ -282,6 +280,6 @@ en:
           [/poll]
       end:
         message: |-
-          That is all I have for you in the advanced user track.
+          That’s all I have for you.
 
           Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:
