@@ -91,7 +91,7 @@ en:
           - https://en.wikipedia.org/wiki/Death_by_coconut
           - https://en.wikipedia.org/wiki/Calculator_spelling
         reply: |-
-          Cool! This will work for most <img src="/images/font-awesome-link.png" width="16" height="16"> links — just remember, it must be on a line _all by itself_, with nothing else in front of it, or behind it.
+          Cool! This will work for most <img src="/images/font-awesome-link.png" width="16" height="16"> links — just remember, it must be on a line _all by itself_, with nothing else in front, or behind.
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
@@ -107,7 +107,7 @@ en:
 
           If you like it (and who wouldn’t!) go ahead and press the like :heart: button below this post to let me know.
 
-          Hey, speaking of – **can you reply with a picture?** Any picture will do! You can drag and drop, press the upload button, or even copy and paste it in.
+          Can you **reply with a picture?** Any picture will do! Drag and drop, press the upload button, or even copy and paste it in.
         reply: |-
           Nifty picture – I pressed the like :heart: button to let you know how much I appreciated it :heart_eyes:
         like_not_found: |-
@@ -121,7 +121,7 @@ en:
 
       formatting:
         instructions: |-
-          Hey, can you make some words **bold** or _italic_ in your reply?
+          Can you make some words **bold** or _italic_ in your reply?
 
           - type `**bold**` or `_italic_`
 
@@ -156,9 +156,10 @@ en:
 
       bookmark:
         instructions: |-
-          First, can you **bookmark this post** using the bookmark button <img src="/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
+          First, can you **bookmark this private message** using the bookmark button <img src="/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
         reply: |-
-          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). To get there, just select your avatar at the upper right &#8599;
+          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_
+          }/activity/bookmarks). To get there, just select your profile picture at the upper right &#8599;
         not_found: |-
           Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions if needed.
 
@@ -188,7 +189,7 @@ en:
         instructions: |-
           Sometimes you might want to get a person’s attention, even if you aren’t replying to them directly. Type `@` then complete their user name to mention them.
 
-          Give it a try – mention **`@%{discobot_username}`** in your reply.
+          Can you mention **`@%{discobot_username}`** in your reply?
         reply: |-
           _Did someone say my name!?_ :raised_hand: I believe you did! :wave:  Well, here I am! Thanks for mentioning me.  :ok_hand:
         not_found: |-
@@ -198,9 +199,7 @@ en:
 
       flag:
         instructions: |-
-          We like our discussions friendly, and we need your help to [keep it civilized](%{guidelines_url}). :two_men_holding_hands::couple::two_women_holding_hands:
-
-          If you see a problem, please flag to privately let the author, or [our helpful staff](%{about_url}), know about it.
+          We like our discussions friendly, and we need your help to [keep things civilized](%{guidelines_url}). If you see a problem, please flag to privately let the author, or [our helpful staff](%{about_url}), know about it.
 
           >  :imp: I wrote something nasty here
 
@@ -222,7 +221,7 @@ en:
 
           Did you notice you’re now back at the beginning? Feed this poor hungry capybara by **replying with the `:herb:` emoji** and you’ll be automatically taken to the end.
         reply: |-
-          Yay you found it :tada:. I knew I could count on you!
+          Yay you found it :tada:
 
           - For more detailed searches, head over to the [full search page](%{search_url}) or expand the advanced search options.
 
@@ -242,7 +241,7 @@ en:
 
           Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
 
-          Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:
+          Go ahead and check out [**our latest discussion topics**](/latest). If you’d like to speak with me again, send me a personal message any time :sunglasses:
 
       certificate:
         alt: 'Certificate of Achievement'
