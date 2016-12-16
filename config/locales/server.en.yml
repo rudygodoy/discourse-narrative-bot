@@ -158,8 +158,7 @@ en:
         instructions: |-
           First, can you **bookmark this private message** using the bookmark button <img src="/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
         reply: |-
-          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_
-          }/activity/bookmarks). To get there, just select your profile picture at the upper right &#8599;
+          Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). To get there, just select your profile picture at the upper right &#8599;
         not_found: |-
           Uh oh, I don’t see any bookmarks in this topic. Did you find the bookmark button under each post?  Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions if needed.
 
