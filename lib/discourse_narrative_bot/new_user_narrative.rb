@@ -170,7 +170,6 @@ module DiscourseNarrativeBot
 
       post = reply_to(@post, raw, opts)
       @data[:topic_id] = post.topic.id
-      enqueue_timeout_job(@user)
       post
     end
 

@@ -141,6 +141,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
     describe 'when [:begin, :init]' do
       it 'should create the right post' do
         Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
+          narrative.expects(:enqueue_timeout_job).never
+
           narrative.input(:init, user, nil)
           new_post = Post.last
 
