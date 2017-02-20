@@ -27,8 +27,32 @@ module DiscourseNarrativeBot
     end
 
     def reset_rate_limits(post)
-      post.default_rate_limiter.rollback!
-      post.limit_posts_per_day&.rollback!
+      return unless defined?(store_key)
+
+      user = post.user
+      data = DiscourseNarrativeBot::Store.get(store_key(user))
+
+      return unless data
+      key = "#{DiscourseNarrativeBot::PLUGIN_NAME}:reset-rate-limit:#{post.topic_id}:#{data['state']}"
+
+      if !(count = $redis.get(key))
+        count = 0
+
+        duration =
+          if user && user.new_user?
+            SiteSetting.rate_limit_new_user_create_post
+          else
+            SiteSetting.rate_limit_create_post
+          end
+
+        $redis.setex(key, duration, count)
+      end
+
+      if count.to_i < 2
+        post.default_rate_limiter.rollback!
+        post.limit_posts_per_day&.rollback!
+        $redis.incr(key)
+      end
     end
 
     def fake_delay
