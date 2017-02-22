@@ -28,6 +28,9 @@ en:
           `@%{discobot_username} %{new_user_track}`
           > Starts the new user narrative track
 
+          `@%{discobot_username} %{advanced_user_track}`
+          > Starts the advanced user narrative track
+
           `@%{discobot_username} roll 2d6`
           > :game_die: dice roll: 3, 6
 

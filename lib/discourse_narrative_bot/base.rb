@@ -55,15 +55,11 @@ module DiscourseNarrativeBot
     end
 
     def set_data(user, value)
-      DiscourseNarrativeBot::Store.set(store_key(user), value)
+      DiscourseNarrativeBot::Store.set(user.id, value)
     end
 
     def get_data(user)
-      DiscourseNarrativeBot::Store.get(store_key(user))
-    end
-
-    def store_key(user)
-      not_implemented
+      DiscourseNarrativeBot::Store.get(user.id)
     end
 
     private

@@ -27,12 +27,11 @@ module DiscourseNarrativeBot
     end
 
     def reset_rate_limits(post)
-      return unless defined?(store_key)
-
       user = post.user
-      data = DiscourseNarrativeBot::Store.get(store_key(user))
+      data = DiscourseNarrativeBot::Store.get(user.id.to_s)
 
       return unless data
+
       key = "#{DiscourseNarrativeBot::PLUGIN_NAME}:reset-rate-limit:#{post.topic_id}:#{data['state']}"
 
       if !(count = $redis.get(key))

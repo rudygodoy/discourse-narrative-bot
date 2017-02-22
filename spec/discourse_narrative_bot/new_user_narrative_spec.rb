@@ -68,7 +68,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expect(narrative.get_data(user)).to eq({
             "topic_id" => topic.id,
             "state" => "tutorial_bookmark",
-            "last_post_id" => new_post.id
+            "last_post_id" => new_post.id,
+            "track" => described_class.to_s
           })
 
           expect(new_post.raw).to eq(expected_raw.chomp)
@@ -97,7 +98,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expect(narrative.get_data(user)).to eq({
             "topic_id" => new_post.topic.id,
             "state" => "tutorial_bookmark",
-            "last_post_id" => new_post.id
+            "last_post_id" => new_post.id,
+            "track" => described_class.to_s
           })
 
           expect(new_post.raw).to eq(expected_raw.chomp)
@@ -171,7 +173,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       describe 'when post is not in the right topic' do
         it 'should not do anything' do
-          other_post.update_attributes!(user_id: -2)
+          other_post.update!(user_id: -2)
           narrative.expects(:enqueue_timeout_job).with(user).never
 
           expect { narrative.input(:bookmark, user, other_post) }.to_not change { Post.count }
@@ -200,7 +202,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       it 'should create the right reply' do
-        post.update_attributes!(user: described_class.discobot_user)
+        post.update!(user: described_class.discobot_user)
         narrative.expects(:enqueue_timeout_job).with(user)
 
         narrative.input(:bookmark, user, post)
@@ -256,7 +258,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       it 'should create the right reply' do
-        post.update_attributes!(raw: 'https://en.wikipedia.org/wiki/ROT13')
+        post.update!(raw: 'https://en.wikipedia.org/wiki/ROT13')
 
         narrative.expects(:enqueue_timeout_job).with(user)
         narrative.input(:reply, user, post)
@@ -299,7 +301,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.images.not_found'))
         expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
 
-        post.update_attributes!(
+        post.update!(
           raw: "<img src='https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg'>",
         )
 
@@ -365,7 +367,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       ["**bold**", "__italic__", "[b]bold[/b]", "[i]italic[/i]"].each do |raw|
         it 'should create the right reply' do
-          post.update_attributes!(raw: raw)
+          post.update!(raw: raw)
 
           narrative.expects(:enqueue_timeout_job).with(user)
           narrative.input(:reply, user, post)
@@ -409,7 +411,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       it 'should create the right reply' do
-        post.update_attributes!(
+        post.update!(
           raw: '[quote="#{post.user}, post:#{post.post_number}, topic:#{topic.id}"]\n:monkey: :fries:\n[/quote]'
         )
 
@@ -454,7 +456,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       it 'should create the right reply' do
-        post.update_attributes!(
+        post.update!(
           raw: ':monkey: :fries:'
         )
 
@@ -506,7 +508,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       it 'should create the right reply' do
-        post.update_attributes!(
+        post.update!(
           raw: '@discobot hello how are you doing today?'
         )
 
@@ -540,7 +542,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post flagged is not for the right topic' do
         it 'should not do anything' do
           narrative.expects(:enqueue_timeout_job).with(user).never
-          flag.update_attributes!(post: other_post)
+          flag.update!(post: other_post)
 
           expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
@@ -550,7 +552,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post being flagged does not belong to discobot ' do
         it 'should not do anything' do
           narrative.expects(:enqueue_timeout_job).with(user).never
-          flag.update_attributes!(post: other_post)
+          flag.update!(post: other_post)
 
           expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
@@ -632,7 +634,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
 
         it 'should create the right reply' do
-          post.update_attributes!(
+          post.update!(
             raw: "#{described_class::SEARCH_ANSWER} this is a capybara"
           )
 

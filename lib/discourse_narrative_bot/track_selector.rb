@@ -2,7 +2,7 @@ module DiscourseNarrativeBot
   class TrackSelector
     include Actions
 
-    GENERIC_REPLIEX_COUNT_PREFIX = 'discourse-narrative-bot:track-selector-count:'.freeze
+    GENERIC_REPLIES_COUNT_PREFIX = 'discourse-narrative-bot:track-selector-count:'.freeze
 
     TRACKS = [
       NewUserNarrative,
@@ -20,27 +20,29 @@ module DiscourseNarrativeBot
         topic_id = @post.topic_id
 
         TRACKS.each do |klass|
-          track = klass.new
-          data = track.get_data(@user)
-
           if selected_track(klass::RESET_TRIGGER)
-            track.reset_bot(@user, @post)
-            return
-          elsif (data && data[:topic_id] == topic_id)
-            state = data[:state]
-
-            if ((state && state.to_sym == :end) && @input == :reply)
-              if bot_mentioned?(@post)
-                mention_replies
-              else
-                generic_replies(klass::RESET_TRIGGER)
-              end
-            else
-              track.input(@input, @user, @post)
-            end
-
+            klass.new.reset_bot(@user, @post)
             return
           end
+        end
+
+        data = DiscourseNarrativeBot::Store.get(@user.id.to_s)
+
+        if (data && data[:topic_id] == topic_id)
+          state = data[:state]
+          klass = data[:track].constantize
+
+          if ((state && state.to_sym == :end) && @input == :reply)
+            if bot_mentioned?(@post)
+              mention_replies
+            else
+              generic_replies(klass::RESET_TRIGGER)
+            end
+          else
+            klass.new.input(@input, @user, @post)
+          end
+
+          return
         end
 
         if (@input == :reply) && (bot_mentioned?(@post) || pm_to_bot?(@post) || reply_to_bot_post?(@post))
@@ -80,7 +82,7 @@ module DiscourseNarrativeBot
     end
 
     def generic_replies(reset_trigger)
-      key = "#{GENERIC_REPLIEX_COUNT_PREFIX}#{@user.id}"
+      key = "#{GENERIC_REPLIES_COUNT_PREFIX}#{@user.id}"
       count = ($redis.get(key) || $redis.setex(key, 900, 0)).to_i
 
       case count

@@ -12,13 +12,14 @@ describe DiscourseNarrativeBot::TrackSelector do
       before do
         narrative.set_data(user,
           state: :tutorial_images,
-          topic_id: post.topic.id
+          topic_id: post.topic.id,
+          track: "DiscourseNarrativeBot::NewUserNarrative"
         )
       end
 
       context 'when bot is mentioned' do
         it 'should select the right track' do
-          post.update_attributes!(raw: '@discobot show me what you can do')
+          post.update!(raw: '@discobot show me what you can do')
           described_class.new(:reply, user, post).select
           new_post = Post.last
 
@@ -31,7 +32,7 @@ describe DiscourseNarrativeBot::TrackSelector do
       context 'when bot is replied to' do
         it 'should select the right track' do
           Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-            post.update_attributes!(
+            post.update!(
               raw: 'show me what you can do',
               reply_to_post_number: bot_post.post_number
             )
@@ -48,7 +49,7 @@ describe DiscourseNarrativeBot::TrackSelector do
 
       context 'when reply contains a reset trigger' do
         it 'should start/reset the track' do
-          post.update_attributes!(
+          post.update!(
             raw: "@discobot #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}"
           )
 
@@ -58,12 +59,23 @@ describe DiscourseNarrativeBot::TrackSelector do
             .to eq("tutorial_bookmark")
         end
       end
+
+      context 'when reply contains a reset trigger to another track' do
+        it 'should start the new track' do
+          post.update!(raw: "@discobot #{DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER}")
+
+          described_class.new(:reply, user, post).select
+
+          expect(DiscourseNarrativeBot::AdvancedUserNarrative.new.get_data(user)['track'])
+            .to eq("DiscourseNarrativeBot::AdvancedUserNarrative")
+        end
+      end
     end
 
     context 'random discobot mentions' do
       describe 'when discobot is mentioned' do
         it 'should create the right reply' do
-          post.update_attributes!(raw: 'Show me what you can do @discobot')
+          post.update!(raw: 'Show me what you can do @discobot')
           described_class.new(:reply, user, post).select
           new_post = Post.last
 
@@ -77,11 +89,15 @@ describe DiscourseNarrativeBot::TrackSelector do
 
         context 'when discobot is mentioned at the end of a track' do
           before do
-            narrative.set_data(user, state: :end, topic_id: post.topic.id)
+            narrative.set_data(user,
+              state: :end,
+              topic_id: post.topic.id,
+              track: "DiscourseNarrativeBot::NewUserNarrative"
+            )
           end
 
           it 'should create the right reply' do
-            post.update_attributes!(raw: 'Show me what you can do @discobot')
+            post.update!(raw: 'Show me what you can do @discobot')
             described_class.new(:reply, user, post).select
             new_post = Post.last
 
@@ -96,7 +112,7 @@ describe DiscourseNarrativeBot::TrackSelector do
 
         describe 'when discobot is asked to roll dice' do
           it 'should create the right reply' do
-            post.update_attributes!(raw: '@discobot roll 2d1')
+            post.update!(raw: '@discobot roll 2d1')
             described_class.new(:reply, user, post).select
             new_post = Post.last
 
@@ -113,7 +129,7 @@ describe DiscourseNarrativeBot::TrackSelector do
               quote: "Be Like Water", author: "Bruce Lee"
             )
 
-            post.update_attributes!(raw: '@discobot show me a quote')
+            post.update!(raw: '@discobot show me a quote')
             described_class.new(:reply, user, post).select
             new_post = Post.last
 
@@ -176,11 +192,15 @@ describe DiscourseNarrativeBot::TrackSelector do
 
     context 'generic replies' do
       before do
-        narrative.set_data(user, state: :end, topic_id: post.topic.id)
+        narrative.set_data(user,
+          state: :end,
+          topic_id: post.topic.id,
+          track: "DiscourseNarrativeBot::NewUserNarrative"
+        )
       end
 
       after do
-        $redis.del("#{described_class::GENERIC_REPLIEX_COUNT_PREFIX}#{user.id}")
+        $redis.del("#{described_class::GENERIC_REPLIES_COUNT_PREFIX}#{user.id}")
       end
 
       it 'should create the right generic do not understand responses' do

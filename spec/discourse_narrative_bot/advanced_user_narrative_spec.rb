@@ -66,7 +66,8 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
         expect(narrative.get_data(user)).to eq({
           "topic_id" => topic.id,
           "state" => "tutorial_poll",
-          "last_post_id" => new_post.id
+          "last_post_id" => new_post.id,
+          "track" => described_class.to_s
         })
 
         expect(new_post.raw).to eq(expected_raw.chomp)
@@ -94,7 +95,8 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
         expect(narrative.get_data(user)).to eq({
           "topic_id" => new_post.topic.id,
           "state" => "tutorial_poll",
-          "last_post_id" => new_post.id
+          "last_post_id" => new_post.id,
+          "track" => described_class.to_s
         })
 
         expect(new_post.raw).to eq(expected_raw.chomp)

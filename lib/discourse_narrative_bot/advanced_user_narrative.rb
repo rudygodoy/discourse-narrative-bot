@@ -34,10 +34,6 @@ module DiscourseNarrativeBot
       end
     end
 
-    def store_key(user)
-      "advanced_user_narrative_#{user.id}"
-    end
-
     private
 
     def start_advanced_track
@@ -68,6 +64,7 @@ module DiscourseNarrativeBot
 
       post = reply_to(@post, raw, opts)
       @data[:topic_id] = post.topic.id
+      @data[:track] = self.class.to_s
       post
     end
 
@@ -101,7 +98,7 @@ module DiscourseNarrativeBot
       if Rails.env.test?
         yield
       else
-        DistributedMutex.synchronize(store_key(user)) { yield }
+        DistributedMutex.synchronize("advanced_user_narrative_#{user.id}") { yield }
       end
     end
 

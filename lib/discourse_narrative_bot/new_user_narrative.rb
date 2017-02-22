@@ -103,17 +103,13 @@ module DiscourseNarrativeBot
       end
     end
 
-    def store_key(user)
-      "new_user_narrative_#{user.id}"
-    end
-
     private
 
     def synchronize(user)
       if Rails.env.test?
         yield
       else
-        DistributedMutex.synchronize(store_key(user)) { yield }
+        DistributedMutex.synchronize("new_user_narrative_#{user.id}") { yield }
       end
     end
 
@@ -170,6 +166,7 @@ module DiscourseNarrativeBot
 
       post = reply_to(@post, raw, opts)
       @data[:topic_id] = post.topic.id
+      @data[:track] = self.class.to_s
       post
     end
 
