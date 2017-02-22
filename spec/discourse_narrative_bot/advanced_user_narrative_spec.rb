@@ -108,7 +108,11 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
   describe "#input" do
     context 'poll tutorial' do
       before do
-        narrative.set_data(user, state: :tutorial_poll, topic_id: topic.id)
+        narrative.set_data(user,
+          state: :tutorial_poll,
+          topic_id: topic.id,
+          track: described_class.to_s
+        )
       end
 
       describe 'when post is not in the right topic' do
@@ -132,21 +136,60 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
       end
 
       it 'should create the right reply' do
-        post.update_attributes!(
-          raw: "[poll]\n* 1\n* 2\n[/poll]\n"
-        )
-
+        post.update!(raw: "[poll]\n* 1\n* 2\n[/poll]\n")
         narrative.input(:reply, user, post)
-        new_post = Post.offset(1).last
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.reply')}
+
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.details.instructions')}
         RAW
 
-        expect(new_post.raw).to eq(expected_raw.chomp)
+        expect(Post.last.raw).to eq(expected_raw.chomp)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_details)
+      end
+    end
+
+    context "details tutorial" do
+      before do
+        narrative.set_data(user,
+          state: :tutorial_details,
+          topic_id: topic.id,
+          track: described_class.to_s
+        )
+      end
+
+      describe 'when post is not in the right topic' do
+        it 'should not do anything' do
+          other_post
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_details)
+        end
+      end
+
+      describe 'when user replies to the topic' do
+        it 'should create the right reply' do
+          narrative.input(:reply, user, post)
+
+          expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.advanced_user_narrative.details.not_found'))
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_details)
+        end
+      end
+
+      it 'should create the right reply' do
+        post.update!(raw: "[details=\"This is a test\"]wooohoo[/details]")
+        narrative.input(:reply, user, post)
+
+        expect(Post.offset(1).last.raw).to eq(I18n.t(
+          'discourse_narrative_bot.advanced_user_narrative.details.reply'
+        ))
 
         expect(narrative.get_data(user)).to eq({
-          "state" => 'end', "topic_id" => new_post.topic_id
+          "state" => "end",
+          "topic_id" => topic.id,
+          "track" => described_class.to_s
         })
       end
     end

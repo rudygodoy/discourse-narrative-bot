@@ -8,8 +8,14 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_poll, :reply] => {
-        next_state: :end,
+        next_state: :tutorial_details,
+        next_instructions_key: 'details.instructions',
         action: :reply_to_poll
+      },
+
+      [:tutorial_details, :reply] => {
+        next_state: :end,
+        action: :reply_to_details
       }
     }
 
@@ -75,9 +81,30 @@ module DiscourseNarrativeBot
       fake_delay
 
       if Nokogiri::HTML.fragment(@post.cooked).css(".poll").size > 0
-        reply_to(@post, I18n.t(i18n_key('poll.reply')))
+        raw = <<~RAW
+          #{I18n.t(i18n_key('poll.reply'))}
+
+          #{I18n.t(i18n_key(@next_instructions_key))}
+        RAW
+
+        reply_to(@post, raw)
       else
         reply_to(@post, I18n.t(i18n_key('poll.not_found')))
+        enqueue_timeout_job(@user)
+        false
+      end
+    end
+
+    def reply_to_details
+      topic_id = @post.topic_id
+      return unless valid_topic?(topic_id)
+
+      fake_delay
+
+      if Nokogiri::HTML.fragment(@post.cooked).css("details").size > 0
+        reply_to(@post, I18n.t(i18n_key("details.reply")))
+      else
+        reply_to(@post, I18n.t(i18n_key("details.not_found")))
         enqueue_timeout_job(@user)
         false
       end

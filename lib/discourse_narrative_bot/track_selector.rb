@@ -30,7 +30,7 @@ module DiscourseNarrativeBot
 
         if (data && data[:topic_id] == topic_id)
           state = data[:state]
-          klass = data[:track].constantize
+          klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative).constantize
 
           if ((state && state.to_sym == :end) && @input == :reply)
             if bot_mentioned?(@post)

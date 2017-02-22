@@ -39,7 +39,11 @@ module DiscourseNarrativeBot
             if new_state == :end
               end_reply
               cancel_timeout_job(user)
-              set_data(@user, topic_id: new_post.topic_id, state: :end)
+              set_data(@user,
+                topic_id: new_post.topic_id,
+                state: :end,
+                track: self.class.to_s
+              )
             end
           end
         rescue => e
