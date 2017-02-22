@@ -280,7 +280,10 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       before do
         narrative.set_data(user,
-          state: :tutorial_images, topic_id: topic.id, last_post_id: post_2.id
+          state: :tutorial_images,
+          topic_id: topic.id,
+          last_post_id: post_2.id,
+          track: described_class.to_s
         )
       end
 
