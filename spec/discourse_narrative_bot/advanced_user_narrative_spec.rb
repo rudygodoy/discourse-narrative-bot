@@ -189,7 +189,8 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
         expect(narrative.get_data(user)).to eq({
           "state" => "end",
           "topic_id" => topic.id,
-          "track" => described_class.to_s
+          "track" => described_class.to_s,
+          "completed" => [described_class.to_s]
         })
       end
     end

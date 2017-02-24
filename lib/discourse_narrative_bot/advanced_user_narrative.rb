@@ -22,9 +22,18 @@ module DiscourseNarrativeBot
     RESET_TRIGGER = 'advanced user track'.freeze
     TIMEOUT_DURATION = 900 # 15 mins
 
+    def self.can_start?(user)
+      completed_tracks = DiscourseNarrativeBot::Store.get(user.id)[:completed]
+      completed_tracks && completed_tracks.include?(DiscourseNarrativeBot::NewUserNarrative.to_s)
+    end
+
     def reset_bot(user, post)
-      reset_data(user)
-      set_data(user, topic_id: post.topic_id) if pm_to_bot?(post)
+      if pm_to_bot?(post)
+        reset_data(user, { topic_id: post.topic_id })
+      else
+        reset_data(user)
+      end
+
       Jobs.enqueue_in(2.seconds, :advanced_user_narrative_init, user_id: user.id)
     end
 

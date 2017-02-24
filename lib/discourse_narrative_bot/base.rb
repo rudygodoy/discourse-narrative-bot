@@ -39,10 +39,15 @@ module DiscourseNarrativeBot
             if new_state == :end
               end_reply
               cancel_timeout_job(user)
+
+              completed = Set.new(get_data(@user)[:completed])
+              completed << self.class.to_s
+
               set_data(@user,
                 topic_id: new_post.topic_id,
                 state: :end,
-                track: self.class.to_s
+                track: self.class.to_s,
+                completed: completed
               )
             end
           end
@@ -68,8 +73,12 @@ module DiscourseNarrativeBot
 
     private
 
-    def reset_data(user)
-      set_data(user, nil)
+    def reset_data(user, additional_data = {})
+      old_data = get_data(user)
+      new_data = additional_data
+      new_data[:completed] = old_data[:completed] if old_data[:completed]
+      set_data(user, new_data)
+      new_data
     end
 
     def not_implemented

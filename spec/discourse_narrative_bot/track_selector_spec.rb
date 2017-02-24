@@ -7,6 +7,25 @@ describe DiscourseNarrativeBot::TrackSelector do
   let(:bot_post) { Fabricate(:post, topic: post.topic, user: discobot_user) }
   let(:narrative) { DiscourseNarrativeBot::NewUserNarrative.new }
 
+  def random_mention_reply
+    discobot_username = discobot_user.username
+
+    end_message = <<~RAW
+    #{I18n.t(
+      'discourse_narrative_bot.track_selector.random_mention.header',
+      discobot_username: discobot_username,
+      new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
+    )}
+
+    #{I18n.t(
+      'discourse_narrative_bot.track_selector.random_mention.bot_actions',
+      discobot_username: discobot_username,
+    )}
+    RAW
+
+    end_message.chomp
+  end
+
   describe '#select' do
     context 'when a track is in progress' do
       before do
@@ -58,16 +77,35 @@ describe DiscourseNarrativeBot::TrackSelector do
           expect(DiscourseNarrativeBot::NewUserNarrative.new.get_data(user)['state'])
             .to eq("tutorial_bookmark")
         end
-      end
 
-      context 'when reply contains a reset trigger to another track' do
-        it 'should start the new track' do
-          post.update!(raw: "@discobot #{DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER}")
+        context 'start/reset advanced track' do
+          before do
+            post.update!(
+              raw: "@discobot #{DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER}"
+            )
+          end
 
-          described_class.new(:reply, user, post).select
+          context 'when new user track has not been completed' do
+            it 'should not start the track' do
+              described_class.new(:reply, user, post).select
 
-          expect(DiscourseNarrativeBot::AdvancedUserNarrative.new.get_data(user)['track'])
-            .to eq("DiscourseNarrativeBot::AdvancedUserNarrative")
+              expect(DiscourseNarrativeBot::Store.get(user.id)['track'])
+                .to eq(DiscourseNarrativeBot::NewUserNarrative.to_s)
+            end
+          end
+
+          context 'when new user track has been completed' do
+            it 'should start the track' do
+              data = DiscourseNarrativeBot::Store.get(user.id)
+              data[:completed] = [DiscourseNarrativeBot::NewUserNarrative.to_s]
+              DiscourseNarrativeBot::Store.set(user.id, data)
+
+              described_class.new(:reply, user, post).select
+
+              expect(DiscourseNarrativeBot::Store.get(user.id)['track'])
+                .to eq(DiscourseNarrativeBot::AdvancedUserNarrative.to_s)
+            end
+          end
         end
       end
     end
@@ -78,35 +116,43 @@ describe DiscourseNarrativeBot::TrackSelector do
           post.update!(raw: 'Show me what you can do @discobot')
           described_class.new(:reply, user, post).select
           new_post = Post.last
-
-          expect(new_post.raw).to eq(I18n.t(
-            "discourse_narrative_bot.track_selector.random_mention.message",
-            discobot_username: described_class.discobot_user.username,
-            new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
-            advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
-          ))
+          expect(new_post.raw).to eq(random_mention_reply)
         end
 
         context 'when discobot is mentioned at the end of a track' do
-          before do
+          it 'should create the right reply' do
             narrative.set_data(user,
               state: :end,
               topic_id: post.topic.id,
               track: "DiscourseNarrativeBot::NewUserNarrative"
             )
-          end
 
-          it 'should create the right reply' do
             post.update!(raw: 'Show me what you can do @discobot')
             described_class.new(:reply, user, post).select
             new_post = Post.last
 
-            expect(new_post.raw).to eq(I18n.t(
-              "discourse_narrative_bot.track_selector.random_mention.message",
-              discobot_username: described_class.discobot_user.username,
-              new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
-              advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
-            ))
+            expect(new_post.raw).to eq(random_mention_reply)
+          end
+
+          context 'when user has completed the new user track' do
+            it 'should include the commands to start the advanced user track' do
+              narrative.set_data(user,
+                state: :end,
+                topic_id: post.topic.id,
+                track: "DiscourseNarrativeBot::NewUserNarrative",
+                completed: ["DiscourseNarrativeBot::NewUserNarrative"]
+              )
+
+              post.update!(raw: 'Show me what you can do @discobot')
+              described_class.new(:reply, user, post).select
+              new_post = Post.last
+
+              expect(new_post.raw).to include(I18n.t(
+                'discourse_narrative_bot.track_selector.random_mention.advanced_track',
+                discobot_username: discobot_user.username,
+                advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
+              ))
+            end
           end
         end
 
@@ -180,12 +226,7 @@ describe DiscourseNarrativeBot::TrackSelector do
         it 'should create the right reply' do
           described_class.new(:reply, user, other_post).select
 
-          expect(Post.last.raw).to eq(I18n.t(
-            "discourse_narrative_bot.track_selector.random_mention.message",
-            discobot_username: discobot_user.username,
-            new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
-            advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
-          ))
+          expect(Post.last.raw).to eq(random_mention_reply)
         end
       end
     end

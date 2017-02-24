@@ -20,7 +20,7 @@ module DiscourseNarrativeBot
         topic_id = @post.topic_id
 
         TRACKS.each do |klass|
-          if selected_track(klass::RESET_TRIGGER)
+          if selected_track(klass)
             klass.new.reset_bot(@user, @post)
             return
           end
@@ -53,8 +53,9 @@ module DiscourseNarrativeBot
 
     private
 
-    def selected_track(trigger)
-      bot_mentioned?(@post) && @post.raw.match(/#{trigger}/)
+    def selected_track(klass)
+      return if klass.respond_to?(:can_start?) && !klass.can_start?(@user)
+      bot_mentioned?(@post) && @post.raw.match(/#{klass::RESET_TRIGGER}/)
     end
 
     def mention_replies
@@ -68,12 +69,20 @@ module DiscourseNarrativeBot
         elsif match_data = post_raw.match(/show me a quote/i)
           I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
         else
-          I18n.t(
-            i18n_key('random_mention.message'),
-            discobot_username: self.class.discobot_user.username,
+          discobot_username = self.class.discobot_user.username
+          data = DiscourseNarrativeBot::Store.get(@user.id)
+
+          message = I18n.t(
+            i18n_key('random_mention.header'),
+            discobot_username: discobot_username,
             new_user_track: NewUserNarrative::RESET_TRIGGER,
-            advanced_user_track: AdvancedUserNarrative::RESET_TRIGGER
           )
+
+          if data[:completed] && data[:completed].include?(NewUserNarrative.to_s)
+            message << "\n\n#{I18n.t(i18n_key('random_mention.advanced_track'), discobot_username: discobot_username, advanced_user_track: AdvancedUserNarrative::RESET_TRIGGER)}"
+          end
+
+          message << "\n\n#{I18n.t(i18n_key('random_mention.bot_actions'), discobot_username: discobot_username)}"
         end
 
       fake_delay

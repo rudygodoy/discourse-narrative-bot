@@ -650,11 +650,12 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           ).chomp)
 
           expect(first_post.reload.raw).to eq('Hello world')
-          
+
           expect(narrative.get_data(user)).to eq({
             "state" => "end",
             "topic_id" => new_post.topic_id,
-            "track" => described_class.to_s
+            "track" => described_class.to_s,
+            "completed" => [described_class.to_s]
           })
         end
       end

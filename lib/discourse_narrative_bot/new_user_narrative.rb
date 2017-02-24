@@ -86,8 +86,12 @@ module DiscourseNarrativeBot
     TIMEOUT_DURATION = 900 # 15 mins
 
     def reset_bot(user, post)
-      reset_data(user)
-      set_data(user, topic_id: post.topic_id) if pm_to_bot?(post)
+      if pm_to_bot?(post)
+        reset_data(user, { topic_id: post.topic_id })
+      else
+        reset_data(user)
+      end
+      
       Jobs.enqueue_in(2.seconds, :new_user_narrative_init, user_id: user.id)
     end
 
@@ -468,7 +472,13 @@ module DiscourseNarrativeBot
 
       reply_to(
         @post,
-        I18n.t(i18n_key('end.message'), username: @user.username, base_url: Discourse.base_url, certificate: certificate),
+        I18n.t(i18n_key('end.message'),
+          username: @user.username,
+          base_url: Discourse.base_url,
+          certificate: certificate,
+          discobot_username: self.class.discobot_user.username,
+          advanced_trigger: AdvancedUserNarrative::RESET_TRIGGER
+        ),
         topic_id: @data[:topic_id]
       )
     end

@@ -20,17 +20,17 @@ en:
           :game_die: dice roll: %{results}
         quote: |-
           > :left_speech_bubble: _%{quote}_ &mdash; %{author}
-        message: |-
+        header: |-
           You rang? :telephone: :ear:
 
           I currently know how to do the following things:
 
           `@%{discobot_username} %{new_user_track}`
           > Starts the new user narrative track
-
+        advanced_track: |-
           `@%{discobot_username} %{advanced_user_track}`
           > Starts the advanced user narrative track
-
+        bot_actions: |-
           `@%{discobot_username} roll 2d6`
           > :game_die: dice roll: 3, 6
 
@@ -243,7 +243,7 @@ en:
 
           Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
 
-          Go ahead and check out [**our latest discussion topics**](/latest). If you’d like to speak with me again, send me a personal message any time :sunglasses:
+          Go ahead and check out [**our latest discussion topics**](/latest). If you’d like to learn about the advanced features, say `@%{discobot_username} %{advanced_trigger}`.
 
       certificate:
         alt: 'Certificate of Achievement'
