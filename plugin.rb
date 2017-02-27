@@ -22,8 +22,7 @@ after_initialize do
 
   load File.expand_path('../jobs/bot_input.rb', __FILE__)
   load File.expand_path('../jobs/narrative_timeout.rb', __FILE__)
-  load File.expand_path('../jobs/new_user_narrative_init.rb', __FILE__)
-  load File.expand_path('../jobs/advanced_user_narrative_init.rb', __FILE__)
+  load File.expand_path('../jobs/narrative_init.rb', __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/actions.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/base.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/new_user_narrative.rb", __FILE__)
@@ -152,7 +151,10 @@ after_initialize do
     return if SiteSetting.disable_discourse_narrative_bot_welcome_post
 
     if ![-1, -2].include?(self.id)
-      Jobs.enqueue(:new_user_narrative_init, user_id: self.id)
+      Jobs.enqueue(:narrative_init,
+        user_id: self.id,
+        klass: DiscourseNarrativeBot::NewUserNarrative.to_s
+      )
     end
   end
 

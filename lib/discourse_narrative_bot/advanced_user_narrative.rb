@@ -34,7 +34,7 @@ module DiscourseNarrativeBot
         reset_data(user)
       end
 
-      Jobs.enqueue_in(2.seconds, :advanced_user_narrative_init, user_id: user.id)
+      Jobs.enqueue_in(2.seconds, :narrative_init, user_id: user.id, klass: self.class.to_s)
     end
 
     def notify_timeout(user)
