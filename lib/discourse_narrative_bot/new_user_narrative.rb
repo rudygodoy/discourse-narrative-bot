@@ -91,7 +91,7 @@ module DiscourseNarrativeBot
       else
         reset_data(user)
       end
-      
+
       Jobs.enqueue_in(2.seconds, :new_user_narrative_init, user_id: user.id)
     end
 
@@ -502,14 +502,18 @@ module DiscourseNarrativeBot
     end
 
     def cancel_timeout_job(user)
-      Jobs.cancel_scheduled_job(:new_user_narrative_timeout, user_id: user.id)
+      Jobs.cancel_scheduled_job(:narrative_timeout, user_id: user.id, klass: self.class.to_s)
     end
 
     def enqueue_timeout_job(user)
       return if Rails.env.test?
 
       cancel_timeout_job(user)
-      Jobs.enqueue_in(TIMEOUT_DURATION, :new_user_narrative_timeout, user_id: user.id)
+
+      Jobs.enqueue_in(TIMEOUT_DURATION, :narrative_timeout,
+        user_id: user.id,
+        klass: self.class.to_s
+      )
     end
 
     def welcome_topic
