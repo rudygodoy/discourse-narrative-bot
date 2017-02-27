@@ -253,6 +253,18 @@ en:
       start_message: |-
         Hi @%{username}, I’m glad you’re looking to learn more about advanced features!
 
+      edit:
+        bot_created_post_raw: "@%{discobot_username} created this post :wink:"
+        instructions: |-
+          While composing our replies, we're bound to make mistakes. Do not fret if you do as you'll be allowed to make edits to posts that you've created.
+
+          Can you go ahead and edit the post that I've just created on your behalf and let me know that you've managed to successfully edit a post?
+        not_found: |-
+          It looks like you've yet to edit the [post](%{url}) I created for you. Can you try again?
+          
+          You can do so by clicking on the :pencil: icon which will bring up the composer.
+        reply: |-
+          Great job! Once you're stucked around in the community long enough, you'll be able to edit posts which other users have created.
       poll:
         instructions: |-
           Did you know you can add a poll to any reply, like so:

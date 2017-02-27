@@ -29,12 +29,17 @@ module DiscourseNarrativeBot
 
         begin
           if new_post = self.send(action)
+            old_state = @data[:state]
             old_data = @data.dup
             @state = @data[:state] = new_state
             @data[:last_post_id] = new_post.id
             set_data(@user, @data)
 
-            self.send("init_#{new_state}") if self.class.private_method_defined?("init_#{new_state}")
+            if self.class.private_method_defined?("init_#{new_state}") &&
+              old_state.to_s != new_state.to_s
+
+              self.send("init_#{new_state}")
+            end
 
             if new_state == :end
               end_reply
@@ -73,10 +78,21 @@ module DiscourseNarrativeBot
 
     private
 
+    def set_state_data(key, value)
+      @data[@state] ||= {}
+      @data[@state][key] = value
+      set_data(@user, @data)
+    end
+
+    def get_state_data(key)
+      @data[@state] ||= {}
+      @data[@state][key]
+    end
+
     def reset_data(user, additional_data = {})
       old_data = get_data(user)
       new_data = additional_data
-      new_data[:completed] = old_data[:completed] if old_data[:completed]
+      new_data[:completed] = old_data[:completed] if old_data && old_data[:completed]
       set_data(user, new_data)
       new_data
     end

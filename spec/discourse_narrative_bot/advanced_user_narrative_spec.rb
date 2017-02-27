@@ -58,16 +58,19 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
         expected_raw = <<~RAW
         #{expected_raw}
 
-        #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+        #{I18n.t('discourse_narrative_bot.advanced_user_narrative.edit.instructions')}
         RAW
 
-        new_post = Post.last
+        new_post = Post.offset(1).last
 
         expect(narrative.get_data(user)).to eq({
           "topic_id" => topic.id,
-          "state" => "tutorial_poll",
+          "state" => "tutorial_edit",
           "last_post_id" => new_post.id,
-          "track" => described_class.to_s
+          "track" => described_class.to_s,
+          "tutorial_edit" => {
+            "post_id" => Post.last.id
+          }
         })
 
         expect(new_post.raw).to eq(expected_raw.chomp)
@@ -87,16 +90,19 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
         expected_raw = <<~RAW
         #{expected_raw}
 
-        #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+        #{I18n.t('discourse_narrative_bot.advanced_user_narrative.edit.instructions')}
         RAW
 
-        new_post = Post.last
+        new_post = Post.offset(1).last
 
         expect(narrative.get_data(user)).to eq({
           "topic_id" => new_post.topic.id,
-          "state" => "tutorial_poll",
+          "state" => "tutorial_edit",
           "last_post_id" => new_post.id,
-          "track" => described_class.to_s
+          "track" => described_class.to_s,
+          "tutorial_edit" => {
+            "post_id" => Post.last.id
+          }
         })
 
         expect(new_post.raw).to eq(expected_raw.chomp)
@@ -106,6 +112,64 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
   end
 
   describe "#input" do
+    context 'edit tutorial' do
+      before do
+        narrative.set_data(user,
+          state: :tutorial_edit,
+          topic_id: topic.id,
+          track: described_class.to_s,
+          tutorial_edit: {
+            post_id: first_post.id
+          }
+        )
+      end
+
+      describe 'when post is not in the right topic' do
+        it 'should not do anything' do
+          other_post
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_edit)
+        end
+      end
+
+      describe 'when user replies to the post' do
+        it 'should create the right reply' do
+          post
+          narrative.expects(:enqueue_timeout_job).with(user).once
+
+          expect { narrative.input(:reply, user, post) }
+            .to change { Post.count }.by(1)
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.advanced_user_narrative.edit.not_found',
+            url: first_post.url
+          ))
+        end
+      end
+
+      describe 'when user edits the right post' do
+        let(:post_2) { Fabricate(:post, user: post.user, topic: post.topic) }
+
+        it 'should create the right reply' do
+          post_2
+
+          expect do
+            PostRevisor.new(post_2).revise!(post_2.user, raw: 'something new')
+          end.to change { Post.count }.by(1)
+
+          expected_raw = <<~RAW
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.edit.reply')}
+
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          RAW
+
+          expect(Post.last.raw).to eq(expected_raw.chomp)
+        end
+      end
+    end
+
     context 'poll tutorial' do
       before do
         narrative.set_data(user,

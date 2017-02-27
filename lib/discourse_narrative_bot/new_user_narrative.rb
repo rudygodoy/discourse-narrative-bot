@@ -520,18 +520,7 @@ module DiscourseNarrativeBot
       Topic.find_by(slug: 'welcome-to-discourse', archetype: Archetype.default) ||
         Topic.recent(1).first
     end
-
-    def set_state_data(key, value)
-      @data[@state] ||= {}
-      @data[@state][key] = value
-      set_data(@user, @data)
-    end
-
-    def get_state_data(key)
-      @data[@state] ||= {}
-      @data[@state][key]
-    end
-
+    
     def url_helpers(url, opts = {})
       Rails.application.routes.url_helpers.send(url, opts.merge(host: Discourse.base_url))
     end

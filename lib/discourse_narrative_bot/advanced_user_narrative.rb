@@ -2,10 +2,27 @@ module DiscourseNarrativeBot
   class AdvancedUserNarrative < Base
     TRANSITION_TABLE = {
       [:begin, :init] => {
-        next_state: :tutorial_poll,
-        next_instructions_key: 'poll.instructions',
+        next_state: :tutorial_edit,
+        next_instructions_key: 'edit.instructions',
         action: :start_advanced_track
       },
+
+      [:tutorial_edit, :edit] => {
+        next_state: :tutorial_poll,
+        next_instructions_key: "poll.instructions",
+        action: :reply_to_edit
+      },
+
+      [:tutorial_edit, :reply] => {
+        next_state: :tutorial_edit,
+        action: :missing_edit
+      },
+
+      [:tutorial_delete, :reply] => [
+        next_state: :tutorial_poll,
+        next_instructions_key: 'poll.instructions',
+        action: :reply_to_delete
+      ],
 
       [:tutorial_poll, :reply] => {
         next_state: :tutorial_details,
@@ -51,6 +68,21 @@ module DiscourseNarrativeBot
 
     private
 
+    def init_tutorial_edit
+      data = get_data(@user)
+
+      post = PostCreator.create!(@user, {
+        raw: I18n.t(
+          i18n_key('edit.bot_created_post_raw'),
+          discobot_username: self.class.discobot_user.username
+        ),
+        topic_id: data[:topic_id]
+      })
+
+      set_state_data(:post_id, post.id)
+      post
+    end
+
     def start_advanced_track
       raw = I18n.t(i18n_key("start_message"), username: @user.username)
 
@@ -76,11 +108,41 @@ module DiscourseNarrativeBot
       if @data[:topic_id]
         opts = opts.merge(topic_id: @data[:topic_id])
       end
-
       post = reply_to(@post, raw, opts)
-      @data[:topic_id] = post.topic.id
+
+      @data[:topic_id] = post.topic_id
       @data[:track] = self.class.to_s
       post
+    end
+
+    def reply_to_edit
+      topic_id = @post.topic_id
+      return unless valid_topic?(topic_id)
+
+      fake_delay
+
+      raw = <<~RAW
+      #{I18n.t(i18n_key('edit.reply'))}
+
+      #{I18n.t(i18n_key(@next_instructions_key))}
+      RAW
+
+      reply_to(@post, raw)
+    end
+
+    def missing_edit
+      topic_id = @post.topic_id
+      post_id = get_state_data(:post_id)
+      return unless valid_topic?(topic_id) && post_id != @post.id
+
+      fake_delay
+
+      reply_to(@post, I18n.t(i18n_key('edit.not_found'),
+        url: Post.find_by(id: post_id).url
+      ))
+
+      enqueue_timeout_job(@user)
+      false
     end
 
     def reply_to_poll
@@ -114,6 +176,21 @@ module DiscourseNarrativeBot
         reply_to(@post, I18n.t(i18n_key("details.reply")))
       else
         reply_to(@post, I18n.t(i18n_key("details.not_found")))
+        enqueue_timeout_job(@user)
+        false
+      end
+    end
+
+    def reply_to_wiki
+      topic_id = @post.topic_id
+      return unless valid_topic?(topic_id)
+
+      fake_delay
+
+      if @post.wiki
+        reply_to(@post, I18n.t(i18n_key("wiki.reply")))
+      else
+        reply_to(@post, I18n.t(i18n_key("wiki.not_found")))
         enqueue_timeout_job(@user)
         false
       end

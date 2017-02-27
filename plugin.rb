@@ -176,6 +176,19 @@ after_initialize do
     end
   end
 
+  self.on(:post_edited) do |post|
+    return true  unless SiteSetting.discourse_narrative_bot_enabled ||
+      !user.user_option.mailing_list_mode
+
+    if ![-1, -2].include?(post.user.id)
+      Jobs.enqueue(:bot_input,
+        user_id: post.user.id,
+        post_id: post.id,
+        input: :edit
+      )
+    end
+  end
+
   self.add_model_callback(PostAction, :after_commit, on: :create) do
     return true if !SiteSetting.discourse_narrative_bot_enabled ||
       [-1, -2].include?(self.user.id) ||
