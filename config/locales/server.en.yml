@@ -261,10 +261,10 @@ en:
           Can you go ahead and edit the post that I've just created on your behalf and let me know that you've managed to successfully edit a post?
         not_found: |-
           It looks like you've yet to edit the [post](%{url}) I created for you. Can you try again?
-          
+
           You can do so by clicking on the :pencil: icon which will bring up the composer.
         reply: |-
-          Great job! Once you're stucked around in the community long enough, you'll be able to edit posts which other users have created.
+          Great job! Once you've been around in the community long enough, you'll be able to edit posts which other users have created.
       poll:
         instructions: |-
           Did you know you can add a poll to any reply, like so:

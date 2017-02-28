@@ -8,7 +8,7 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_edit, :edit] => {
-        next_state: :tutorial_poll,
+        next_state: :tutorial_delete,
         next_instructions_key: "poll.instructions",
         action: :reply_to_edit
       },
