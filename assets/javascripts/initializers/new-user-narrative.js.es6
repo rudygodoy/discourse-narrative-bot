@@ -18,6 +18,7 @@ function initialize(api) {
       this.state.skipSearchContext = false;
     } else {
       this.state.contextEnabled = true;
+      this.state.searchContextType = 'topic';
     }
   });
 
