@@ -4,13 +4,14 @@ module DiscourseNarrativeBot
 
     class InvalidTransitionError < StandardError; end
 
-    def input(input, user, post = nil)
+    def input(input, user, post: nil, topic_id: nil)
       synchronize(user) do
         @user = user
         @data = get_data(user) || {}
         @state = (@data[:state] && @data[:state].to_sym) || :begin
         @input = input
         @post = post
+        @topic_id = topic_id
         opts = {}
 
         begin

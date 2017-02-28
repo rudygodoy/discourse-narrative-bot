@@ -39,7 +39,7 @@ describe DiscourseNarrativeBot::TrackSelector do
       context 'when bot is mentioned' do
         it 'should select the right track' do
           post.update!(raw: '@discobot show me what you can do')
-          described_class.new(:reply, user, post).select
+          described_class.new(:reply, user, post_id: post.id).select
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t(
@@ -56,7 +56,7 @@ describe DiscourseNarrativeBot::TrackSelector do
               reply_to_post_number: bot_post.post_number
             )
 
-            described_class.new(:reply, user, post).select
+            described_class.new(:reply, user, post_id: post.id).select
             new_post = Post.last
 
             expect(new_post.raw).to eq(I18n.t(
@@ -72,7 +72,7 @@ describe DiscourseNarrativeBot::TrackSelector do
             raw: "@discobot #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}"
           )
 
-          described_class.new(:reply, user, post).select
+          described_class.new(:reply, user, post_id: post.id).select
 
           expect(DiscourseNarrativeBot::NewUserNarrative.new.get_data(user)['state'])
             .to eq("tutorial_bookmark")
@@ -87,7 +87,7 @@ describe DiscourseNarrativeBot::TrackSelector do
 
           context 'when new user track has not been completed' do
             it 'should not start the track' do
-              described_class.new(:reply, user, post).select
+              described_class.new(:reply, user, post_id: post.id).select
 
               expect(DiscourseNarrativeBot::Store.get(user.id)['track'])
                 .to eq(DiscourseNarrativeBot::NewUserNarrative.to_s)
@@ -100,7 +100,7 @@ describe DiscourseNarrativeBot::TrackSelector do
               data[:completed] = [DiscourseNarrativeBot::NewUserNarrative.to_s]
               DiscourseNarrativeBot::Store.set(user.id, data)
 
-              described_class.new(:reply, user, post).select
+              described_class.new(:reply, user, post_id: post.id).select
 
               expect(DiscourseNarrativeBot::Store.get(user.id)['track'])
                 .to eq(DiscourseNarrativeBot::AdvancedUserNarrative.to_s)
@@ -114,7 +114,7 @@ describe DiscourseNarrativeBot::TrackSelector do
       describe 'when discobot is mentioned' do
         it 'should create the right reply' do
           post.update!(raw: 'Show me what you can do @discobot')
-          described_class.new(:reply, user, post).select
+          described_class.new(:reply, user, post_id: post.id).select
           new_post = Post.last
           expect(new_post.raw).to eq(random_mention_reply)
         end
@@ -128,7 +128,7 @@ describe DiscourseNarrativeBot::TrackSelector do
             )
 
             post.update!(raw: 'Show me what you can do @discobot')
-            described_class.new(:reply, user, post).select
+            described_class.new(:reply, user, post_id: post.id).select
             new_post = Post.last
 
             expect(new_post.raw).to eq(random_mention_reply)
@@ -144,7 +144,7 @@ describe DiscourseNarrativeBot::TrackSelector do
               )
 
               post.update!(raw: 'Show me what you can do @discobot')
-              described_class.new(:reply, user, post).select
+              described_class.new(:reply, user, post_id: post.id).select
               new_post = Post.last
 
               expect(new_post.raw).to include(I18n.t(
@@ -159,7 +159,7 @@ describe DiscourseNarrativeBot::TrackSelector do
         describe 'when discobot is asked to roll dice' do
           it 'should create the right reply' do
             post.update!(raw: '@discobot roll 2d1')
-            described_class.new(:reply, user, post).select
+            described_class.new(:reply, user, post_id: post.id).select
             new_post = Post.last
 
             expect(new_post.raw).to eq(
@@ -176,7 +176,7 @@ describe DiscourseNarrativeBot::TrackSelector do
             )
 
             post.update!(raw: '@discobot show me a quote')
-            described_class.new(:reply, user, post).select
+            described_class.new(:reply, user, post_id: post.id).select
             new_post = Post.last
 
             expect(new_post.raw).to eq(
@@ -200,7 +200,7 @@ describe DiscourseNarrativeBot::TrackSelector do
         it 'should not do anything' do
           other_post
 
-          expect { described_class.new(:reply, user, other_post).select }
+          expect { described_class.new(:reply, user, post_id: other_post.id).select }
             .to_not change { Post.count }
         end
       end
@@ -218,13 +218,14 @@ describe DiscourseNarrativeBot::TrackSelector do
       describe 'when a new like is made' do
         it 'should not do anything' do
           other_post
-          expect { described_class.new(:like, user, other_post).select }.to_not change { Post.count }
+          expect { described_class.new(:like, user, post_id: other_post.id).select }
+            .to_not change { Post.count }
         end
       end
 
       describe 'when a new message is made' do
         it 'should create the right reply' do
-          described_class.new(:reply, user, other_post).select
+          described_class.new(:reply, user, post_id: other_post.id).select
 
           expect(Post.last.raw).to eq(random_mention_reply)
         end
@@ -245,7 +246,7 @@ describe DiscourseNarrativeBot::TrackSelector do
       end
 
       it 'should create the right generic do not understand responses' do
-        described_class.new(:reply, user, post).select
+        described_class.new(:reply, user, post_id: post.id).select
         new_post = Post.last
 
         expect(new_post.raw).to eq(I18n.t(
@@ -254,11 +255,11 @@ describe DiscourseNarrativeBot::TrackSelector do
           discobot_username: discobot_user.username
         ))
 
-        described_class.new(:reply, user, Fabricate(:post,
+        described_class.new(:reply, user, post_id: Fabricate(:post,
           topic: new_post.topic,
           user: user,
           reply_to_post_number: new_post.post_number
-        )).select
+        ).id).select
 
         new_post = Post.last
 
@@ -274,7 +275,8 @@ describe DiscourseNarrativeBot::TrackSelector do
           reply_to_post_number: new_post.post_number
         )
 
-        expect { described_class.new(:reply, user, new_post).select }.to_not change { Post.count }
+        expect { described_class.new(:reply, user, post_id: new_post.id).select }
+          .to_not change { Post.count }
       end
     end
   end

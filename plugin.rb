@@ -177,7 +177,7 @@ after_initialize do
   end
 
   self.on(:post_edited) do |post|
-    return true  unless SiteSetting.discourse_narrative_bot_enabled ||
+    return true unless SiteSetting.discourse_narrative_bot_enabled ||
       !user.user_option.mailing_list_mode
 
     if ![-1, -2].include?(post.user.id)
@@ -185,6 +185,20 @@ after_initialize do
         user_id: post.user.id,
         post_id: post.id,
         input: :edit
+      )
+    end
+  end
+
+  self.on(:post_destroyed) do |post, _, user|
+    return true unless SiteSetting.discourse_narrative_bot_enabled ||
+      !user.user_option.mailing_list_mode
+
+    if ![-1, -2].include?(user.id)
+      Jobs.enqueue(:bot_input,
+        user_id: user.id,
+        post_id: post.id,
+        topic_id: post.topic_id,
+        input: :delete
       )
     end
   end

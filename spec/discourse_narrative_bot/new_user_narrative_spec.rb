@@ -124,7 +124,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         narrative.expects(:send).with('init_tutorial_search').raises(StandardError.new('some error'))
         narrative.expects(:send).with(:reply_to_flag).returns(post)
 
-        expect { narrative.input(:flag, user, post) }.to raise_error(StandardError, 'some error')
+        expect { narrative.input(:flag, user, post: post) }.to raise_error(StandardError, 'some error')
         expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
       end
     end
@@ -135,7 +135,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
 
       it 'should raise the right error' do
-        expect(narrative.input(:something, user, post)).to eq(nil)
+        expect(narrative.input(:something, user, post: post)).to eq(nil)
         expect(narrative.get_data(user)[:state].to_sym).to eq(:begin)
       end
     end
@@ -145,7 +145,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
           narrative.expects(:enqueue_timeout_job).never
 
-          narrative.input(:init, user, nil)
+          narrative.input(:init, user, post: nil)
           new_post = Post.last
 
           expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
@@ -176,7 +176,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post.update!(user_id: -2)
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:bookmark, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:bookmark, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_bookmark)
         end
       end
@@ -186,14 +186,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
           post
 
-          expect { narrative.input(:bookmark, user, post) }.to_not change { Post.count }
+          expect { narrative.input(:bookmark, user, post: post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_bookmark)
         end
       end
 
       describe 'when user replies to the topic' do
         it 'should create the right reply' do
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.not_found'))
@@ -205,7 +205,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         post.update!(user: described_class.discobot_user)
         narrative.expects(:enqueue_timeout_job).with(user)
 
-        narrative.input(:bookmark, user, post)
+        narrative.input(:bookmark, user, post: post)
         new_post = Post.last
         profile_page_url = "#{Discourse.base_url}/users/#{user.username}"
 
@@ -230,7 +230,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_onebox)
         end
       end
@@ -238,7 +238,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post does not contain onebox' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.onebox.not_found'))
@@ -249,7 +249,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe "when user has not liked bot's post" do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.onebox.not_found'))
@@ -261,7 +261,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         post.update!(raw: 'https://en.wikipedia.org/wiki/ROT13')
 
         narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
         new_post = Post.last
 
         expected_raw = <<~RAW
@@ -292,14 +292,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
         end
       end
 
       it 'should create the right replies' do
         narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
 
         expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.images.not_found'))
         expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
@@ -309,7 +309,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         )
 
         narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
 
         expect(Post.last.raw).to eq(I18n.t(
           'discourse_narrative_bot.new_user_narrative.images.like_not_found',
@@ -353,7 +353,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
         end
       end
@@ -361,7 +361,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post does not contain any formatting' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.formatting.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
@@ -373,7 +373,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           post.update!(raw: raw)
 
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
           new_post = Post.last
 
           expected_raw = <<~RAW
@@ -398,7 +398,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_quote)
         end
       end
@@ -406,7 +406,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post does not contain any quotes' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.quoting.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_quote)
@@ -419,7 +419,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         )
 
         narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
         new_post = Post.last
 
         expected_raw = <<~RAW
@@ -443,7 +443,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
         end
       end
@@ -451,7 +451,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post does not contain any emoji' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.emoji.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
@@ -464,7 +464,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         )
 
         narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
         new_post = Post.last
 
         expected_raw = <<~RAW
@@ -490,7 +490,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_mention)
         end
       end
@@ -498,7 +498,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post does not contain any mentions' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
 
           expect(Post.last.raw).to eq(I18n.t(
             'discourse_narrative_bot.new_user_narrative.mention.not_found',
@@ -516,7 +516,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         )
 
         narrative.expects(:enqueue_timeout_job).with(user)
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
         new_post = Post.last
 
         expected_raw = <<~RAW
@@ -547,7 +547,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
           flag.update!(post: other_post)
 
-          expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
+          expect { narrative.input(:flag, user, post: flag.post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
         end
       end
@@ -557,14 +557,14 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           narrative.expects(:enqueue_timeout_job).with(user).never
           flag.update!(post: other_post)
 
-          expect { narrative.input(:flag, user, flag.post) }.to_not change { Post.count }
+          expect { narrative.input(:flag, user, post: flag.post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
         end
       end
 
       describe 'when user replies to the topic' do
         it 'should create the right reply' do
-          narrative.input(:reply, user, other_post)
+          narrative.input(:reply, user, post: other_post)
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.flag.not_found'))
@@ -575,7 +575,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       it 'should create the right reply' do
         narrative.expects(:enqueue_timeout_job).with(user)
 
-        expect  { narrative.input(:flag, user, flag.post) }.to change { PostAction.count }.by(-1)
+        expect  { narrative.input(:flag, user, post: flag.post) }.to change { PostAction.count }.by(-1)
 
         new_post = Post.last
 
@@ -603,7 +603,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_search)
         end
       end
@@ -611,7 +611,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       describe 'when post does not contain the right answer' do
         it 'should create the right reply' do
           narrative.expects(:enqueue_timeout_job).with(user)
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
 
           expect(Post.last.raw).to eq(I18n.t(
             'discourse_narrative_bot.new_user_narrative.search.not_found'
@@ -641,7 +641,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
             raw: "#{described_class::SEARCH_ANSWER} this is a capybara"
           )
 
-          expect { narrative.input(:reply, user, post) }.to change { Post.count }.by(2)
+          expect { narrative.input(:reply, user, post: post) }.to change { Post.count }.by(2)
           new_post = Post.offset(1).last
 
           expect(new_post.raw).to eq(I18n.t(

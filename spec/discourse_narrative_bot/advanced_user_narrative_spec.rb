@@ -129,7 +129,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_edit)
         end
       end
@@ -139,7 +139,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           post
           narrative.expects(:enqueue_timeout_job).with(user).once
 
-          expect { narrative.input(:reply, user, post) }
+          expect { narrative.input(:reply, user, post: post) }
             .to change { Post.count }.by(1)
 
           expect(Post.last.raw).to eq(I18n.t(
@@ -162,10 +162,83 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.advanced_user_narrative.edit.reply')}
 
-          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.delete.instructions')}
           RAW
 
           expect(Post.last.raw).to eq(expected_raw.chomp)
+        end
+      end
+    end
+
+    context 'delete tutorial' do
+      before do
+        narrative.set_data(user,
+          state: :tutorial_delete,
+          topic_id: topic.id,
+          track: described_class.to_s
+        )
+      end
+
+      describe 'when user replies to the topic' do
+        it 'should create the right reply' do
+          narrative.expects(:enqueue_timeout_job).with(user).once
+
+          narrative.input(:reply, user, post: post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.advanced_user_narrative.delete.not_found'
+          ))
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_delete)
+        end
+      end
+
+      describe 'when user destroys a post in a different topic' do
+        it 'should not do anything' do
+          other_post
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          PostDestroyer.new(user, other_post).destroy
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_delete)
+        end
+      end
+
+      describe 'when user deletes a post in the right topic' do
+        it 'should create the right reply' do
+          post
+
+          expect { PostDestroyer.new(user, post).destroy }
+            .to change { Post.count }.by(1)
+
+          expected_raw = <<~RAW
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.delete.reply')}
+
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          RAW
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+          expect(Post.last.raw).to eq(expected_raw.chomp)
+        end
+
+        context 'when user is an admin' do
+          it 'should create the right reply' do
+            post
+            user.update!(admin: true)
+
+            expect { PostDestroyer.new(user, post).destroy }
+              .to_not change { Post.count }
+
+            expected_raw = <<~RAW
+            #{I18n.t('discourse_narrative_bot.advanced_user_narrative.delete.reply')}
+
+            #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+            RAW
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+            expect(Post.last.raw).to eq(expected_raw.chomp)
+          end
         end
       end
     end
@@ -184,14 +257,14 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
         end
       end
 
       describe 'when user replies to the topic' do
         it 'should create the right reply' do
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.not_found'))
@@ -201,7 +274,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
 
       it 'should create the right reply' do
         post.update!(raw: "[poll]\n* 1\n* 2\n[/poll]\n")
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.reply')}
@@ -228,14 +301,14 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           other_post
           narrative.expects(:enqueue_timeout_job).with(user).never
 
-          expect { narrative.input(:reply, user, other_post) }.to_not change { Post.count }
+          expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_details)
         end
       end
 
       describe 'when user replies to the topic' do
         it 'should create the right reply' do
-          narrative.input(:reply, user, post)
+          narrative.input(:reply, user, post: post)
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.advanced_user_narrative.details.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_details)
@@ -244,7 +317,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
 
       it 'should create the right reply' do
         post.update!(raw: "[details=\"This is a test\"]wooohoo[/details]")
-        narrative.input(:reply, user, post)
+        narrative.input(:reply, user, post: post)
 
         expect(Post.offset(1).last.raw).to eq(I18n.t(
           'discourse_narrative_bot.advanced_user_narrative.details.reply'

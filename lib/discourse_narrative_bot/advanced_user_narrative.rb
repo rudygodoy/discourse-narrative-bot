@@ -9,7 +9,7 @@ module DiscourseNarrativeBot
 
       [:tutorial_edit, :edit] => {
         next_state: :tutorial_delete,
-        next_instructions_key: "poll.instructions",
+        next_instructions_key: "delete.instructions",
         action: :reply_to_edit
       },
 
@@ -18,11 +18,16 @@ module DiscourseNarrativeBot
         action: :missing_edit
       },
 
-      [:tutorial_delete, :reply] => [
+      [:tutorial_delete, :delete] => {
         next_state: :tutorial_poll,
         next_instructions_key: 'poll.instructions',
         action: :reply_to_delete
-      ],
+      },
+
+      [:tutorial_delete, :reply] => {
+        next_state: :tutorial_delete,
+        action: :missing_delete
+      },
 
       [:tutorial_poll, :reply] => {
         next_state: :tutorial_details,
@@ -40,7 +45,9 @@ module DiscourseNarrativeBot
     TIMEOUT_DURATION = 900 # 15 mins
 
     def self.can_start?(user)
-      completed_tracks = DiscourseNarrativeBot::Store.get(user.id)[:completed]
+      data = DiscourseNarrativeBot::Store.get(user.id)
+      return unless data
+      completed_tracks = data[:completed]
       completed_tracks && completed_tracks.include?(DiscourseNarrativeBot::NewUserNarrative.to_s)
     end
 
@@ -116,8 +123,7 @@ module DiscourseNarrativeBot
     end
 
     def reply_to_edit
-      topic_id = @post.topic_id
-      return unless valid_topic?(topic_id)
+      return unless valid_topic?(@post.topic_id)
 
       fake_delay
 
@@ -131,9 +137,8 @@ module DiscourseNarrativeBot
     end
 
     def missing_edit
-      topic_id = @post.topic_id
       post_id = get_state_data(:post_id)
-      return unless valid_topic?(topic_id) && post_id != @post.id
+      return unless valid_topic?(@post.topic_id) && post_id != @post.id
 
       fake_delay
 
@@ -141,6 +146,31 @@ module DiscourseNarrativeBot
         url: Post.find_by(id: post_id).url
       ))
 
+      enqueue_timeout_job(@user)
+      false
+    end
+
+    def reply_to_delete
+      return unless valid_topic?(@topic_id)
+
+      fake_delay
+
+      raw = <<~RAW
+      #{I18n.t(i18n_key('delete.reply'))}
+
+      #{I18n.t(i18n_key(@next_instructions_key))}
+      RAW
+
+      PostCreator.create!(self.class.discobot_user,
+        raw: raw,
+        topic_id: @topic_id
+      )
+    end
+
+    def missing_delete
+      return unless valid_topic?(@post.topic_id)
+      fake_delay
+      reply_to(@post, I18n.t(i18n_key('delete.not_found')))
       enqueue_timeout_job(@user)
       false
     end

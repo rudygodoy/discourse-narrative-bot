@@ -265,6 +265,22 @@ en:
           You can do so by clicking on the :pencil: icon which will bring up the composer.
         reply: |-
           Great job! Once you've been around in the community long enough, you'll be able to edit posts which other users have created.
+
+      delete:
+        instructions: |-
+          Another action that you can carry out on your post is to DELETE them!
+
+          <img src="/images/delete.gif"/>
+
+          Do go ahead and delete any of your posts above. Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal the :wastebasket: icon.
+        not_found: |-
+          Looks like you're having trouble deleting your posts. If you're having trouble finding the :wastebasket: icon, click on <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal it.
+        reply: |-
+          Error 21
+          FAILED ERROR: java.lang.NullPointerException
+          Bot has been deleted. Self destructing in 5...4...3...2
+
+          haha I'm just kidding. Great job on deleting your post.
       poll:
         instructions: |-
           Did you know you can add a poll to any reply, like so:

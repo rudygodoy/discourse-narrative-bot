@@ -9,14 +9,18 @@ module DiscourseNarrativeBot
       AdvancedUserNarrative
     ]
 
-    def initialize(input, user, post)
+    def initialize(input, user, post_id:, topic_id: nil)
       @input = input
       @user = user
-      @post = post
+      @post_id = post_id
+      @topic_id = topic_id
+      @post = Post.find_by(id: post_id)
     end
 
     def select
-      if @post
+      data = DiscourseNarrativeBot::Store.get(@user.id)
+
+      if @post && @input != :delete
         topic_id = @post.topic_id
 
         TRACKS.each do |klass|
@@ -25,8 +29,6 @@ module DiscourseNarrativeBot
             return
           end
         end
-
-        data = DiscourseNarrativeBot::Store.get(@user.id.to_s)
 
         if (data && data[:topic_id] == topic_id)
           state = data[:state]
@@ -39,7 +41,7 @@ module DiscourseNarrativeBot
               generic_replies(klass::RESET_TRIGGER)
             end
           else
-            klass.new.input(@input, @user, @post)
+            klass.new.input(@input, @user, post: @post)
           end
 
           return
@@ -48,6 +50,9 @@ module DiscourseNarrativeBot
         if (@input == :reply) && (bot_mentioned?(@post) || pm_to_bot?(@post) || reply_to_bot_post?(@post))
           mention_replies
         end
+      elsif data && data[:state] && (data[:state] && data[:state].to_sym != :end) && @input == :delete
+        klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative).constantize
+        klass.new.input(@input, @user, post: @post, topic_id: @topic_id)
       end
     end
 
