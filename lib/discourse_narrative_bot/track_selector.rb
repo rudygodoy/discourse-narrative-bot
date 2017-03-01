@@ -32,7 +32,7 @@ module DiscourseNarrativeBot
 
         if (data && data[:topic_id] == topic_id)
           state = data[:state]
-          klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative).constantize
+          klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative.to_s).constantize
 
           if ((state && state.to_sym == :end) && @input == :reply)
             if bot_mentioned?(@post)
@@ -51,7 +51,7 @@ module DiscourseNarrativeBot
           mention_replies
         end
       elsif data && data[:state] && (data[:state] && data[:state].to_sym != :end) && @input == :delete
-        klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative).constantize
+        klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative.to_s).constantize
         klass.new.input(@input, @user, post: @post, topic_id: @topic_id)
       end
     end

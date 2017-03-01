@@ -29,9 +29,10 @@ module DiscourseNarrativeBot
         end
 
         begin
+          old_data = @data.dup
+
           if new_post = self.send(action)
-            old_state = @data[:state]
-            old_data = @data.dup
+            old_state = old_data[:state]
             @state = @data[:state] = new_state
             @data[:last_post_id] = new_post.id
             set_data(@user, @data)

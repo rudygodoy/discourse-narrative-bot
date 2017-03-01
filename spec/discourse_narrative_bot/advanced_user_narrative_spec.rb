@@ -210,16 +210,16 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           post
 
           expect { PostDestroyer.new(user, post).destroy }
-            .to change { Post.count }.by(1)
+            .to change { Post.count }.by(2)
 
           expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.advanced_user_narrative.delete.reply')}
 
-          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.recover.instructions')}
           RAW
 
-          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
-          expect(Post.last.raw).to eq(expected_raw.chomp)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_recover)
+          expect(Post.offset(1).last.raw).to eq(expected_raw.chomp)
         end
 
         context 'when user is an admin' do
@@ -233,12 +233,73 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
             expected_raw = <<~RAW
             #{I18n.t('discourse_narrative_bot.advanced_user_narrative.delete.reply')}
 
-            #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+            #{I18n.t('discourse_narrative_bot.advanced_user_narrative.recover.instructions')}
             RAW
 
-            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_recover)
             expect(Post.last.raw).to eq(expected_raw.chomp)
           end
+        end
+      end
+    end
+
+    context 'undelete post tutorial' do
+      before do
+        narrative.set_data(user,
+          state: :tutorial_recover,
+          topic_id: topic.id,
+          track: described_class.to_s
+        )
+      end
+
+      describe 'when user replies to the topic' do
+        it 'should create the right reply' do
+          narrative.set_data(user, narrative.get_data(user).merge(
+            tutorial_recover: { post_id: '1' }
+          ))
+
+          narrative.expects(:enqueue_timeout_job).with(user).once
+
+          narrative.input(:reply, user, post: post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.advanced_user_narrative.recover.not_found'
+          ))
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_recover)
+        end
+      end
+
+      describe 'when user recovers a post in a different topic' do
+        it 'should not do anything' do
+          other_post
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          PostDestroyer.new(user, other_post).destroy
+          PostDestroyer.new(user, other_post).recover
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_recover)
+        end
+      end
+
+      describe 'when user recovers a post in the right topic' do
+        it 'should create the right reply' do
+          post
+
+          PostDestroyer.new(user, post).destroy
+
+          expect { PostDestroyer.new(user, post).recover }
+            .to change { Post.count }.by(1)
+
+          expected_raw = <<~RAW
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.recover.reply')}
+
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          RAW
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+          expect(Post.last.raw).to eq(expected_raw.chomp)
         end
       end
     end

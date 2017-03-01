@@ -203,6 +203,19 @@ after_initialize do
     end
   end
 
+  self.on(:post_recovered) do |post, _, user|
+    return true unless SiteSetting.discourse_narrative_bot_enabled ||
+      !user.user_option.mailing_list_mode
+
+    if ![-1, -2].include?(user.id)
+      Jobs.enqueue(:bot_input,
+        user_id: user.id,
+        post_id: post.id,
+        input: :recover
+      )
+    end
+  end
+
   self.add_model_callback(PostAction, :after_commit, on: :create) do
     return true if !SiteSetting.discourse_narrative_bot_enabled ||
       [-1, -2].include?(self.user.id) ||

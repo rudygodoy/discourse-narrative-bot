@@ -19,14 +19,25 @@ module DiscourseNarrativeBot
       },
 
       [:tutorial_delete, :delete] => {
-        next_state: :tutorial_poll,
-        next_instructions_key: 'poll.instructions',
+        next_state: :tutorial_recover,
+        next_instructions_key: 'recover.instructions',
         action: :reply_to_delete
       },
 
       [:tutorial_delete, :reply] => {
         next_state: :tutorial_delete,
         action: :missing_delete
+      },
+
+      [:tutorial_recover, :recover] => {
+        next_state: :tutorial_poll,
+        next_instructions_key: 'poll.instructions',
+        action: :reply_to_recover
+      },
+
+      [:tutorial_recover, :reply] => {
+        next_state: :tutorial_recover,
+        action: :missing_recover
       },
 
       [:tutorial_poll, :reply] => {
@@ -88,6 +99,21 @@ module DiscourseNarrativeBot
 
       set_state_data(:post_id, post.id)
       post
+    end
+
+    def init_tutorial_recover
+      data = get_data(@user)
+
+      post = PostCreator.create!(@user, {
+        raw: I18n.t(
+          i18n_key('recover.deleted_post_raw'),
+          discobot_username: self.class.discobot_user.username
+        ),
+        topic_id: data[:topic_id]
+      })
+
+      set_state_data(:post_id, post.id)
+      PostDestroyer.new(@user, post).destroy
     end
 
     def start_advanced_track
@@ -171,6 +197,33 @@ module DiscourseNarrativeBot
       return unless valid_topic?(@post.topic_id)
       fake_delay
       reply_to(@post, I18n.t(i18n_key('delete.not_found')))
+      enqueue_timeout_job(@user)
+      false
+    end
+
+    def reply_to_recover
+      return unless valid_topic?(@post.topic_id)
+
+      fake_delay
+
+      raw = <<~RAW
+      #{I18n.t(i18n_key('recover.reply'))}
+
+      #{I18n.t(i18n_key(@next_instructions_key))}
+      RAW
+
+      PostCreator.create!(self.class.discobot_user,
+        raw: raw,
+        topic_id: @post.topic_id
+      )
+    end
+
+    def missing_recover
+      return unless valid_topic?(@post.topic_id) &&
+        post_id = get_state_data(:post_id) && @post.id != post_id
+
+      fake_delay
+      reply_to(@post, I18n.t(i18n_key('recover.not_found')))
       enqueue_timeout_job(@user)
       false
     end

@@ -281,6 +281,16 @@ en:
           Bot has been deleted. Self destructing in 5...4...3...2
 
           haha I'm just kidding. Great job on deleting your post.
+      recover:
+        deleted_post_raw: '@%{discobot_username} deleted this post :wink:'
+        instructions: |-
+          O dear, it looks like I accidentally deleted the new post that I've just created for you. No worries at all, we'll be able to recover it.
+
+          Can you do me a favor by clicking on the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> and clicking <img src="/images/font-awesome-rotate-left.png" width="16" height="16">.
+        not_found: |-
+          Having trouble trying to un-delete the post? Remember to click on the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal the un-delete post button <img src="/images/font-awesome-rotate-left.png" width="16" height="16">.
+        reply: |-
+          That was awesome! Do note that by default, you only have a 24 hours window to un-delete any posts that have been deleted by you.
       poll:
         instructions: |-
           Did you know you can add a poll to any reply, like so:
