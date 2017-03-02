@@ -4,3 +4,8 @@ plugins:
     client: true
   disable_discourse_narrative_bot_welcome_post:
     default: false
+
+uncategorized:
+  send_welcome_message:
+    default: false
+    hidden: true

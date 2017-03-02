@@ -29,6 +29,9 @@ after_initialize do
   load File.expand_path("../lib/discourse_narrative_bot/advanced_user_narrative.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/track_selector.rb", __FILE__)
 
+  # Disable welcome message because that is what the bot is supposed to replace.
+  SiteSetting.send_welcome_message = false
+
   module ::DiscourseNarrativeBot
     PLUGIN_NAME = "discourse-narrative-bot".freeze
 
