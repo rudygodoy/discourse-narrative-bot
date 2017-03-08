@@ -71,7 +71,7 @@ module DiscourseNarrativeBot
           I18n.t(i18n_key('random_mention.dice'),
             results: Dice.new(match_data[1].to_i, match_data[2].to_i).roll.join(", ")
           )
-        elsif match_data = post_raw.match(/show me a quote/i)
+        elsif match_data = post_raw.match(/quote/i)
           I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
         else
           discobot_username = self.class.discobot_user.username

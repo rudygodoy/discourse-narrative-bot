@@ -175,7 +175,7 @@ describe DiscourseNarrativeBot::TrackSelector do
               quote: "Be Like Water", author: "Bruce Lee"
             )
 
-            post.update!(raw: '@discobot show me a quote')
+            post.update!(raw: '@discobot quote')
             described_class.new(:reply, user, post_id: post.id).select
             new_post = Post.last
 
