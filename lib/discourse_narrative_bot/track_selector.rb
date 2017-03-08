@@ -83,7 +83,7 @@ module DiscourseNarrativeBot
             new_user_track: NewUserNarrative::RESET_TRIGGER,
           )
 
-          if data[:completed] && data[:completed].include?(NewUserNarrative.to_s)
+          if data && (completed = data[:completed]) && completed.include?(NewUserNarrative.to_s)
             message << "\n\n#{I18n.t(i18n_key('random_mention.advanced_track'), discobot_username: discobot_username, advanced_user_track: AdvancedUserNarrative::RESET_TRIGGER)}"
           end
 
