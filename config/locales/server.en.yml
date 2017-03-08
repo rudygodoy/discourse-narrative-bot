@@ -64,25 +64,25 @@ en:
           Don’t be shy! This is a personal message, so nobody can see it except you and me.
 
         message_1: |-
-          Hi @%{username}
+          Thanks for joining, @%{username}!
 
-          Welcome to %{title}! It’s great to meet you. I’d :heart: to show you around, if you have time.
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
         message_2: |-
-          Hey, it’s good to see you @%{username}!
+          Thanks for joining, @%{username}!
 
-          If you’re interested, I can give you a brief tour.
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
         message_3: |-
           Thanks for joining, @%{username}!
 
           I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
         message_4: |-
-          Well if it isn’t @%{username}!
+          Thanks for joining, @%{username}!
 
-          Great to have you here at %{title}. Without further ado, let's get started right way.
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
         message_5: |-
-          Welcome @%{username}!
+          Thanks for joining, @%{username}!
 
-          It’s my job to greet everyone that arrives here at %{title} and offer to help.
+          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
 
       onebox:
         instructions: |-
@@ -94,7 +94,7 @@ en:
           - https://en.wikipedia.org/wiki/Death_by_coconut
           - https://en.wikipedia.org/wiki/Calculator_spelling
         reply: |-
-          Cool! This will work for most <img src="/images/font-awesome-link.png" width="16" height="16"> links — just remember, it must be on a line _all by itself_, with nothing else in front, or behind.
+          Cool! This will work for most <img src="/images/font-awesome-link.png" width="16" height="16"> links. Remember, it must be on a line _all by itself_, with nothing else in front, or behind.
         not_found: |-
           Sorry, I couldn’t find the link in your reply! :cry:
 
@@ -159,7 +159,7 @@ en:
 
       bookmark:
         instructions: |-
-          First, can you **bookmark this private message** using the bookmark button <img src="/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
+          First, can you **bookmark this private message** using bookmark <img src="/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use show more <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
         reply: |-
           Excellent! Now you can easily find your way back to this _fabulous_ private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). To get there, just select your profile picture at the upper right &#8599;
         not_found: |-
@@ -175,7 +175,7 @@ en:
 
           - Type colon <kbd>:</kbd> then complete the emoji name `:tada:`
 
-          - Press the emoji button <img src="/images/font-awesome-smile.png" width="16" height="16"> in the editor
+          - Press the emoji button <img src="/images/font-awesome-smile.png" width="16" height="16"> in the editor, or on your mobile keyboard
         reply: |-
           That’s downright :sparkles: _emojitastic!_ :sparkles:
         not_found: |-
@@ -183,7 +183,7 @@ en:
 
           Try typing a colon <kbd>:</kbd> to bring up the emoji picker, then type the first few letters of what you want, such as `:bird:`
 
-          Or you can press the emoji button <img src="/images/font-awesome-smile.png" width="16" height="16"> in the editor for a visual emoji picker.
+          Or you can press the emoji button <img src="/images/font-awesome-smile.png" width="16" height="16"> in the editor.
 
           (If you are on a mobile device, you can also enter Emoji directly from your keyboard, too.)
 
@@ -205,7 +205,7 @@ en:
 
           >  :imp: I wrote something nasty here
 
-          I guess you know what to do. Go ahead and **flag this post** <img src="/images/font-awesome-flag.png" width="16" height="16"> as inappropriate! Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal more actions for each post.
+          I guess you know what to do. Go ahead and **flag this post** <img src="/images/font-awesome-flag.png" width="16" height="16"> as inappropriate! 
         reply: |-
           [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post :angel:, I’ve gone ahead and removed the flag for now.)
         not_found: |-
@@ -231,19 +231,21 @@ en:
 
           - If you have a physical :keyboard:, press <kbd>?</kbd> to view our handy keyboard shortcuts.
         not_found: |-
-          Hmm… Looks like you might be having trouble. Sorry about that. Did you search <img src="/images/font-awesome-search.png" width="16" height="16"> for the term **capy&#8203;bara**?
+          Hmm… looks like you might be having trouble. Sorry about that. Did you search <img src="/images/font-awesome-search.png" width="16" height="16"> for the term **capy&#8203;bara**?
 
           (Be sure to limit your search to just the current topic, too!)
 
       end:
         message: |-
-          That’s all I have to show you for now @%{username} – thanks for sticking with me! I think you deserve an award, so I made this for you:
+          Thanks for sticking with me @%{username}! I made this for you:
 
           %{certificate}
 
-          Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
+          Right now you’re a new user. Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
 
-          Go ahead and check out [**our latest discussion topics**](/latest). If you’d like to learn about the advanced features, say `@%{discobot_username} %{advanced_trigger}`.
+          That’s all for now! :sunglasses: Check out [**our latest discussion topics**](/latest) or [**discussion categories**](/categories).
+          
+          (If you’d like to speak with me again to learn more, just message or mention `@%{discobot_username}` any time!)
 
       certificate:
         alt: 'Certificate of Achievement'
