@@ -103,6 +103,7 @@ module DiscourseNarrativeBot
 
     def generic_replies(reset_trigger)
       key = "#{GENERIC_REPLIES_COUNT_PREFIX}#{@user.id}"
+      reset_trigger = "#{RESET_TRIGGER} #{reset_trigger}"
       count = ($redis.get(key) || $redis.setex(key, 900, 0)).to_i
 
       case count
