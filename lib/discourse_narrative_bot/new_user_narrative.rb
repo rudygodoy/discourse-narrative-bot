@@ -179,6 +179,7 @@ module DiscourseNarrativeBot
       return if @post.user_id == -2
 
       fake_delay
+      enqueue_timeout_job(@user)
 
       reply_to(@post, I18n.t(i18n_key('bookmark.not_found')))
     end

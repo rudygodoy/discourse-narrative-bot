@@ -187,6 +187,8 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
       describe 'when user replies to the topic' do
         it 'should create the right reply' do
+          narrative.expects(:enqueue_timeout_job).with(user).once
+
           narrative.input(:reply, user, post: post)
           new_post = Post.last
 
