@@ -252,7 +252,7 @@ en:
 
           Do go ahead and delete any of your posts above. Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal the :wastebasket: icon.
         not_found: |-
-          Looks like you're having trouble deleting your posts. If you're having trouble finding the :wastebasket: icon, click on <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal it.
+          Looks like you're having trouble deleting your posts. If you're having trouble finding the <img src="/images/font-awesome-trash.png" width="16" height="16">icon, click on <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal it.
         reply: |-
           Error 21
           FAILED ERROR: java.lang.NullPointerException
@@ -281,7 +281,7 @@ en:
               * Bananas
               [/poll]
 
-          Can you use the :gear: icon in the editor to build a poll?
+          Can you use the <img src="/images/font-awesome-gear.png" width="16" height="16"> icon in the editor to build a poll?
         not_found: |-
           Looks like you didn’t include a poll in your reply. Can you try including the following poll in your next reply?
 
@@ -304,8 +304,8 @@ en:
           1. Click on the :gear: icon in the editor.
           2. Select "Hide Details"
           3. Edit the details summary and add your content
+          
           [/details]
-
           Can you add a details widget in your next reply with a list of your top 3 favorite fruits?
         not_found: |-
           Are you having trouble creating a details widget? Try including the following template in your next reply.
