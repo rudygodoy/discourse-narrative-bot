@@ -20,13 +20,14 @@ module DiscourseNarrativeBot
     end
 
     def select
-      data = DiscourseNarrativeBot::Store.get(@user.id)
+      data = Store.get(@user.id)
 
       if @post && @input != :delete
         topic_id = @post.topic_id
+        bot_mentioned = bot_mentioned?(@post)
 
         TRACKS.each do |klass|
-          if selected_track(klass)
+          if bot_mentioned && selected_track(klass)
             klass.new.reset_bot(@user, @post)
             return
           end
@@ -34,7 +35,7 @@ module DiscourseNarrativeBot
 
         if (data && data[:topic_id] == topic_id)
           state = data[:state]
-          klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative.to_s).constantize
+          klass = (data[:track] || NewUserNarrative.to_s).constantize
 
           if ((state && state.to_sym == :end) && @input == :reply)
             if bot_mentioned?(@post)
@@ -43,7 +44,18 @@ module DiscourseNarrativeBot
               generic_replies(klass::RESET_TRIGGER)
             end
           else
-            klass.new.input(@input, @user, post: @post)
+            previous_status = data[:attempted]
+            current_status = klass.new.input(@input, @user, post: @post)
+            data = Store.get(@user.id)
+            data[:attempted] = !current_status
+
+            if previous_status && data[:attempted] == previous_status
+              generic_replies(klass::RESET_TRIGGER)
+            else
+              $redis.del(generic_replies_key(@user))
+            end
+
+            Store.set(@user.id, data)
           end
 
           return
@@ -53,7 +65,7 @@ module DiscourseNarrativeBot
           mention_replies
         end
       elsif data && data[:state]&.to_sym != :end && @input == :delete
-        klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative.to_s).constantize
+        klass = (data[:track] || NewUserNarrative.to_s).constantize
         klass.new.input(@input, @user, post: @post, topic_id: @topic_id)
       end
     end
@@ -62,7 +74,7 @@ module DiscourseNarrativeBot
 
     def selected_track(klass)
       return if klass.respond_to?(:can_start?) && !klass.can_start?(@user)
-      bot_mentioned?(@post) && @post.raw.match(/#{RESET_TRIGGER} #{klass::RESET_TRIGGER}/)
+      @post.raw.match(/#{RESET_TRIGGER} #{klass::RESET_TRIGGER}/)
     end
 
     def mention_replies
@@ -77,7 +89,7 @@ module DiscourseNarrativeBot
           I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
         else
           discobot_username = self.class.discobot_user.username
-          data = DiscourseNarrativeBot::Store.get(@user.id)
+          data = Store.get(@user.id)
 
           tracks = [NewUserNarrative::RESET_TRIGGER]
 
@@ -101,8 +113,12 @@ module DiscourseNarrativeBot
       reply_to(@post, raw)
     end
 
+    def generic_replies_key(user)
+      "#{GENERIC_REPLIES_COUNT_PREFIX}#{user.id}"
+    end
+
     def generic_replies(reset_trigger)
-      key = "#{GENERIC_REPLIES_COUNT_PREFIX}#{@user.id}"
+      key = generic_replies_key(@user)
       reset_trigger = "#{RESET_TRIGGER} #{reset_trigger}"
       count = ($redis.get(key) || $redis.setex(key, 900, 0)).to_i
 

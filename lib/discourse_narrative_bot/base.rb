@@ -5,6 +5,8 @@ module DiscourseNarrativeBot
     class InvalidTransitionError < StandardError; end
 
     def input(input, user, post: nil, topic_id: nil)
+      new_post = nil
+
       synchronize(user) do
         @user = user
         @data = get_data(user) || {}
@@ -64,6 +66,8 @@ module DiscourseNarrativeBot
           raise e
         end
       end
+
+      new_post
     end
 
     def reset_bot

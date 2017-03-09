@@ -180,8 +180,7 @@ module DiscourseNarrativeBot
 
       fake_delay
       enqueue_timeout_job(@user)
-
-      reply_to(@post, I18n.t(i18n_key('bookmark.not_found')))
+      reply_to(@post, I18n.t(i18n_key('bookmark.not_found'))) unless @data[:attempted]
       false
     end
 
@@ -222,8 +221,7 @@ module DiscourseNarrativeBot
         reply
       else
         fake_delay
-
-        reply_to(@post, I18n.t(i18n_key('onebox.not_found')))
+        reply_to(@post, I18n.t(i18n_key('onebox.not_found'))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -301,8 +299,7 @@ module DiscourseNarrativeBot
       end
 
       fake_delay
-
-      reply = reply_to(@post, raw)
+      reply = reply_to(@post, raw) unless @data[:attempted]
       enqueue_timeout_job(@user)
       transition ? reply : false
     end
@@ -325,8 +322,7 @@ module DiscourseNarrativeBot
         reply
       else
         fake_delay
-
-        reply_to(@post, I18n.t(i18n_key('formatting.not_found')))
+        reply_to(@post, I18n.t(i18n_key('formatting.not_found'))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -354,8 +350,7 @@ module DiscourseNarrativeBot
         reply
       else
         fake_delay
-
-        reply_to(@post, I18n.t(i18n_key('quoting.not_found')))
+        reply_to(@post, I18n.t(i18n_key('quoting.not_found'))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -381,8 +376,7 @@ module DiscourseNarrativeBot
         reply
       else
         fake_delay
-
-        reply_to(@post, I18n.t(i18n_key('emoji.not_found')))
+        reply_to(@post, I18n.t(i18n_key('emoji.not_found'))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -407,12 +401,13 @@ module DiscourseNarrativeBot
       else
         fake_delay
 
-        reply_to(
-          @post, I18n.t(i18n_key('mention.not_found'),
+        unless @data[:attempted]
+          reply_to(@post, I18n.t(
+            i18n_key('mention.not_found'),
             username: @user.username,
             discobot_username: self.class.discobot_user.username
-          )
-        )
+          ))
+        end
 
         enqueue_timeout_job(@user)
         false
@@ -424,8 +419,7 @@ module DiscourseNarrativeBot
       return if @post.user_id == -2
 
       fake_delay
-
-      reply_to(@post, I18n.t(i18n_key('flag.not_found')))
+      reply_to(@post, I18n.t(i18n_key('flag.not_found'))) unless @data[:attempted]
       false
     end
 
@@ -467,8 +461,7 @@ module DiscourseNarrativeBot
         reply
       else
         fake_delay
-
-        reply_to(@post, I18n.t(i18n_key('search.not_found')))
+        reply_to(@post, I18n.t(i18n_key('search.not_found'))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end

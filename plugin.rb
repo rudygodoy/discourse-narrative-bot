@@ -172,10 +172,10 @@ after_initialize do
     end
   end
 
-  self.on(:post_created) do |post|
+  self.on(:post_created) do |post, options|
     user = post.user
 
-    if user.enqueue_narrative_bot_job?
+    if user.enqueue_narrative_bot_job? && !options[:skip_bot]
       Jobs.enqueue(:bot_input,
         user_id: user.id,
         post_id: post.id,

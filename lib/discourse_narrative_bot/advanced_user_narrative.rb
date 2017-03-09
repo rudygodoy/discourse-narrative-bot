@@ -89,12 +89,15 @@ module DiscourseNarrativeBot
     def init_tutorial_edit
       data = get_data(@user)
 
+      fake_delay
+
       post = PostCreator.create!(@user, {
         raw: I18n.t(
           i18n_key('edit.bot_created_post_raw'),
           discobot_username: self.class.discobot_user.username
         ),
-        topic_id: data[:topic_id]
+        topic_id: data[:topic_id],
+        skip_bot: true
       })
 
       set_state_data(:post_id, post.id)
@@ -109,7 +112,8 @@ module DiscourseNarrativeBot
           i18n_key('recover.deleted_post_raw'),
           discobot_username: self.class.discobot_user.username
         ),
-        topic_id: data[:topic_id]
+        topic_id: data[:topic_id],
+        skip_bot: true
       })
 
       set_state_data(:post_id, post.id)
@@ -168,9 +172,11 @@ module DiscourseNarrativeBot
 
       fake_delay
 
-      reply_to(@post, I18n.t(i18n_key('edit.not_found'),
-        url: Post.find_by(id: post_id).url
-      ))
+      unless @data[:attempted]
+        reply_to(@post, I18n.t(i18n_key('edit.not_found'),
+          url: Post.find_by(id: post_id).url
+        ))
+      end
 
       enqueue_timeout_job(@user)
       false
@@ -196,7 +202,7 @@ module DiscourseNarrativeBot
     def missing_delete
       return unless valid_topic?(@post.topic_id)
       fake_delay
-      reply_to(@post, I18n.t(i18n_key('delete.not_found')))
+      reply_to(@post, I18n.t(i18n_key('delete.not_found'))) unless @data[:attempted]
       enqueue_timeout_job(@user)
       false
     end
@@ -223,7 +229,7 @@ module DiscourseNarrativeBot
         post_id = get_state_data(:post_id) && @post.id != post_id
 
       fake_delay
-      reply_to(@post, I18n.t(i18n_key('recover.not_found')))
+      reply_to(@post, I18n.t(i18n_key('recover.not_found'))) unless @data[:attempted]
       enqueue_timeout_job(@user)
       false
     end
@@ -243,7 +249,7 @@ module DiscourseNarrativeBot
 
         reply_to(@post, raw)
       else
-        reply_to(@post, I18n.t(i18n_key('poll.not_found')))
+        reply_to(@post, I18n.t(i18n_key('poll.not_found'))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -258,7 +264,7 @@ module DiscourseNarrativeBot
       if Nokogiri::HTML.fragment(@post.cooked).css("details").size > 0
         reply_to(@post, I18n.t(i18n_key("details.reply")))
       else
-        reply_to(@post, I18n.t(i18n_key("details.not_found")))
+        reply_to(@post, I18n.t(i18n_key("details.not_found"))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -273,7 +279,7 @@ module DiscourseNarrativeBot
       if @post.wiki
         reply_to(@post, I18n.t(i18n_key("wiki.reply")))
       else
-        reply_to(@post, I18n.t(i18n_key("wiki.not_found")))
+        reply_to(@post, I18n.t(i18n_key("wiki.not_found"))) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
