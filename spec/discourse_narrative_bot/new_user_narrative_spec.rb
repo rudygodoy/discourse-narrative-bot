@@ -301,7 +301,11 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         narrative.expects(:enqueue_timeout_job).with(user)
         narrative.input(:reply, user, post: post)
 
-        expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.images.not_found'))
+        expect(Post.last.raw).to eq(I18n.t(
+          'discourse_narrative_bot.new_user_narrative.images.not_found',
+          image_url: "#{Discourse.base_url}/images/dog-walk.gif"
+        ))
+
         expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
 
         post.update!(

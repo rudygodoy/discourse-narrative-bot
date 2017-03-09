@@ -116,7 +116,7 @@ en:
         not_found: |-
           Looks like you didn’t upload an image so I’ve choosen a picture that I’m _sure_ you will enjoy.
 
-          `https://discourse.org/images/discobot-newuser/dog-walk.gif`
+          `%{image_url}`
 
           Try uploading that one next, or pasting the link in on a line by itself!
 
@@ -203,7 +203,7 @@ en:
 
           >  :imp: I wrote something nasty here
 
-          I guess you know what to do. Go ahead and **flag this post** <img src="/images/font-awesome-flag.png" width="16" height="16"> as inappropriate! 
+          I guess you know what to do. Go ahead and **flag this post** <img src="/images/font-awesome-flag.png" width="16" height="16"> as inappropriate!
         reply: |-
           [Our staff](/about) will be privately notified about your flag. If enough community members flag a post, it will also be automatically hidden as a precaution. (Since I didn’t actually write a nasty post :angel:, I’ve gone ahead and removed the flag for now.)
         not_found: |-
@@ -240,7 +240,7 @@ en:
           Right now you’re a new user. Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
 
           That’s all for now! Check out [**our latest discussion topics**](/latest) or [**discussion categories**](/categories). :sunglasses:
-          
+
           (If you’d like to speak with me again to learn more, just message or mention `@%{discobot_username}` any time!)
 
       certificate:

@@ -290,7 +290,11 @@ module DiscourseNarrativeBot
           transition = false
         end
       else
-        raw = I18n.t(i18n_key('images.not_found'))
+        raw = I18n.t(
+          i18n_key('images.not_found'),
+          image_url: "#{Discourse.base_url}/images/dog-walk.gif"
+        )
+
         transition = false
       end
 
@@ -520,7 +524,7 @@ module DiscourseNarrativeBot
       Topic.find_by(slug: 'welcome-to-discourse', archetype: Archetype.default) ||
         Topic.recent(1).first
     end
-    
+
     def url_helpers(url, opts = {})
       Rails.application.routes.url_helpers.send(url, opts.merge(host: Discourse.base_url))
     end

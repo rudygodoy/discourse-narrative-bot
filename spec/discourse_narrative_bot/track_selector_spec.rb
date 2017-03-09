@@ -43,7 +43,8 @@ describe DiscourseNarrativeBot::TrackSelector do
           new_post = Post.last
 
           expect(new_post.raw).to eq(I18n.t(
-            "discourse_narrative_bot.new_user_narrative.images.not_found"
+            "discourse_narrative_bot.new_user_narrative.images.not_found",
+            image_url: "#{Discourse.base_url}/images/dog-walk.gif"
           ))
         end
       end
@@ -60,7 +61,8 @@ describe DiscourseNarrativeBot::TrackSelector do
             new_post = Post.last
 
             expect(new_post.raw).to eq(I18n.t(
-              "discourse_narrative_bot.new_user_narrative.images.not_found"
+              "discourse_narrative_bot.new_user_narrative.images.not_found",
+              image_url: "#{Discourse.base_url}/images/dog-walk.gif"
             ))
           end
         end
