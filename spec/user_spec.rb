@@ -6,15 +6,13 @@ describe User do
 
   describe 'when a user is created' do
     it 'should initiate the bot' do
-      Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-        user
+      user
 
-        expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
-          username: user.username, title: SiteSetting.title
-        )
+      expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message',
+        username: user.username, title: SiteSetting.title
+      )
 
-        expect(Post.last.raw).to include(expected_raw.chomp)
-      end
+      expect(Post.last.raw).to include(expected_raw.chomp)
     end
 
     context 'when welcome post is disabled' do

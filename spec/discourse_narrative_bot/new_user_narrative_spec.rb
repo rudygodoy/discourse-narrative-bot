@@ -50,61 +50,57 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       let(:post) { Fabricate(:post, topic: topic) }
 
       it 'should reset the bot' do
-        Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-          narrative.reset_bot(user, post)
+        narrative.reset_bot(user, post)
 
-          expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
-            username: user.username, title: SiteSetting.title
-          )
+        expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message',
+          username: user.username, title: SiteSetting.title
+        )
 
-          expected_raw = <<~RAW
-          #{expected_raw}
+        expected_raw = <<~RAW
+        #{expected_raw}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
-          RAW
+        #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
+        RAW
 
-          new_post = Post.last
+        new_post = Post.last
 
-          expect(narrative.get_data(user)).to eq({
-            "topic_id" => topic.id,
-            "state" => "tutorial_bookmark",
-            "last_post_id" => new_post.id,
-            "track" => described_class.to_s
-          })
+        expect(narrative.get_data(user)).to eq({
+          "topic_id" => topic.id,
+          "state" => "tutorial_bookmark",
+          "last_post_id" => new_post.id,
+          "track" => described_class.to_s
+        })
 
-          expect(new_post.raw).to eq(expected_raw.chomp)
-          expect(new_post.topic.id).to eq(topic.id)
-        end
+        expect(new_post.raw).to eq(expected_raw.chomp)
+        expect(new_post.topic.id).to eq(topic.id)
       end
     end
 
     context 'when trigger is not initiated in a PM' do
       it 'should start the new track in a PM' do
-        Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-          narrative.reset_bot(user, other_post)
+        narrative.reset_bot(user, other_post)
 
-          expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
-            username: user.username, title: SiteSetting.title
-          )
+        expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message',
+          username: user.username, title: SiteSetting.title
+        )
 
-          expected_raw = <<~RAW
-          #{expected_raw}
+        expected_raw = <<~RAW
+        #{expected_raw}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
-          RAW
+        #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
+        RAW
 
-          new_post = Post.last
+        new_post = Post.last
 
-          expect(narrative.get_data(user)).to eq({
-            "topic_id" => new_post.topic.id,
-            "state" => "tutorial_bookmark",
-            "last_post_id" => new_post.id,
-            "track" => described_class.to_s
-          })
+        expect(narrative.get_data(user)).to eq({
+          "topic_id" => new_post.topic.id,
+          "state" => "tutorial_bookmark",
+          "last_post_id" => new_post.id,
+          "track" => described_class.to_s
+        })
 
-          expect(new_post.raw).to eq(expected_raw.chomp)
-          expect(new_post.topic.id).to_not eq(topic.id)
-        end
+        expect(new_post.raw).to eq(expected_raw.chomp)
+        expect(new_post.topic.id).to_not eq(topic.id)
       end
     end
   end
@@ -142,27 +138,25 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
     describe 'when [:begin, :init]' do
       it 'should create the right post' do
-        Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-          narrative.expects(:enqueue_timeout_job).never
+        narrative.expects(:enqueue_timeout_job).never
 
-          narrative.input(:init, user, post: nil)
-          new_post = Post.last
+        narrative.input(:init, user, post: nil)
+        new_post = Post.last
 
-          expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message_1',
-            username: user.username, title: SiteSetting.title
-          )
+        expected_raw = I18n.t('discourse_narrative_bot.new_user_narrative.hello.message',
+          username: user.username, title: SiteSetting.title
+        )
 
-          expected_raw = <<~RAW
-          #{expected_raw}
+        expected_raw = <<~RAW
+        #{expected_raw}
 
-          #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
-          RAW
+        #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.instructions', profile_page_url: profile_page_url)}
+        RAW
 
-          expect(new_post.raw).to eq(expected_raw.chomp)
+        expect(new_post.raw).to eq(expected_raw.chomp)
 
-          expect(narrative.get_data(user)[:state].to_sym)
-            .to eq(:tutorial_bookmark)
-        end
+        expect(narrative.get_data(user)[:state].to_sym)
+          .to eq(:tutorial_bookmark)
       end
     end
 

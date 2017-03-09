@@ -61,27 +61,10 @@ en:
 
           Don’t be shy! This is a personal message, so nobody can see it except you and me.
 
-        message_1: |-
+        message: |-
           Thanks for joining, @%{username}!
 
           I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
-        message_2: |-
-          Thanks for joining, @%{username}!
-
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
-        message_3: |-
-          Thanks for joining, @%{username}!
-
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
-        message_4: |-
-          Thanks for joining, @%{username}!
-
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
-        message_5: |-
-          Thanks for joining, @%{username}!
-
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
-
       onebox:
         instructions: |-
           Next, can you share one of these links with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
