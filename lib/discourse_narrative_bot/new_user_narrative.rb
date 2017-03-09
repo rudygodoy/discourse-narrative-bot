@@ -176,7 +176,7 @@ module DiscourseNarrativeBot
 
     def missing_bookmark
       return unless valid_topic?(@post.topic_id)
-      return if @post.user_id == -2
+      return if @post.user_id == self.class.discobot_user.id
 
       fake_delay
       enqueue_timeout_job(@user)
@@ -186,7 +186,7 @@ module DiscourseNarrativeBot
 
     def reply_to_bookmark
       return unless valid_topic?(@post.topic_id)
-      return unless @post.user_id == -2
+      return unless @post.user_id == self.class.discobot_user.id
 
       raw = <<~RAW
         #{I18n.t(i18n_key('bookmark.reply'), profile_page_url: url_helpers(:user_url, username: @user.username))}
