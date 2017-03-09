@@ -20,14 +20,11 @@ en:
           :game_die: dice roll: %{results}
         quote: |-
           > :left_speech_bubble: _%{quote}_ &mdash; %{author}
-        header: |-
+        tracks: |-
           Hi! I currently know how to do the following things:
 
-          `@%{discobot_username} %{new_user_track}`
-          > Starts the new user narrative track
-        advanced_track: |-
-          `@%{discobot_username} %{advanced_user_track}`
-          > Starts the advanced user narrative track
+          `@%{discobot_username} %{reset_trigger} %{default_track}`
+          > Starts one of the following interactive narratives: %{tracks}.
         bot_actions: |-
           `@%{discobot_username} roll 2d6`
           > :game_die: dice roll: 3, 6

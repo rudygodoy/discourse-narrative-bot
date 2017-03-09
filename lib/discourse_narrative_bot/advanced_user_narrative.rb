@@ -52,7 +52,7 @@ module DiscourseNarrativeBot
       }
     }
 
-    RESET_TRIGGER = 'advanced user track'.freeze
+    RESET_TRIGGER = 'advanced user'.freeze
     TIMEOUT_DURATION = 900 # 15 mins
 
     def self.can_start?(user)
@@ -78,7 +78,7 @@ module DiscourseNarrativeBot
       if post = Post.find_by(id: @data[:last_post_id])
         reply_to(post, I18n.t("discourse_narrative_bot.timeout.message",
           username: user.username,
-          reset_trigger: RESET_TRIGGER,
+          reset_trigger: "#{TrackSelector::RESET_TRIGGER} #{RESET_TRIGGER}",
           discobot_username: self.class.discobot_user.username
         ))
       end

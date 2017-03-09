@@ -12,9 +12,11 @@ describe DiscourseNarrativeBot::TrackSelector do
 
     end_message = <<~RAW
     #{I18n.t(
-      'discourse_narrative_bot.track_selector.random_mention.header',
+      'discourse_narrative_bot.track_selector.random_mention.tracks',
       discobot_username: discobot_username,
-      new_user_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
+      default_track: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER,
+      reset_trigger: described_class::RESET_TRIGGER,
+      tracks: DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER
     )}
 
     #{I18n.t(
@@ -71,7 +73,7 @@ describe DiscourseNarrativeBot::TrackSelector do
       context 'when reply contains a reset trigger' do
         it 'should start/reset the track' do
           post.update!(
-            raw: "@discobot #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}"
+            raw: "@discobot #{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}"
           )
 
           described_class.new(:reply, user, post_id: post.id).select
@@ -83,7 +85,7 @@ describe DiscourseNarrativeBot::TrackSelector do
         context 'start/reset advanced track' do
           before do
             post.update!(
-              raw: "@discobot #{DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER}"
+              raw: "@discobot #{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER}"
             )
           end
 
@@ -149,11 +151,9 @@ describe DiscourseNarrativeBot::TrackSelector do
               described_class.new(:reply, user, post_id: post.id).select
               new_post = Post.last
 
-              expect(new_post.raw).to include(I18n.t(
-                'discourse_narrative_bot.track_selector.random_mention.advanced_track',
-                discobot_username: discobot_user.username,
-                advanced_user_track: DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
-              ))
+              expect(new_post.raw).to include(
+                DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
+              )
             end
           end
         end

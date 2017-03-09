@@ -25,7 +25,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
       expect(Post.last.raw).to eq(I18n.t(
         'discourse_narrative_bot.timeout.message',
         username: user.username,
-        reset_trigger: described_class::RESET_TRIGGER,
+        reset_trigger: "#{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{described_class::RESET_TRIGGER}",
         discobot_username: discobot_user.username
       ))
     end

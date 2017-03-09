@@ -9,6 +9,8 @@ module DiscourseNarrativeBot
       AdvancedUserNarrative
     ]
 
+    RESET_TRIGGER = 'track'.freeze
+
     def initialize(input, user, post_id:, topic_id: nil)
       @input = input
       @user = user
@@ -60,7 +62,7 @@ module DiscourseNarrativeBot
 
     def selected_track(klass)
       return if klass.respond_to?(:can_start?) && !klass.can_start?(@user)
-      bot_mentioned?(@post) && @post.raw.match(/#{klass::RESET_TRIGGER}/)
+      bot_mentioned?(@post) && @post.raw.match(/#{RESET_TRIGGER} #{klass::RESET_TRIGGER}/)
     end
 
     def mention_replies
@@ -77,15 +79,19 @@ module DiscourseNarrativeBot
           discobot_username = self.class.discobot_user.username
           data = DiscourseNarrativeBot::Store.get(@user.id)
 
-          message = I18n.t(
-            i18n_key('random_mention.header'),
-            discobot_username: discobot_username,
-            new_user_track: NewUserNarrative::RESET_TRIGGER,
-          )
+          tracks = [NewUserNarrative::RESET_TRIGGER]
 
           if data && (completed = data[:completed]) && completed.include?(NewUserNarrative.to_s)
-            message << "\n\n#{I18n.t(i18n_key('random_mention.advanced_track'), discobot_username: discobot_username, advanced_user_track: AdvancedUserNarrative::RESET_TRIGGER)}"
+            tracks << AdvancedUserNarrative::RESET_TRIGGER
           end
+
+          message = I18n.t(
+            i18n_key('random_mention.tracks'),
+            discobot_username: discobot_username,
+            reset_trigger: RESET_TRIGGER,
+            default_track: NewUserNarrative::RESET_TRIGGER,
+            tracks: tracks.join(', ')
+          )
 
           message << "\n\n#{I18n.t(i18n_key('random_mention.bot_actions'), discobot_username: discobot_username)}"
         end
