@@ -52,7 +52,7 @@ module DiscourseNarrativeBot
         if (@input == :reply) && (bot_mentioned?(@post) || pm_to_bot?(@post) || reply_to_bot_post?(@post))
           mention_replies
         end
-      elsif data && data[:state] && (data[:state] && data[:state].to_sym != :end) && @input == :delete
+      elsif data && data[:state]&.to_sym != :end && @input == :delete
         klass = (data[:track] || DiscourseNarrativeBot::NewUserNarrative.to_s).constantize
         klass.new.input(@input, @user, post: @post, topic_id: @topic_id)
       end

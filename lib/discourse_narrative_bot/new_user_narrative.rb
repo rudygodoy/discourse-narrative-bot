@@ -182,6 +182,7 @@ module DiscourseNarrativeBot
       enqueue_timeout_job(@user)
 
       reply_to(@post, I18n.t(i18n_key('bookmark.not_found')))
+      false
     end
 
     def reply_to_bookmark
@@ -424,7 +425,8 @@ module DiscourseNarrativeBot
 
       fake_delay
 
-      reply = reply_to(@post, I18n.t(i18n_key('flag.not_found')))
+      reply_to(@post, I18n.t(i18n_key('flag.not_found')))
+      false
     end
 
     def reply_to_flag
