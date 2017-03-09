@@ -301,7 +301,7 @@ en:
           Now, let us learn how to add an interactive details widget. To view the instructions, click :mouse_three_button: on the following title.
 
           [details=How to add an interactive details widget that a user can view or hide on demand]
-          1. Click on the :gear: icon in the editor.
+          1. Click on the <img src="/images/font-awesome-gear.png" width="16" height="16"> icon in the editor.
           2. Select "Hide Details"
           3. Edit the details summary and add your content
 
