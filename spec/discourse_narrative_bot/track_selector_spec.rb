@@ -53,20 +53,25 @@ describe DiscourseNarrativeBot::TrackSelector do
 
       context 'when bot is replied to' do
         it 'should select the right track' do
-          Timecop.freeze(Time.new(2016, 10, 31, 16, 30)) do
-            post.update!(
-              raw: 'show me what you can do',
-              reply_to_post_number: bot_post.post_number
-            )
+          post.update!(
+            raw: 'show me what you can do',
+            reply_to_post_number: bot_post.post_number
+          )
 
-            described_class.new(:reply, user, post_id: post.id).select
-            new_post = Post.last
+          described_class.new(:reply, user, post_id: post.id).select
 
-            expect(new_post.raw).to eq(I18n.t(
-              "discourse_narrative_bot.new_user_narrative.images.not_found",
-              image_url: "#{Discourse.base_url}/images/dog-walk.gif"
-            ))
-          end
+          expect(Post.last.raw).to eq(I18n.t(
+            "discourse_narrative_bot.new_user_narrative.images.not_found",
+            image_url: "#{Discourse.base_url}/images/dog-walk.gif"
+          ))
+
+          described_class.new(:reply, user, post_id: post.id).select
+
+          expect(Post.last.raw).to eq(I18n.t(
+            'discourse_narrative_bot.track_selector.do_not_understand.first_response',
+            reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
+            discobot_username: discobot_user.username
+          ))
         end
       end
 
