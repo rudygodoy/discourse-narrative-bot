@@ -113,7 +113,7 @@ after_initialize do
           In recognition of successful completion of the new user tutorial
         </text>
         <text transform="translate(386.926 316.441)" style="font-size:18px;fill:#020403;font-family:Tangerine, Tangerine">
-          Discobot
+          #{NewUserNarrative.discobot_user.username}
         </text>
         <text transform="translate(98.126 317.351)" style="font-size:18px;fill:#020403;font-family:Tangerine, Tangerine">
           #{params[:date]}
