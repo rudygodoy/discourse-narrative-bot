@@ -12,8 +12,6 @@ if !user
     u.email = "discobot_email"
     u.password = SecureRandom.hex
     u.active = true
-    u.admin = true
-    u.moderator = true
     u.approved = true
     u.trust_level = TrustLevel[4]
   end
@@ -27,6 +25,7 @@ if !user
 end
 
 bot = User.find(-2)
+bot.update!(admin:true, moderator: false)
 
 bot.user_option.update!(
   email_private_messages: false,
