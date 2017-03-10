@@ -59,9 +59,16 @@ en:
           Don’t be shy! This is a personal message, so nobody can see it except you and me.
 
         message: |-
-          Thanks for joining, @%{username}!
+          Thanks for joining %{title}, and welcome!                  
+          
+          I’m your friendly neighborhood bot, here to help:
 
-          I’m your friendly neighborhood bot, available to demonstrate how %{title} works.
+          - For safety reasons, we temporarily limit what new users can do. You’ll gain new abilities (and [badges](/badges)) as we get to know you.
+
+          - We believe in [civilized community behavior](/guidelines) at all times.
+          
+          - I’m only a robot, but [our friendly staff](/staff) are also here to help.
+
       onebox:
         instructions: |-
           Next, can you share one of these links with me? Reply with **a link on a line by itself**, and it’ll automatically expand to include a nifty summary.
@@ -137,7 +144,7 @@ en:
 
       bookmark:
         instructions: |-
-          First, can you **bookmark this private message** using bookmark <img src="/images/font-awesome-bookmark.png" width="16" height="16"> under this post? Use show more <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal additional actions.
+          If you’d like to learn more, <img src="/images/font-awesome-bookmark.png" width="16" height="16"> **bookmark this private message**. Use <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> under this post to reveal additional actions. There may be a :gift: in your future, if you do! 
         reply: |-
           Excellent! Now you can easily find your way back to our private conversation any time, right from [the bookmarks tab on your profile](%{profile_page_url}/activity/bookmarks). Just select your profile picture at the upper right &#8599;
         not_found: |-
