@@ -24,10 +24,16 @@ module DiscourseNarrativeBot
 
       if @post && @input != :delete
         topic_id = @post.topic_id
-        bot_mentioned = bot_mentioned?(@post)
+        post_analyzer = PostAnalyzer.new(@post.raw, @post.topic_id)
+        # TODO: Expose the method publicaly in PostAnalyzer
+        stripped_text = post_analyzer.send(:cooked_stripped).text
+
+        bot_mentioned = post_analyzer.raw_mentions.include?(
+          self.class.discobot_user.username
+        )
 
         TRACKS.each do |klass|
-          if bot_mentioned && selected_track(klass)
+          if selected_track(klass, stripped_text)
             klass.new.reset_bot(@user, @post)
             return
           end
@@ -38,7 +44,7 @@ module DiscourseNarrativeBot
           klass = (data[:track] || NewUserNarrative.to_s).constantize
 
           if ((state && state.to_sym == :end) && @input == :reply)
-            bot_mentioned ? mention_replies : generic_replies(klass::RESET_TRIGGER)
+            bot_mentioned ? mention_replies(stripped_text) : generic_replies(klass::RESET_TRIGGER)
           elsif @input == :reply
             previous_status = data[:attempted]
             current_status = klass.new.input(@input, @user, post: @post)
@@ -60,7 +66,7 @@ module DiscourseNarrativeBot
         end
 
         if (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
-          mention_replies
+          mention_replies(stripped_text)
         end
       elsif data && data[:state]&.to_sym != :end && @input == :delete
         klass = (data[:track] || NewUserNarrative.to_s).constantize
@@ -70,23 +76,23 @@ module DiscourseNarrativeBot
 
     private
 
-    def selected_track(klass)
+    def selected_track(klass, text)
       return if klass.respond_to?(:can_start?) && !klass.can_start?(@user)
-      @post.raw.match(/#{RESET_TRIGGER} #{klass::RESET_TRIGGER}/)
+      text.match(/@#{self.class.discobot_user.username} #{RESET_TRIGGER} #{klass::RESET_TRIGGER}/)
     end
 
-    def mention_replies
+    def mention_replies(text)
       post_raw = @post.raw
+      discobot_username = self.class.discobot_user.username
 
       raw =
-        if match_data = post_raw.match(/roll (\d+)d(\d+)/i)
+        if match_data = post_raw.match(/@#{discobot_username} roll (\d+)d(\d+)/i)
           I18n.t(i18n_key('random_mention.dice'),
             results: Dice.new(match_data[1].to_i, match_data[2].to_i).roll.join(", ")
           )
-        elsif match_data = post_raw.match(/quote/i)
+        elsif match_data = post_raw.match(/@#{discobot_username} quote/i)
           I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
         else
-          discobot_username = self.class.discobot_user.username
           data = Store.get(@user.id)
 
           tracks = [NewUserNarrative::RESET_TRIGGER]

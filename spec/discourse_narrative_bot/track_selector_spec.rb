@@ -174,6 +174,24 @@ describe DiscourseNarrativeBot::TrackSelector do
               results: '1, 1'
             ))
           end
+
+          describe 'when dice roll is requested incorrectly' do
+            it 'should create the right reply' do
+              post.update!(raw: 'roll 2d1 @discobot')
+              described_class.new(:reply, user, post_id: post.id).select
+
+              expect(Post.last.raw).to eq(random_mention_reply)
+            end
+          end
+
+          describe 'when roll dice command is present inside a quote' do
+            it 'should ignore the command' do
+              post.update!(raw: '[quote="Donkey, post:6, topic:1"]@discobot roll 2d1[/quote]')
+
+              expect { described_class.new(:reply, user, post_id: post.id).select }
+                .to_not change { Post.count }
+            end
+          end
         end
 
         describe 'when a quote is requested' do
@@ -190,6 +208,24 @@ describe DiscourseNarrativeBot::TrackSelector do
               I18n.t("discourse_narrative_bot.track_selector.random_mention.quote",
               quote: "Be Like Water", author: "Bruce Lee"
             ))
+          end
+
+          describe 'when quote is requested incorrectly' do
+            it 'should create the right reply' do
+              post.update!(raw: 'quote @discobot')
+              described_class.new(:reply, user, post_id: post.id).select
+
+              expect(Post.last.raw).to eq(random_mention_reply)
+            end
+          end
+
+          describe 'when quote command is present inside a onebox or quote' do
+            it 'should ignore the command' do
+              post.update!(raw: '[quote="Donkey, post:6, topic:1"]@discobot quote[/quote]')
+
+              expect { described_class.new(:reply, user, post_id: post.id).select }
+                .to_not change { Post.count }
+            end
           end
         end
       end

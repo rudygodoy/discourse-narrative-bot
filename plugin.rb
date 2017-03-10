@@ -164,6 +164,8 @@ after_initialize do
     end
   end
 
+  require_dependency "user"
+
   User.class_eval do
     def enqueue_narrative_bot_job?
       SiteSetting.discourse_narrative_bot_enabled &&
