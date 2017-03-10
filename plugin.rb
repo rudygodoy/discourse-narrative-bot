@@ -164,13 +164,18 @@ after_initialize do
     end
   end
 
+  User.class_eval do
+    def enqueue_narrative_bot_job?
+      SiteSetting.discourse_narrative_bot_enabled &&
+        ![-1, -2].include?(self.id) &&
+        !self.user_option.mailing_list_mode
+    end
+  end
+
   self.on(:post_created) do |post|
     user = post.user
 
-    return true unless SiteSetting.discourse_narrative_bot_enabled ||
-      !user.user_option.mailing_list_mode
-
-    if ![-1, -2].include?(user.id)
+    if user.enqueue_narrative_bot_job?
       Jobs.enqueue(:bot_input,
         user_id: user.id,
         post_id: post.id,
@@ -180,10 +185,7 @@ after_initialize do
   end
 
   self.on(:post_edited) do |post|
-    return true unless SiteSetting.discourse_narrative_bot_enabled ||
-      !user.user_option.mailing_list_mode
-
-    if ![-1, -2].include?(post.user.id)
+    if post.user.enqueue_narrative_bot_job?
       Jobs.enqueue(:bot_input,
         user_id: post.user.id,
         post_id: post.id,
@@ -193,10 +195,7 @@ after_initialize do
   end
 
   self.on(:post_destroyed) do |post, _, user|
-    return true unless SiteSetting.discourse_narrative_bot_enabled ||
-      !user.user_option.mailing_list_mode
-
-    if ![-1, -2].include?(user.id)
+    if user.enqueue_narrative_bot_job?
       Jobs.enqueue(:bot_input,
         user_id: user.id,
         post_id: post.id,
@@ -207,10 +206,7 @@ after_initialize do
   end
 
   self.on(:post_recovered) do |post, _, user|
-    return true unless SiteSetting.discourse_narrative_bot_enabled ||
-      !user.user_option.mailing_list_mode
-
-    if ![-1, -2].include?(user.id)
+    if user.enqueue_narrative_bot_job?
       Jobs.enqueue(:bot_input,
         user_id: user.id,
         post_id: post.id,
@@ -220,26 +216,24 @@ after_initialize do
   end
 
   self.add_model_callback(PostAction, :after_commit, on: :create) do
-    return true if !SiteSetting.discourse_narrative_bot_enabled ||
-      [-1, -2].include?(self.user.id) ||
-      self.user.user_option.mailing_list_mode
+    if self.user.enqueue_narrative_bot_job?
+      input =
+        case self.post_action_type_id
+        when *PostActionType.flag_types.values
+          :flag
+        when PostActionType.types[:like]
+          :like
+        when PostActionType.types[:bookmark]
+          :bookmark
+        end
 
-    input =
-      case self.post_action_type_id
-      when *PostActionType.flag_types.values
-        :flag
-      when PostActionType.types[:like]
-        :like
-      when PostActionType.types[:bookmark]
-        :bookmark
+      if input
+        Jobs.enqueue(:bot_input,
+          user_id: self.user.id,
+          post_id: self.post.id,
+          input: input
+        )
       end
-
-    if input
-      Jobs.enqueue(:bot_input,
-        user_id: self.user.id,
-        post_id: self.post.id,
-        input: input
-      )
     end
   end
 end
