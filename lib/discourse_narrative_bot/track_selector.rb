@@ -38,12 +38,8 @@ module DiscourseNarrativeBot
           klass = (data[:track] || NewUserNarrative.to_s).constantize
 
           if ((state && state.to_sym == :end) && @input == :reply)
-            if bot_mentioned?(@post)
-              mention_replies
-            else
-              generic_replies(klass::RESET_TRIGGER)
-            end
-          else
+            bot_mentioned ? mention_replies : generic_replies(klass::RESET_TRIGGER)
+          elsif @input == :reply
             previous_status = data[:attempted]
             current_status = klass.new.input(@input, @user, post: @post)
             data = Store.get(@user.id)
@@ -56,12 +52,14 @@ module DiscourseNarrativeBot
             end
 
             Store.set(@user.id, data)
+          else
+            klass.new.input(@input, @user, post: @post)
           end
 
           return
         end
 
-        if (@input == :reply) && (bot_mentioned?(@post) || pm_to_bot?(@post) || reply_to_bot_post?(@post))
+        if (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
           mention_replies
         end
       elsif data && data[:state]&.to_sym != :end && @input == :delete

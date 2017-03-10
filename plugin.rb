@@ -194,8 +194,8 @@ after_initialize do
     end
   end
 
-  self.on(:post_destroyed) do |post, _, user|
-    if user.enqueue_narrative_bot_job?
+  self.on(:post_destroyed) do |post, options, user|
+    if user.enqueue_narrative_bot_job? && !options[:skip_bot]
       Jobs.enqueue(:bot_input,
         user_id: user.id,
         post_id: post.id,

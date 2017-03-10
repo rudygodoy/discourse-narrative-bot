@@ -117,7 +117,7 @@ module DiscourseNarrativeBot
       })
 
       set_state_data(:post_id, post.id)
-      PostDestroyer.new(@user, post).destroy
+      PostDestroyer.new(@user, post, skip_bot: true).destroy
     end
 
     def start_advanced_track
