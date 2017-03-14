@@ -8,7 +8,7 @@ en:
 
     timeout:
       message: |-
-        Hey @%{username}, just checking in because I haven’t heard from you in a while. :calendar_spiral:
+        Hey @%{username}, just checking in because I haven’t heard from you in a while.
 
         If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@%{discobot_username} %{reset_trigger}`.
 
