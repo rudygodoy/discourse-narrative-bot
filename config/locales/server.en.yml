@@ -50,14 +50,6 @@ en:
 
       hello:
         title: ":robot: Greetings!"
-        triggers: |-
-          - unicorns :unicorn:
-          - rockets :rocket:
-          - ninjas :japanese_castle:
-          - monkeys :monkey_face:
-
-          Don’t be shy! This is a personal message, so nobody can see it except you and me.
-
         message: |-
           Thanks for joining %{title}, and welcome!
 
@@ -218,11 +210,9 @@ en:
 
       end:
         message: |-
-          Thanks for sticking with me @%{username}! I made this for you:
+          Thanks for sticking with me @%{username}! I made this for you, I think you’ve earned it:
 
           %{certificate}
-
-          Right now you’re a new user. Participate for a little while and our new user safety limits will quickly be lifted as we get to know you. :raised_hands: Keep coming back over a period of weeks or months and you could gain [special abilities](https://meta.discourse.org/t/what-do-user-trust-levels-do/4924) to help keep our community safe and friendly for everyone.
 
           That’s all for now! Check out [**our latest discussion topics**](/latest) or [**discussion categories**](/categories). :sunglasses:
 
