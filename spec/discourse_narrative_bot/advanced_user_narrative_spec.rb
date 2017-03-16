@@ -9,6 +9,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
   let(:discobot_user) { User.find(-2) }
+  let(:skip_trigger) { "@#{discobot_user.username} #{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
 
   describe '#notify_timeout' do
     before do
@@ -147,6 +148,23 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
             url: first_post.url
           ))
         end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.advanced_user_narrative.delete.instructions')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_delete)
+          end
+        end
       end
 
       describe 'when user edits the right post' do
@@ -166,6 +184,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           RAW
 
           expect(Post.last.raw).to eq(expected_raw.chomp)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_delete)
         end
       end
     end
@@ -191,6 +210,23 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           ))
 
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_delete)
+        end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.offset(1).last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.advanced_user_narrative.recover.instructions')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_recover)
+          end
         end
       end
 
@@ -269,6 +305,23 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
 
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_recover)
         end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.advanced_user_narrative.poll.instructions')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+          end
+        end
       end
 
       describe 'when user recovers a post in a different topic' do
@@ -331,6 +384,23 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
         end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.advanced_user_narrative.details.instructions')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_details)
+          end
+        end
       end
 
       it 'should create the right reply' do
@@ -373,6 +443,22 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.advanced_user_narrative.details.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_details)
+        end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.advanced_user_narrative.end.message')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:end)
+          end
         end
       end
 

@@ -67,11 +67,22 @@ describe DiscourseNarrativeBot::TrackSelector do
 
           described_class.new(:reply, user, post_id: post.id).select
 
-          expect(Post.last.raw).to eq(I18n.t(
+          expected_raw = <<~RAW
+          #{I18n.t(
             'discourse_narrative_bot.track_selector.do_not_understand.first_response',
             reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
             discobot_username: discobot_user.username
-          ))
+          )}
+
+          #{I18n.t(
+            'discourse_narrative_bot.track_selector.do_not_understand.track_response',
+            discobot_username: discobot_user.username,
+            reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
+            skip_trigger: described_class::SKIP_TRIGGER
+          )}
+          RAW
+
+          expect(Post.last.raw).to eq(expected_raw.chomp)
         end
       end
 

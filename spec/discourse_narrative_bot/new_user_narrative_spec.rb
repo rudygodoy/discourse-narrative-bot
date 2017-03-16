@@ -11,6 +11,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
   let(:other_post) { Fabricate(:post, topic: other_topic) }
   let(:discobot_user) { User.find(-2) }
   let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
+  let(:skip_trigger) { "@#{discobot_user.username} #{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
 
   describe '#notify_timeout' do
     before do
@@ -195,6 +196,23 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_bookmark)
         end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.new_user_narrative.onebox.instructions')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_onebox)
+          end
+        end
       end
 
       it 'should create the right reply' do
@@ -253,6 +271,25 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
+      describe 'when user replies to the topic' do
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.new_user_narrative.emoji.instructions')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
+          end
+        end
+      end
+
       it 'should create the right reply' do
         post.update!(raw: 'https://en.wikipedia.org/wiki/ROT13')
 
@@ -290,6 +327,27 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect { narrative.input(:reply, user, post: other_post) }.to_not change { Post.count }
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
+        end
+      end
+
+      describe 'when user replies to the topic' do
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.new_user_narrative.flag.instructions',
+              guidelines_url: Discourse.base_url + '/guidelines',
+              about_url: Discourse.base_url + '/about'
+            ))
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
+          end
         end
       end
 
@@ -333,12 +391,13 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           )}
         RAW
 
+        expect(Post.last.raw).to eq(expected_raw.chomp)
+
         post_action = PostAction.last
 
         expect(post_action.post_action_type_id).to eq(PostActionType.types[:like])
         expect(post_action.user).to eq(described_class.discobot_user)
         expect(post_action.post).to eq(post)
-        expect(Post.last.raw).to eq(expected_raw.chomp)
         expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
       end
     end
@@ -365,6 +424,25 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.formatting.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
+        end
+      end
+
+      describe 'when user replies to the topic' do
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.new_user_narrative.quoting.instructions',
+            ))
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_quote)
+          end
         end
       end
 
@@ -413,6 +491,25 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         end
       end
 
+      describe 'when user replies to the topic' do
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.new_user_narrative.images.instructions',
+            ))
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_images)
+          end
+        end
+      end
+
       it 'should create the right reply' do
         post.update!(
           raw: '[quote="#{post.user}, post:#{post.post_number}, topic:#{topic.id}"]\n:monkey: :fries:\n[/quote]'
@@ -433,7 +530,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       end
     end
 
-    describe 'when [:tutorial_emoji, :reply]' do
+    describe 'emoji tutorial' do
       before do
         narrative.set_data(user, state: :tutorial_emoji, topic_id: topic.id)
       end
@@ -455,6 +552,26 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
           expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.emoji.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_emoji)
+        end
+      end
+
+      describe 'when user replies to the topic' do
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.new_user_narrative.mention.instructions',
+              discobot_username: discobot_user.username
+            ))
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_mention)
+          end
         end
       end
 
@@ -507,6 +624,24 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           ))
 
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_mention)
+        end
+      end
+
+      describe 'when reply contains the skip trigger' do
+        it 'should create the right reply' do
+          post.update!(raw: skip_trigger)
+          described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+          DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.new_user_narrative.formatting.instructions',
+            discobot_username: discobot_user.username
+          ))
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_formatting)
         end
       end
 
@@ -570,6 +705,23 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expect(new_post.raw).to eq(I18n.t('discourse_narrative_bot.new_user_narrative.flag.not_found'))
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_flag)
         end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            other_post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: other_post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.new_user_narrative.search.instructions'
+            ))
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_search)
+          end
+        end
       end
 
       it 'should create the right reply' do
@@ -583,8 +735,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           #{I18n.t('discourse_narrative_bot.new_user_narrative.flag.reply')}
 
           #{I18n.t(
-            'discourse_narrative_bot.new_user_narrative.search.instructions',
-            topic_id: welcome_topic.id, slug: welcome_topic.slug
+            'discourse_narrative_bot.new_user_narrative.search.instructions'
           )}
         RAW
 
@@ -618,6 +769,17 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           ))
 
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_search)
+        end
+      end
+
+      describe 'when reply contains the skip trigger' do
+        it 'should create the right reply' do
+          post.update!(raw: skip_trigger)
+
+          expect { DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select }
+            .to change { Post.count }.by(1)
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:end)
         end
       end
 

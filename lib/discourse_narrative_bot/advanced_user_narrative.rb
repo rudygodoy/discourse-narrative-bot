@@ -1,54 +1,65 @@
 module DiscourseNarrativeBot
   class AdvancedUserNarrative < Base
+    I18N_KEY = "discourse_narrative_bot.advanced_user_narrative".freeze
+
     TRANSITION_TABLE = {
-      [:begin, :init] => {
+      begin: {
         next_state: :tutorial_edit,
-        next_instructions_key: 'edit.instructions',
-        action: :start_advanced_track
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.edit.instructions") },
+        init: {
+          action: :start_advanced_track
+        }
       },
 
-      [:tutorial_edit, :edit] => {
+      tutorial_edit: {
         next_state: :tutorial_delete,
-        next_instructions_key: "delete.instructions",
-        action: :reply_to_edit
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.delete.instructions") },
+        edit: {
+          action: :reply_to_edit
+        },
+        reply: {
+          next_state: :tutorial_edit,
+          action: :missing_edit
+        }
       },
 
-      [:tutorial_edit, :reply] => {
-        next_state: :tutorial_edit,
-        action: :missing_edit
-      },
-
-      [:tutorial_delete, :delete] => {
+      tutorial_delete: {
         next_state: :tutorial_recover,
-        next_instructions_key: 'recover.instructions',
-        action: :reply_to_delete
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.recover.instructions") },
+        delete: {
+          action: :reply_to_delete
+        },
+        reply: {
+          next_state: :tutorial_delete,
+          action: :missing_delete
+        }
       },
 
-      [:tutorial_delete, :reply] => {
-        next_state: :tutorial_delete,
-        action: :missing_delete
-      },
-
-      [:tutorial_recover, :recover] => {
+      tutorial_recover: {
         next_state: :tutorial_poll,
-        next_instructions_key: 'poll.instructions',
-        action: :reply_to_recover
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.poll.instructions") },
+        recover: {
+          action: :reply_to_recover
+        },
+        reply: {
+          next_state: :tutorial_recover,
+          action: :missing_recover
+        }
       },
 
-      [:tutorial_recover, :reply] => {
-        next_state: :tutorial_recover,
-        action: :missing_recover
-      },
-
-      [:tutorial_poll, :reply] => {
+      tutorial_poll: {
         next_state: :tutorial_details,
-        next_instructions_key: 'details.instructions',
-        action: :reply_to_poll
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.details.instructions") },
+        reply: {
+          action: :reply_to_poll
+        }
       },
 
-      [:tutorial_details, :reply] => {
+      tutorial_details: {
         next_state: :end,
-        action: :reply_to_details
+        reply: {
+          action: :reply_to_details
+        }
       }
     }
 
@@ -93,7 +104,7 @@ module DiscourseNarrativeBot
 
       post = PostCreator.create!(@user, {
         raw: I18n.t(
-          i18n_key('edit.bot_created_post_raw'),
+          "#{I18N_KEY}.edit.bot_created_post_raw",
           discobot_username: self.class.discobot_user.username
         ),
         topic_id: data[:topic_id],
@@ -109,7 +120,7 @@ module DiscourseNarrativeBot
 
       post = PostCreator.create!(@user, {
         raw: I18n.t(
-          i18n_key('recover.deleted_post_raw'),
+          "#{I18N_KEY}.recover.deleted_post_raw",
           discobot_username: self.class.discobot_user.username
         ),
         topic_id: data[:topic_id],
@@ -121,16 +132,16 @@ module DiscourseNarrativeBot
     end
 
     def start_advanced_track
-      raw = I18n.t(i18n_key("start_message"), username: @user.username)
+      raw = I18n.t("#{I18N_KEY}.start_message", username: @user.username)
 
       raw = <<~RAW
       #{raw}
 
-      #{I18n.t(i18n_key(@next_instructions_key))}
+      #{instance_eval(&@next_instructions)}
       RAW
 
       opts = {
-        title: I18n.t(i18n_key("title")),
+        title: I18n.t("#{I18N_KEY}.title"),
         target_usernames: @user.username,
         archetype: Archetype.private_message
       }
@@ -158,9 +169,9 @@ module DiscourseNarrativeBot
       fake_delay
 
       raw = <<~RAW
-      #{I18n.t(i18n_key('edit.reply'))}
+      #{I18n.t("#{I18N_KEY}.edit.reply")}
 
-      #{I18n.t(i18n_key(@next_instructions_key))}
+      #{instance_eval(&@next_instructions)}
       RAW
 
       reply_to(@post, raw)
@@ -173,7 +184,7 @@ module DiscourseNarrativeBot
       fake_delay
 
       unless @data[:attempted]
-        reply_to(@post, I18n.t(i18n_key('edit.not_found'),
+        reply_to(@post, I18n.t("#{I18N_KEY}.edit.not_found",
           url: Post.find_by(id: post_id).url
         ))
       end
@@ -188,9 +199,9 @@ module DiscourseNarrativeBot
       fake_delay
 
       raw = <<~RAW
-      #{I18n.t(i18n_key('delete.reply'))}
+      #{I18n.t("#{I18N_KEY}.delete.reply")}
 
-      #{I18n.t(i18n_key(@next_instructions_key))}
+      #{instance_eval(&@next_instructions)}
       RAW
 
       PostCreator.create!(self.class.discobot_user,
@@ -202,7 +213,7 @@ module DiscourseNarrativeBot
     def missing_delete
       return unless valid_topic?(@post.topic_id)
       fake_delay
-      reply_to(@post, I18n.t(i18n_key('delete.not_found'))) unless @data[:attempted]
+      reply_to(@post, I18n.t("#{I18N_KEY}.delete.not_found")) unless @data[:attempted]
       enqueue_timeout_job(@user)
       false
     end
@@ -213,9 +224,9 @@ module DiscourseNarrativeBot
       fake_delay
 
       raw = <<~RAW
-      #{I18n.t(i18n_key('recover.reply'))}
+      #{I18n.t("#{I18N_KEY}.recover.reply")}
 
-      #{I18n.t(i18n_key(@next_instructions_key))}
+      #{instance_eval(&@next_instructions)}
       RAW
 
       PostCreator.create!(self.class.discobot_user,
@@ -229,7 +240,7 @@ module DiscourseNarrativeBot
         post_id = get_state_data(:post_id) && @post.id != post_id
 
       fake_delay
-      reply_to(@post, I18n.t(i18n_key('recover.not_found'))) unless @data[:attempted]
+      reply_to(@post, I18n.t("#{I18N_KEY}.recover.not_found")) unless @data[:attempted]
       enqueue_timeout_job(@user)
       false
     end
@@ -242,14 +253,14 @@ module DiscourseNarrativeBot
 
       if Nokogiri::HTML.fragment(@post.cooked).css(".poll").size > 0
         raw = <<~RAW
-          #{I18n.t(i18n_key('poll.reply'))}
+          #{I18n.t("#{I18N_KEY}.poll.reply")}
 
-          #{I18n.t(i18n_key(@next_instructions_key))}
+          #{instance_eval(&@next_instructions)}
         RAW
 
         reply_to(@post, raw)
       else
-        reply_to(@post, I18n.t(i18n_key('poll.not_found'))) unless @data[:attempted]
+        reply_to(@post, I18n.t("#{I18N_KEY}.poll.not_found")) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -262,9 +273,9 @@ module DiscourseNarrativeBot
       fake_delay
 
       if Nokogiri::HTML.fragment(@post.cooked).css("details").size > 0
-        reply_to(@post, I18n.t(i18n_key("details.reply")))
+        reply_to(@post, I18n.t("#{I18N_KEY}.details.reply"))
       else
-        reply_to(@post, I18n.t(i18n_key("details.not_found"))) unless @data[:attempted]
+        reply_to(@post, I18n.t("#{I18N_KEY}.details.not_found")) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -277,9 +288,9 @@ module DiscourseNarrativeBot
       fake_delay
 
       if @post.wiki
-        reply_to(@post, I18n.t(i18n_key("wiki.reply")))
+        reply_to(@post, I18n.t("#{I18N_KEY}.wiki.reply"))
       else
-        reply_to(@post, I18n.t(i18n_key("wiki.not_found"))) unless @data[:attempted]
+        reply_to(@post, I18n.t("#{I18N_KEY}.wiki.not_found")) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
       end
@@ -287,13 +298,7 @@ module DiscourseNarrativeBot
 
     def end_reply
       fake_delay
-      reply_to(@post, I18n.t(i18n_key('end.message')))
-    end
-
-    def transition
-      TRANSITION_TABLE.fetch([@state, @input])
-    rescue KeyError
-      raise InvalidTransitionError.new
+      reply_to(@post, I18n.t("#{I18N_KEY}.end.message"))
     end
 
     def synchronize(user)
@@ -302,10 +307,6 @@ module DiscourseNarrativeBot
       else
         DistributedMutex.synchronize("advanced_user_narrative_#{user.id}") { yield }
       end
-    end
-
-    def i18n_key(key)
-      "discourse_narrative_bot.advanced_user_narrative.#{key}"
     end
 
     def cancel_timeout_job(user)
