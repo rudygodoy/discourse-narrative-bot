@@ -10,6 +10,7 @@ module DiscourseNarrativeBot
     ]
 
     RESET_TRIGGER = 'track'.freeze
+    SKIP_TRIGGER = 'skip'.freeze
 
     def initialize(input, user, post_id:, topic_id: nil)
       @input = input
@@ -47,19 +48,19 @@ module DiscourseNarrativeBot
             bot_mentioned ? mention_replies(stripped_text) : generic_replies(klass::RESET_TRIGGER)
           elsif @input == :reply
             previous_status = data[:attempted]
-            current_status = klass.new.input(@input, @user, post: @post)
+            current_status = klass.new.input(@input, @user, post: @post, skip: skip_track?(stripped_text))
             data = Store.get(@user.id)
             data[:attempted] = !current_status
 
             if previous_status && data[:attempted] == previous_status
-              generic_replies(klass::RESET_TRIGGER)
+              generic_replies(klass::RESET_TRIGGER, state)
             else
               $redis.del(generic_replies_key(@user))
             end
 
             Store.set(@user.id, data)
           else
-            klass.new.input(@input, @user, post: @post)
+            klass.new.input(@input, @user, post: @post, skip: skip_track?(stripped_text))
           end
 
           return
@@ -70,7 +71,12 @@ module DiscourseNarrativeBot
         end
       elsif data && data[:state]&.to_sym != :end && @input == :delete
         klass = (data[:track] || NewUserNarrative.to_s).constantize
-        klass.new.input(@input, @user, post: @post, topic_id: @topic_id)
+
+        klass.new.input(@input, @user,
+          post: @post,
+          topic_id: @topic_id,
+          skip: skip_track?(stripped_text)
+        )
       end
     end
 
@@ -121,17 +127,20 @@ module DiscourseNarrativeBot
       "#{GENERIC_REPLIES_COUNT_PREFIX}#{user.id}"
     end
 
-    def generic_replies(reset_trigger)
+    def generic_replies(reset_trigger, state = nil)
       key = generic_replies_key(@user)
       reset_trigger = "#{RESET_TRIGGER} #{reset_trigger}"
       count = ($redis.get(key) || $redis.setex(key, 900, 0)).to_i
 
       case count
       when 0
-        reply_to(@post, I18n.t(i18n_key('do_not_understand.first_response'),
-          reset_trigger: reset_trigger,
-          discobot_username: self.class.discobot_user.username
-        ))
+        raw = I18n.t(i18n_key('do_not_understand.first_response'))
+
+        if state && state.to_sym != :end
+          raw = "#{raw}\n\n#{I18n.t(i18n_key('do_not_understand.track_response'), discobot_username: self.class.discobot_user.username, reset_trigger: reset_trigger, skip_trigger: SKIP_TRIGGER)}"
+        end
+
+        reply_to(@post, raw)
       when 1
         reply_to(@post, I18n.t(i18n_key('do_not_understand.second_response'),
           reset_trigger: reset_trigger,
@@ -146,6 +155,10 @@ module DiscourseNarrativeBot
 
     def i18n_key(key)
       "discourse_narrative_bot.track_selector.#{key}"
+    end
+
+    def skip_track?(text)
+      text.match(/@#{self.class.discobot_user.username} #{SKIP_TRIGGER}/)
     end
   end
 end

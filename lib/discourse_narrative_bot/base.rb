@@ -4,16 +4,17 @@ module DiscourseNarrativeBot
 
     class InvalidTransitionError < StandardError; end
 
-    def input(input, user, post: nil, topic_id: nil)
+    def input(input, user, post: nil, topic_id: nil, skip: false)
       new_post = nil
+      @post = post
+      @topic_id = topic_id
+      @skip = skip
 
       synchronize(user) do
         @user = user
         @data = get_data(user) || {}
         @state = (@data[:state] && @data[:state].to_sym) || :begin
         @input = input
-        @post = post
-        @topic_id = topic_id
         opts = {}
 
         begin
@@ -23,29 +24,30 @@ module DiscourseNarrativeBot
           return
         end
 
-        new_state = opts[:next_state]
+        next_state = opts[:next_state]
         action = opts[:action]
 
-        if next_instructions_key = opts[:next_instructions_key]
-          @next_instructions_key = next_instructions_key
+        if next_instructions = opts[:next_instructions]
+          @next_instructions = next_instructions
         end
 
         begin
           old_data = @data.dup
+          new_post = (@skip && @state != :end) ? skip_tutorial(next_state) : self.send(action)
 
-          if new_post = self.send(action)
+          if new_post
             old_state = old_data[:state]
-            @state = @data[:state] = new_state
+            @state = @data[:state] = next_state
             @data[:last_post_id] = new_post.id
             set_data(@user, @data)
 
-            if self.class.private_method_defined?("init_#{new_state}") &&
-              old_state.to_s != new_state.to_s
+            if self.class.private_method_defined?("init_#{next_state}") &&
+              old_state.to_s != next_state.to_s
 
-              self.send("init_#{new_state}")
+              self.send("init_#{next_state}")
             end
 
-            if new_state == :end
+            if next_state == :end
               end_reply
               cancel_timeout_job(user)
 
@@ -101,6 +103,29 @@ module DiscourseNarrativeBot
       new_data[:completed] = old_data[:completed] if old_data && old_data[:completed]
       set_data(user, new_data)
       new_data
+    end
+
+    def transition
+      options = self.class::TRANSITION_TABLE.fetch(@state).dup
+      input_options = options.fetch(@input)
+      options.merge!(input_options) unless @skip
+      options
+    rescue KeyError
+      raise InvalidTransitionError.new
+    end
+
+    def skip_tutorial(next_state)
+      return unless valid_topic?(@post.topic_id)
+
+      fake_delay
+
+      if next_state != :end
+        reply = reply_to(@post, instance_eval(&@next_instructions))
+        enqueue_timeout_job(@user)
+        reply
+      else
+        @post
+      end
     end
 
     def not_implemented
