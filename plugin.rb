@@ -55,6 +55,10 @@ after_initialize do
       def self.get(key)
         ::PluginStore.get(PLUGIN_NAME, key)
       end
+
+      def self.remove(key)
+        ::PluginStore.remove(PLUGIN_NAME, key)
+      end
     end
 
     class CertificatesController < ::ApplicationController
@@ -149,7 +153,7 @@ after_initialize do
   self.add_model_callback(User, :after_destroy) do
     return unless SiteSetting.discourse_narrative_bot_enabled
 
-    DiscourseNarrativeBot::Store.set(self.id, nil)
+    DiscourseNarrativeBot::Store.remove(self.id)
   end
 
   self.add_model_callback(User, :after_commit, on: :create) do
