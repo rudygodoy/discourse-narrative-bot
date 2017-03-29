@@ -222,68 +222,62 @@ en:
     advanced_user_narrative:
       title: ':arrow_up: Advanced user features'
       start_message: |-
-        Hi @%{username}, I’m glad you’re looking to learn more about advanced features!
+        Hi @%{username}, let’s cover some advanced features.
 
       edit:
-        bot_created_post_raw: "@%{discobot_username} created this post :wink:"
+        bot_created_post_raw: "@%{discobot_username} is, by far, the coolest bot I know :wink:"
         instructions: |-
-          While composing our replies, we're bound to make mistakes. Do not fret if you do as you'll be allowed to make edits to posts that you've created.
+          Everyone makes mistakes. But don’t worry, you can always edit your posts to fix them!
 
-          Can you go ahead and edit the post that I've just created on your behalf and let me know that you've managed to successfully edit a post?
+          Can you begin by **editing** the post I just created on your behalf?
         not_found: |-
-          It looks like you've yet to edit the [post](%{url}) I created for you. Can you try again?
+          It looks like you’ve yet to edit the [post](%{url}) I created for you. Can you try again?
 
-          You can do so by clicking on the <img src="/images/font-awesome-pencil.png" width="16" height="16"> icon which will bring up the composer.
+          Use the <img src="/images/font-awesome-pencil.png" width="16" height="16"> icon to bring up the editor.
         reply: |-
-          Great job! Once you've been around in the community long enough, you'll be able to edit posts which other users have created.
+          Great work! 
+
+          Note that edits made after 5 minutes will show up as public edit revisions, and a little pencil icon will appear at the upper right with the revision count.
 
       delete:
         instructions: |-
-          Another action that you can carry out on your post is to DELETE them!
+          If you’d like to withdraw a post you made, you can delete it.
 
-          <img src="/images/delete.gif"/>
-
-          Do go ahead and delete any of your posts above. Use the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal the <img src="/images/font-awesome-trash.png" width="16" height="16"> icon.
+          Go ahead and delete any of your posts above by using the <img src="/images/font-awesome-trash.png" width="16" height="16"> **delete** action.
         not_found: |-
-          Looks like you're having trouble deleting your posts. If you're having trouble finding the <img src="/images/font-awesome-trash.png" width="16" height="16"> icon, click on <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal it.
+          I don’t see any deleted posts yet? Remember <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> show more will reveal <img src="/images/font-awesome-trash.png" width="16" height="16"> delete.
         reply: |-
-          Error 21
-          FAILED ERROR: java.lang.NullPointerException
-          Bot has been deleted. Self destructing in 5...4...3...2
+          Whoa! :boom:
 
-          haha I'm just kidding. Great job on deleting your post.
+          To preserve continuity of discussions, deletes aren’t immediate, so the post will be removed after some time.
       recover:
-        deleted_post_raw: '@%{discobot_username} deleted this post :wink:'
+        deleted_post_raw: 'Why did @%{discobot_username} delete my post? :anguished:'
         instructions: |-
-          O dear, it looks like I accidentally deleted the new post that I've just created for you. No worries at all, we'll be able to recover it.
+          Oh no! It looks like I accidentally deleted a new post that I just created for you.
 
-          Can you do me a favor by clicking on the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> and clicking <img src="/images/font-awesome-rotate-left.png" width="16" height="16">.
+          Can you do me a favor and <img src="/images/font-awesome-rotate-left.png" width="16" height="16"> **undelete** it?
         not_found: |-
-          Having trouble trying to un-delete the post? Remember to click on the show more button <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> to reveal the un-delete post button <img src="/images/font-awesome-rotate-left.png" width="16" height="16">.
+          Having trouble? Remember <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> show more will reveal <img src="/images/font-awesome-rotate-left.png" width="16" height="16"> undelete.
         reply: |-
-          That was awesome! Do note that by default, you only have a 24 hours window to un-delete any posts that have been deleted by you.
+          Phew, that was a close one! Thanks for fixing that :wink:
+          
+          Do note that you only have 24 hours to undelete a post.
       poll:
         instructions: |-
-          Did you know you can add a poll to any reply, like so:
+          Did you know you can add a **poll** to any post?
 
-              What is your favorite fruit?
-
-              [poll]
-              * Apple
-              * Durian
-              * Bananas
-              [/poll]
-
-          Can you use the <img src="/images/font-awesome-gear.png" width="16" height="16"> icon in the editor to build a poll?
+          Can you use the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor to build a poll?
         not_found: |-
-          Looks like you didn’t include a poll in your reply. Can you try including the following poll in your next reply?
-
+          Whoops! There wasn’t any poll in your reply.
+          
+          Use the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear icon in the editor, or copy and paste this poll in your next reply:
+          
               [poll]
               * :cat:
               * :dog:
               [/poll]
         reply: |-
-          Hey nice poll! How’d I do in teaching you about polls :smile:
+          Hey, nice poll! How’d I do in teaching you?
 
           [poll]
           * :+1:
@@ -291,25 +285,31 @@ en:
           [/poll]
       details:
         instructions: |-
-          Now, let us learn how to add an interactive details widget. To view the instructions, click :mouse_three_button: on the following title.
+          Sometimes you may wish to **hide details** of your posts:
 
-          [details=How to add an interactive details widget that a user can view or hide on demand]
-          1. Click on the <img src="/images/font-awesome-gear.png" width="16" height="16"> icon in the editor.
-          2. Select "Hide Details"
-          3. Edit the details summary and add your content
-
+          - You’re discussing plot points of a movie or TV show that would be a spoiler.
+          
+          - Your post has lots of detailed, optional content that may be overwhelming when read all at once.
+          
+          [details=Select this to see how it works!]
+          1. Select the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor.
+          2. Select "Hide Details".
+          3. Edit the details summary and add your content.
           [/details]
-          Can you add a details widget in your next reply with a list of your top 3 favorite fruits?
+          
+          Can you use the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor to add a details section to your next reply?
         not_found: |-
-          Are you having trouble creating a details widget? Try including the following template in your next reply.
+          Having trouble creating a details widget? Try including the following in your next reply:
 
-              [details=This is a details widget]
-              Yay you figured it out!
+              [details=Select me for details]
+              Here are the details
               [/details]
         reply: |-
-          Great work! :thumbsup: Details widgets also work great for hiding information that you want to make optional for the user to view.
+          Great work — your attention to _detail_ is admirable! :thumbsup:
       end:
         message: |-
-          You blazed through this track like a pro :bow: That’s all I have for you.
+          You blazed through this track like a pro :bow:
+          
+          That’s all I have for you.
 
           Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:
