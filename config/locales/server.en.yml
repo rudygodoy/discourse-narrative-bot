@@ -10,9 +10,13 @@ en:
       message: |-
         Hey @%{username}, just checking in because I haven’t heard from you in a while.
 
-        If you wish to continue reply to me any time. Or if you got stuck and want to reset, reply with `@%{discobot_username} %{reset_trigger}`.
+        - To continue, reply to me any time.
 
-        (If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:)
+        - If you’d like to skip this step, say `@%{discobot_username} %{skip_trigger}`.
+        
+        - To start over, say `@%{discobot_username} %{reset_trigger}`.
+
+        If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:
 
     track_selector:
       random_mention:
@@ -38,7 +42,7 @@ en:
 
           Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning
         track_response:
-          You can try again, or if you’d like to skip this step of the lession, say `@%{discobot_username} %{skip_trigger}`. Otherwise, to start over at the beginning of the lesson, say `@%{discobot_username} %{reset_trigger}`.
+          You can try again, or if you’d like to skip this step, say `@%{discobot_username} %{skip_trigger}`. Otherwise, to start over, say `@%{discobot_username} %{reset_trigger}`.
         second_response: |-
           Aw, sorry. I’m still not getting it. :anguished:
 
@@ -53,7 +57,7 @@ en:
         message: |-
           Thanks for joining %{title}, and welcome!
 
-          - I’m only a robot, but [our friendly staff](/about) are also here to help.
+          - I’m only a robot, but [our friendly staff](/about) are also here to help if you need to reach a person.
 
           - For safety reasons, we temporarily limit what new users can do. You’ll gain new abilities (and [badges](/badges)) as we get to know you.
 
