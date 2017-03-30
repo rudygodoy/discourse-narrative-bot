@@ -4,7 +4,7 @@ en:
     disable_discourse_narrative_bot_welcome_post: "Disable the welcome post by Discourse Narrative Bot"
 
   discourse_narrative_bot:
-    bio: "Offical bot of %{site_title}. To interact with me, send me a private message or mention me **`@%{discobot_username}`** anywhere in your reply."
+    bio: "Hi, I’m not a real person. I’m a bot. To interact with me, send me a message or mention **`@%{discobot_username}`** anywhere."
 
     timeout:
       message: |-
