@@ -151,16 +151,13 @@ after_initialize do
   end
 
   self.add_model_callback(User, :after_destroy) do
-    return unless SiteSetting.discourse_narrative_bot_enabled
-
     DiscourseNarrativeBot::Store.remove(self.id)
   end
 
   self.add_model_callback(User, :after_commit, on: :create) do
-    return if SiteSetting.disable_discourse_narrative_bot_welcome_post ||
-      !SiteSetting.discourse_narrative_bot_enabled
+    return if SiteSetting.disable_discourse_narrative_bot_welcome_post
 
-    if ![-1, -2].include?(self.id)
+    if enqueue_narrative_bot_job?
       Jobs.enqueue(:narrative_init,
         user_id: self.id,
         klass: DiscourseNarrativeBot::NewUserNarrative.to_s
@@ -174,7 +171,8 @@ after_initialize do
     def enqueue_narrative_bot_job?
       SiteSetting.discourse_narrative_bot_enabled &&
         ![-1, -2].include?(self.id) &&
-        !self.user_option.mailing_list_mode
+        !self.user_option.mailing_list_mode &&
+        !self.staged
     end
   end
 

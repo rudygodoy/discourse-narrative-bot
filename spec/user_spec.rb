@@ -17,13 +17,16 @@ describe User do
 
     context 'when welcome post is disabled' do
       before do
-        @original_value = SiteSetting.disable_discourse_narrative_bot_welcome_post
         SiteSetting.disable_discourse_narrative_bot_welcome_post = true
       end
 
-      after do
-        SiteSetting.disable_discourse_narrative_bot_welcome_post = @original_value
+      it 'should not initiate the bot' do
+        expect { user }.to_not change { Post.count }
       end
+    end
+
+    context 'when user is staged' do
+      let(:user) { Fabricate(:user, staged: true) }
 
       it 'should not initiate the bot' do
         expect { user }.to_not change { Post.count }
