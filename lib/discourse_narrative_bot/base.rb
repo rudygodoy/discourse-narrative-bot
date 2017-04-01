@@ -84,6 +84,19 @@ module DiscourseNarrativeBot
       DiscourseNarrativeBot::Store.get(user.id)
     end
 
+    def notify_timeout(user)
+      @data = get_data(user) || {}
+
+      if post = Post.find_by(id: @data[:last_post_id])
+        reply_to(post, I18n.t("discourse_narrative_bot.timeout.message",
+          username: user.username,
+          skip_trigger: TrackSelector::SKIP_TRIGGER,
+          reset_trigger: "#{TrackSelector::RESET_TRIGGER} #{self.class::RESET_TRIGGER}",
+          discobot_username: self.class.discobot_user.username
+        ))
+      end
+    end
+
     private
 
     def set_state_data(key, value)

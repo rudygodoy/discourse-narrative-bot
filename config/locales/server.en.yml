@@ -13,7 +13,7 @@ en:
         - To continue, reply to me any time.
 
         - If you’d like to skip this step, say `@%{discobot_username} %{skip_trigger}`.
-        
+
         - To start over, say `@%{discobot_username} %{reset_trigger}`.
 
         If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:
@@ -239,7 +239,7 @@ en:
 
           Use the <img src="/images/font-awesome-pencil.png" width="16" height="16"> icon to bring up the editor.
         reply: |-
-          Great work! 
+          Great work!
 
           Note that edits made after 5 minutes will show up as public edit revisions, and a little pencil icon will appear at the upper right with the revision count.
 
@@ -264,7 +264,7 @@ en:
           Having trouble? Remember <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> show more will reveal <img src="/images/font-awesome-rotate-left.png" width="16" height="16"> undelete.
         reply: |-
           Phew, that was a close one! Thanks for fixing that :wink:
-          
+
           Do note that you only have 24 hours to undelete a post.
       poll:
         instructions: |-
@@ -273,9 +273,9 @@ en:
           Can you use the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor to build a poll?
         not_found: |-
           Whoops! There wasn’t any poll in your reply.
-          
+
           Use the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear icon in the editor, or copy and paste this poll in your next reply:
-          
+
               [poll]
               * :cat:
               * :dog:
@@ -292,15 +292,15 @@ en:
           Sometimes you may wish to **hide details** of your posts:
 
           - You’re discussing plot points of a movie or TV show that would be a spoiler.
-          
+
           - Your post has lots of detailed, optional content that may be overwhelming when read all at once.
-          
+
           [details=Select this to see how it works!]
           1. Select the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor.
           2. Select "Hide Details".
           3. Edit the details summary and add your content.
           [/details]
-          
+
           Can you use the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor to add a details section to your next reply?
         not_found: |-
           Having trouble creating a details widget? Try including the following in your next reply:
@@ -313,7 +313,7 @@ en:
       end:
         message: |-
           You blazed through this track like a pro :bow:
-          
+
           That’s all I have for you.
 
           Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:

@@ -28,6 +28,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
       expect(Post.last.raw).to eq(I18n.t(
         'discourse_narrative_bot.timeout.message',
         username: user.username,
+        skip_trigger: DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER,
         reset_trigger: "#{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{described_class::RESET_TRIGGER}",
         discobot_username: discobot_user.username
       ))
@@ -221,7 +222,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         narrative.input(:bookmark, user, post: post)
         new_post = Post.last
-        profile_page_url = "#{Discourse.base_url}/users/#{user.username}"
+        profile_page_url = "#{Discourse.base_url}/u/#{user.username}"
 
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.new_user_narrative.bookmark.reply', profile_page_url: profile_page_url)}
