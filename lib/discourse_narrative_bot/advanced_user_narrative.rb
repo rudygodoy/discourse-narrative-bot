@@ -67,9 +67,12 @@ module DiscourseNarrativeBot
     TIMEOUT_DURATION = 900 # 15 mins
 
     def self.can_start?(user)
+      return true if user.staff?
+
       data = DiscourseNarrativeBot::Store.get(user.id)
       return unless data
       completed_tracks = data[:completed]
+
       completed_tracks && completed_tracks.include?(DiscourseNarrativeBot::NewUserNarrative.to_s)
     end
 

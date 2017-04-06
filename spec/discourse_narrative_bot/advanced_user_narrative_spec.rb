@@ -11,6 +11,16 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
   let(:discobot_user) { User.find(-2) }
   let(:skip_trigger) { "@#{discobot_user.username} #{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
 
+  describe '.can_start?' do
+    describe 'when user is a moderator' do
+      it 'should return true' do
+        user.update!(moderator: true)
+
+        expect(described_class.can_start?(user)).to eq(true)
+      end
+    end
+  end
+
   describe '#notify_timeout' do
     before do
       narrative.set_data(user,

@@ -99,7 +99,9 @@ module DiscourseNarrativeBot
 
           tracks = [NewUserNarrative::RESET_TRIGGER]
 
-          if data && (completed = data[:completed]) && completed.include?(NewUserNarrative.to_s)
+          if (data && (completed = data[:completed]) && completed.include?(NewUserNarrative.to_s)) ||
+              @user.staff?
+
             tracks << AdvancedUserNarrative::RESET_TRIGGER
           end
 

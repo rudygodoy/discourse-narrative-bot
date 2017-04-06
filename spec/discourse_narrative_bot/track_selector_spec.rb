@@ -154,6 +154,20 @@ describe DiscourseNarrativeBot::TrackSelector do
             expect(new_post.raw).to eq(random_mention_reply)
           end
 
+          context 'when user is an admin or moderator' do
+            it 'should include the commands to start the advanced user track' do
+              user.update!(moderator: true)
+
+              post.update!(raw: 'Show me what you can do @discobot')
+              described_class.new(:reply, user, post_id: post.id).select
+              new_post = Post.last
+
+              expect(new_post.raw).to include(
+                DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
+              )
+            end
+          end
+
           context 'when user has completed the new user track' do
             it 'should include the commands to start the advanced user track' do
               narrative.set_data(user,
