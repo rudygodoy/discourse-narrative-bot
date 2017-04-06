@@ -266,6 +266,13 @@ en:
           Phew, that was a close one! Thanks for fixing that :wink:
 
           Do note that you only have 24 hours to undelete a post.
+      category_hashtag:
+        instructions: |-
+          We've learned about user mentions. Did you know that you can easily create a link to a category as well? #%{category}
+        not_found: |-
+          Didn't find it yet :(
+        reply: |-
+          Good work
       poll:
         instructions: |-
           Did you know you can add a **poll** to any post?
