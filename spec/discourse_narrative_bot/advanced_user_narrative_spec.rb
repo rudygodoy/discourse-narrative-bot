@@ -327,10 +327,11 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
             new_post = Post.last
 
             expect(new_post.raw).to eq(I18n.t(
-              'discourse_narrative_bot.advanced_user_narrative.poll.instructions')
-            )
+              'discourse_narrative_bot.advanced_user_narrative.category_hashtag.instructions',
+              category: "#Uncategorized"
+            ))
 
-            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_category_hashtag)
           end
         end
       end
@@ -359,12 +360,81 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.advanced_user_narrative.recover.reply')}
 
-          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.category_hashtag.instructions', category: "#Uncategorized")}
           RAW
 
-          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_category_hashtag)
           expect(Post.last.raw).to eq(expected_raw.chomp)
         end
+      end
+    end
+
+    context 'category hashtag tutorial' do
+      before do
+        narrative.set_data(user,
+          state: :tutorial_category_hashtag,
+          topic_id: topic.id,
+          track: described_class.to_s
+        )
+      end
+
+      describe 'when post is not in the right topic' do
+        it 'should not do anything' do
+          other_post
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          expect { narrative.input(:reply, user, post: other_post) }
+            .to_not change { Post.count }
+
+          expect(narrative.get_data(user)[:state].to_sym)
+            .to eq(:tutorial_category_hashtag)
+        end
+      end
+
+      describe 'when user replies to the topic' do
+        it 'should create the right reply' do
+          narrative.input(:reply, user, post: post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.advanced_user_narrative.category_hashtag.not_found'
+          ))
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_category_hashtag)
+        end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.advanced_user_narrative.poll.instructions'
+            ))
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+          end
+        end
+      end
+
+      it 'should create the right reply' do
+        category = Fabricate(:category)
+
+        post.update!(raw: "Check out this ##{category.slug}")
+        narrative.input(:reply, user, post: post)
+
+        expected_raw = <<~RAW
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.category_hashtag.reply')}
+
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+        RAW
+
+        expect(Post.last.raw).to eq(expected_raw.chomp)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
       end
     end
 

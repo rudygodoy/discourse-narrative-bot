@@ -254,6 +254,7 @@ en:
           Whoa! :boom:
 
           To preserve continuity of discussions, deletes aren’t immediate, so the post will be removed after some time.
+
       recover:
         deleted_post_raw: 'Why did @%{discobot_username} delete my post? :anguished:'
         instructions: |-
@@ -266,6 +267,22 @@ en:
           Phew, that was a close one! Thanks for fixing that :wink:
 
           Do note that you only have 24 hours to undelete a post.
+
+      category_hashtag:
+        draft_raw: The category that I am the most interested in is
+        instructions: |-
+          Did you know that you can easily add a category hashtag in your post? For example, I could get you to checkout the %{category} category.
+
+          In the middle of any sentence, simply type `#` and it'll trigger the autocomplete for you to select the available categories.
+        not_found: |-
+          O dear, it looks like you didn't manage to create a category hashtag. Do note that `#` can't be the first character as that conflicts with Markdown's syntax.
+
+          Can you try and copy the following text in your next reply?
+
+              I can create a category hashtag #
+        reply: |-
+          Great job! If tagging is enabled, tag hashtags will also be available in the autocomplete and you can use them like how you would for category hashtags.
+          
       poll:
         instructions: |-
           Did you know you can add a **poll** to any post?

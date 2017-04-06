@@ -36,14 +36,26 @@ module DiscourseNarrativeBot
       },
 
       tutorial_recover: {
-        next_state: :tutorial_poll,
-        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.poll.instructions") },
+        next_state: :tutorial_category_hashtag,
+        next_instructions: Proc.new do
+          I18n.t("#{I18N_KEY}.category_hashtag.instructions",
+            category: "##{Category.secured.last.name}"
+          )
+        end,
         recover: {
           action: :reply_to_recover
         },
         reply: {
           next_state: :tutorial_recover,
           action: :missing_recover
+        }
+      },
+
+      tutorial_category_hashtag: {
+        next_state: :tutorial_poll,
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.poll.instructions") },
+        reply: {
+          action: :reply_to_category_hashtag
         }
       },
 
@@ -236,11 +248,30 @@ module DiscourseNarrativeBot
       false
     end
 
-    def reply_to_poll
+    def reply_to_category_hashtag
       topic_id = @post.topic_id
       return unless valid_topic?(topic_id)
 
-      fake_delay
+      if Nokogiri::HTML.fragment(@post.cooked).css('.hashtag').size > 0
+        raw = <<~RAW
+          #{I18n.t("#{I18N_KEY}.category_hashtag.reply")}
+
+          #{instance_eval(&@next_instructions)}
+        RAW
+
+        fake_delay
+        reply_to(@post, raw)
+      else
+        fake_delay
+        reply_to(@post, I18n.t("#{I18N_KEY}.category_hashtag.not_found")) unless @data[:attempted]
+        enqueue_timeout_job(@user)
+        false
+      end
+    end
+
+    def reply_to_poll
+      topic_id = @post.topic_id
+      return unless valid_topic?(topic_id)
 
       if Nokogiri::HTML.fragment(@post.cooked).css(".poll").size > 0
         raw = <<~RAW
@@ -249,8 +280,10 @@ module DiscourseNarrativeBot
           #{instance_eval(&@next_instructions)}
         RAW
 
+        fake_delay
         reply_to(@post, raw)
       else
+        fake_delay
         reply_to(@post, I18n.t("#{I18N_KEY}.poll.not_found")) unless @data[:attempted]
         enqueue_timeout_job(@user)
         false
