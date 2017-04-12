@@ -413,10 +413,10 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
             new_post = Post.last
 
             expect(new_post.raw).to eq(I18n.t(
-              'discourse_narrative_bot.advanced_user_narrative.poll.instructions'
+              'discourse_narrative_bot.advanced_user_narrative.change_topic_notification_level.instructions'
             ))
 
-            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_change_topic_notification_level)
           end
         end
       end
@@ -430,11 +430,88 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
         expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.advanced_user_narrative.category_hashtag.reply')}
 
-          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.change_topic_notification_level.instructions')}
         RAW
 
         expect(Post.last.raw).to eq(expected_raw.chomp)
-        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+        expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_change_topic_notification_level)
+      end
+    end
+
+    context 'topic notification level tutorial' do
+      before do
+        narrative.set_data(user,
+          state: :tutorial_change_topic_notification_level,
+          topic_id: topic.id,
+          track: described_class.to_s
+        )
+      end
+
+      describe 'when notification level is changed for another topic' do
+        it 'should not do anything' do
+          other_topic
+          user
+          narrative.expects(:enqueue_timeout_job).with(user).never
+
+          expect do
+            TopicUser.change(
+              user.id,
+              other_topic.id,
+              notification_level: TopicUser.notification_levels[:tracking]
+            )
+          end.to_not change { Post.count }
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_change_topic_notification_level)
+        end
+      end
+
+      describe 'when user replies to the topic' do
+        it 'should create the right reply' do
+          narrative.input(:reply, user, post: post)
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.advanced_user_narrative.change_topic_notification_level.not_found'
+          ))
+
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_change_topic_notification_level)
+        end
+
+        describe 'when reply contains the skip trigger' do
+          it 'should create the right reply' do
+            post.update!(raw: skip_trigger)
+            described_class.any_instance.expects(:enqueue_timeout_job).with(user)
+
+            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
+
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(I18n.t(
+              'discourse_narrative_bot.advanced_user_narrative.poll.instructions')
+            )
+
+            expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+          end
+        end
+      end
+
+      describe 'when user changed the topic notification level' do
+        it 'should create the right reply' do
+          TopicUser.change(
+            user.id,
+            topic.id,
+            notification_level: TopicUser.notification_levels[:tracking]
+          )
+
+          expected_raw = <<~RAW
+            #{I18n.t('discourse_narrative_bot.advanced_user_narrative.change_topic_notification_level.reply')}
+
+            #{I18n.t('discourse_narrative_bot.advanced_user_narrative.poll.instructions')}
+          RAW
+
+          expect(Post.last.raw).to eq(expected_raw.chomp)
+          expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_poll)
+        end
       end
     end
 
