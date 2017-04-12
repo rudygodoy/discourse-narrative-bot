@@ -12,6 +12,11 @@ module DiscourseNarrativeBot
     RESET_TRIGGER = 'track'.freeze
     SKIP_TRIGGER = 'skip'.freeze
 
+    TOPIC_ACTIONS = [
+      :delete,
+      :topic_notification_level_changed
+    ].each(&:freeze)
+
     def initialize(input, user, post_id:, topic_id: nil)
       @input = input
       @user = user
@@ -22,8 +27,9 @@ module DiscourseNarrativeBot
 
     def select
       data = Store.get(@user.id)
+      is_topic_action = TOPIC_ACTIONS.include?(@input)
 
-      if @post && @input != :delete
+      if @post && !is_topic_action
         topic_id = @post.topic_id
         post_analyzer = PostAnalyzer.new(@post.raw, @post.topic_id)
         # TODO: Expose the method publicaly in PostAnalyzer
@@ -69,7 +75,7 @@ module DiscourseNarrativeBot
         if (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
           mention_replies(stripped_text)
         end
-      elsif data && data[:state]&.to_sym != :end && @input == :delete
+      elsif data && data[:state]&.to_sym != :end && is_topic_action
         klass = (data[:track] || NewUserNarrative.to_s).constantize
 
         klass.new.input(@input, @user, post: @post, topic_id: @topic_id)

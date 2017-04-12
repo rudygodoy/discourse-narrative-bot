@@ -220,7 +220,6 @@ after_initialize do
   end
 
   self.add_model_callback(PostAction, :after_commit, on: :create) do
-
     if self.user.enqueue_narrative_bot_job?
       input =
         case self.post_action_type_id
@@ -239,6 +238,18 @@ after_initialize do
           input: input
         )
       end
+    end
+  end
+
+  self.on(:topic_notification_level_changed) do |_, user_id, topic_id|
+    user = User.find_by(id: user_id)
+
+    if user && user.enqueue_narrative_bot_job?
+      Jobs.enqueue(:bot_input,
+        user_id: user_id,
+        topic_id: topic_id,
+        input: :topic_notification_level_changed
+      )
     end
   end
 end

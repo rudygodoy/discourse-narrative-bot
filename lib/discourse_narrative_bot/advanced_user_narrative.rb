@@ -52,10 +52,22 @@ module DiscourseNarrativeBot
       },
 
       tutorial_category_hashtag: {
-        next_state: :tutorial_poll,
-        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.poll.instructions") },
+        next_state: :tutorial_change_topic_notification_level,
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.change_topic_notification_level.instructions") },
         reply: {
           action: :reply_to_category_hashtag
+        }
+      },
+
+      tutorial_change_topic_notification_level: {
+        next_state: :tutorial_poll,
+        next_instructions: Proc.new { I18n.t("#{I18N_KEY}.poll.instructions") },
+        topic_notification_level_changed: {
+          action: :reply_to_topic_notification_level_changed
+        },
+        reply: {
+          next_state: :tutorial_notification_level,
+          action: :missing_topic_notification_level_change
         }
       },
 
@@ -267,6 +279,35 @@ module DiscourseNarrativeBot
         enqueue_timeout_job(@user)
         false
       end
+    end
+
+    def missing_topic_notification_level_change
+      return unless valid_topic?(@post.topic_id)
+
+      fake_delay
+      reply_to(@post, I18n.t("#{I18N_KEY}.change_topic_notification_level.not_found")) unless @data[:attempted]
+      enqueue_timeout_job(@user)
+      false
+    end
+
+    def reply_to_topic_notification_level_changed
+      return unless valid_topic?(@topic_id)
+
+      fake_delay
+      raw = <<~RAW
+        #{I18n.t("#{I18N_KEY}.change_topic_notification_level.reply")}
+
+        #{instance_eval(&@next_instructions)}
+      RAW
+
+      fake_delay
+
+      post = PostCreator.create!(self.class.discobot_user,
+        raw: raw,
+        topic_id: @topic_id
+      )
+      enqueue_timeout_job(@user)
+      post
     end
 
     def reply_to_poll
