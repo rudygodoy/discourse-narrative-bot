@@ -81,9 +81,9 @@ module DiscourseNarrativeBot
 
       allowed_users = topic.allowed_users.pluck(:id)
 
-      allowed_users.delete(-2) &&
-        allowed_users.length == 1 &&
-        topic.allowed_groups.length == 0
+      topic.allowed_groups.length == 0 &&
+        allowed_users.delete(-2) &&
+        allowed_users.length == 1
     end
   end
 end

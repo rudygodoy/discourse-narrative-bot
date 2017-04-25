@@ -27,17 +27,13 @@ module DiscourseNarrativeBot
 
     def select
       data = Store.get(@user.id)
-      is_topic_action = TOPIC_ACTIONS.include?(@input)
 
-      if @post && !is_topic_action
+      if @post && !is_topic_action?
         topic_id = @post.topic_id
-        post_analyzer = PostAnalyzer.new(@post.raw, @post.topic_id)
+        post_analyzer = PostAnalyzer.new(@post.raw, topic_id)
+
         # TODO: Expose the method publicaly in PostAnalyzer
         stripped_text = post_analyzer.send(:cooked_stripped).text
-
-        bot_mentioned = post_analyzer.raw_mentions.include?(
-          self.class.discobot_user.username
-        )
 
         TRACKS.each do |klass|
           if selected_track(klass, stripped_text)
@@ -46,11 +42,15 @@ module DiscourseNarrativeBot
           end
         end
 
+        bot_mentioned = post_analyzer.raw_mentions.include?(
+          self.class.discobot_user.username
+        )
+
         if (data && data[:topic_id] == topic_id)
           state = data[:state]
           klass = (data[:track] || NewUserNarrative.to_s).constantize
 
-          if ((state && state.to_sym == :end) && @input == :reply)
+          if state&.to_sym == :end && @input == :reply
             bot_mentioned ? mention_replies(stripped_text) : generic_replies(klass::RESET_TRIGGER)
           elsif @input == :reply
             previous_status = data[:attempted]
@@ -68,21 +68,20 @@ module DiscourseNarrativeBot
           else
             klass.new.input(@input, @user, post: @post, skip: skip_track?(stripped_text))
           end
-
-          return
-        end
-
-        if (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
+        elsif (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
           mention_replies(stripped_text)
         end
-      elsif data && data[:state]&.to_sym != :end && is_topic_action
+      elsif data.dig(:state)&.to_sym != :end && is_topic_action?
         klass = (data[:track] || NewUserNarrative.to_s).constantize
-
         klass.new.input(@input, @user, post: @post, topic_id: @topic_id)
       end
     end
 
     private
+
+    def is_topic_action?
+      @is_topic_action ||= TOPIC_ACTIONS.include?(@input)
+    end
 
     def selected_track(klass, text)
       return if klass.respond_to?(:can_start?) && !klass.can_start?(@user)
