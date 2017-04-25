@@ -71,7 +71,7 @@ module DiscourseNarrativeBot
         elsif (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
           mention_replies(stripped_text)
         end
-      elsif data.dig(:state)&.to_sym != :end && is_topic_action?
+      elsif data && data.dig(:state)&.to_sym != :end && is_topic_action?
         klass = (data[:track] || NewUserNarrative.to_s).constantize
         klass.new.input(@input, @user, post: @post, topic_id: @topic_id)
       end
@@ -161,7 +161,11 @@ module DiscourseNarrativeBot
     end
 
     def skip_track?(text)
-      text.match(/@#{self.class.discobot_user.username} #{SKIP_TRIGGER}/)
+      if pm_to_bot?(@post)
+        text == SKIP_TRIGGER
+      else
+        text.match(/@#{self.class.discobot_user.username} #{SKIP_TRIGGER}/)
+      end
     end
   end
 end
