@@ -2,16 +2,25 @@ require 'rails_helper'
 
 describe DiscourseNarrativeBot::NewUserNarrative do
   let!(:welcome_topic) { Fabricate(:topic, title: 'Welcome to Discourse') }
-  let(:first_post) { Fabricate(:post) }
-  let(:topic) { Fabricate(:private_message_topic, first_post: first_post) }
-  let(:user) { topic.user }
+  let(:discobot_user) { User.find(-2) }
+  let(:first_post) { Fabricate(:post, user: discobot_user) }
+  let(:user) { Fabricate(:user) }
+
+  let(:topic) do
+    Fabricate(:private_message_topic, first_post: first_post,
+      topic_allowed_users: [
+        Fabricate.build(:topic_allowed_user, user: discobot_user),
+        Fabricate.build(:topic_allowed_user, user: user),
+      ]
+    )
+  end
+
   let(:post) { Fabricate(:post, topic: topic, user: user) }
   let(:narrative) { described_class.new }
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
-  let(:discobot_user) { User.find(-2) }
   let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
-  let(:skip_trigger) { "@#{discobot_user.username} #{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
+  let(:skip_trigger) { "#{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
 
   describe '#notify_timeout' do
     before do

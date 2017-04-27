@@ -1,15 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
-  let(:first_post) { Fabricate(:post) }
-  let(:topic) { Fabricate(:private_message_topic, first_post: first_post) }
-  let(:user) { topic.user }
+  let(:discobot_user) { User.find(-2) }
+  let(:first_post) { Fabricate(:post, user: discobot_user) }
+  let(:user) { Fabricate(:user) }
+
+  let(:topic) do
+    Fabricate(:private_message_topic, first_post: first_post,
+      topic_allowed_users: [
+        Fabricate.build(:topic_allowed_user, user: discobot_user),
+        Fabricate.build(:topic_allowed_user, user: user),
+      ]
+    )
+  end
+
   let(:post) { Fabricate(:post, topic: topic, user: user) }
   let(:narrative) { described_class.new }
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
-  let(:discobot_user) { User.find(-2) }
-  let(:skip_trigger) { "@#{discobot_user.username} #{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
+  let(:skip_trigger) { "#{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
 
   describe '.can_start?' do
     describe 'when user is a moderator' do

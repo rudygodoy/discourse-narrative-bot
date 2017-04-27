@@ -176,6 +176,18 @@ after_initialize do
     end
   end
 
+  Validators::PostValidator.class_eval do
+    include DiscourseNarrativeBot::Actions
+
+    def plugin_options(post)
+      if pm_to_bot?(post)
+        { skip_post_body: true }
+      else
+        {}
+      end
+    end
+  end
+
   self.on(:post_created) do |post, options|
     user = post.user
 

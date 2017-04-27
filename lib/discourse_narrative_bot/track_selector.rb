@@ -161,11 +161,8 @@ module DiscourseNarrativeBot
     end
 
     def skip_track?(text)
-      if pm_to_bot?(@post)
-        text == SKIP_TRIGGER
-      else
-        text.match(/@#{self.class.discobot_user.username} #{SKIP_TRIGGER}/)
-      end
+      return true if text.match(/@#{self.class.discobot_user.username} #{SKIP_TRIGGER}/)
+      return true if pm_to_bot?(@post) && text == SKIP_TRIGGER
     end
   end
 end

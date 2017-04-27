@@ -77,7 +77,7 @@ module DiscourseNarrativeBot
     def pm_to_bot?(post)
       topic = post.topic
 
-      return false unless topic.archetype == Archetype.private_message
+      return false unless topic && topic.archetype == Archetype.private_message
 
       allowed_users = topic.allowed_users.pluck(:id)
 
