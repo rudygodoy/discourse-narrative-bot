@@ -9,7 +9,7 @@ module DiscourseNarrativeBot
       AdvancedUserNarrative
     ]
 
-    RESET_TRIGGER = 'track'.freeze
+    RESET_TRIGGER = 'show'.freeze
     SKIP_TRIGGER = 'skip'.freeze
 
     TOPIC_ACTIONS = [
