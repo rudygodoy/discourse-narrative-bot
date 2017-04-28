@@ -40,7 +40,7 @@ en:
         first_response: |-
           Hey, thanks for the reply!
 
-          Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning
+          Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning:
         track_response:
           You can try again, or if you’d like to skip this step, say `@%{discobot_username} %{skip_trigger}`. Otherwise, to start over, say `@%{discobot_username} %{reset_trigger}`.
         second_response: |-
