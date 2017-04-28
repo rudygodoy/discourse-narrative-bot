@@ -2,9 +2,7 @@ require 'rails_helper'
 
 describe DiscourseNarrativeBot::TrackSelector do
   let(:user) { Fabricate(:user) }
-  let(:post) { Fabricate(:post, user: user) }
   let(:discobot_user) { described_class.discobot_user }
-  let(:bot_post) { Fabricate(:post, topic: post.topic, user: discobot_user) }
   let(:narrative) { DiscourseNarrativeBot::NewUserNarrative.new }
 
   def random_mention_reply
@@ -29,11 +27,24 @@ describe DiscourseNarrativeBot::TrackSelector do
   end
 
   describe '#select' do
-    context 'when a track is in progress' do
+    context 'in a PM with discobot' do
+      let(:first_post) { Fabricate(:post, user: discobot_user) }
+
+      let(:topic) do
+        Fabricate(:private_message_topic, first_post: first_post,
+          topic_allowed_users: [
+            Fabricate.build(:topic_allowed_user, user: discobot_user),
+            Fabricate.build(:topic_allowed_user, user: user),
+          ]
+        )
+      end
+
+      let(:post) { Fabricate(:post, topic: topic, user: user) }
+
       before do
         narrative.set_data(user,
           state: :tutorial_images,
-          topic_id: post.topic.id,
+          topic_id: topic.id,
           track: "DiscourseNarrativeBot::NewUserNarrative"
         )
       end
@@ -55,7 +66,7 @@ describe DiscourseNarrativeBot::TrackSelector do
         it 'should select the right track' do
           post.update!(
             raw: 'show me what you can do',
-            reply_to_post_number: bot_post.post_number
+            reply_to_post_number: first_post.post_number
           )
 
           described_class.new(:reply, user, post_id: post.id).select
@@ -71,12 +82,10 @@ describe DiscourseNarrativeBot::TrackSelector do
           #{I18n.t(
             'discourse_narrative_bot.track_selector.do_not_understand.first_response',
             reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
-            discobot_username: discobot_user.username
           )}
 
           #{I18n.t(
             'discourse_narrative_bot.track_selector.do_not_understand.track_response',
-            discobot_username: discobot_user.username,
             reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
             skip_trigger: described_class::SKIP_TRIGGER
           )}
@@ -89,7 +98,7 @@ describe DiscourseNarrativeBot::TrackSelector do
       context 'when reply contains a reset trigger' do
         it 'should start/reset the track' do
           post.update!(
-            raw: "@discobot #{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}"
+            raw: "#{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}"
           )
 
           described_class.new(:reply, user, post_id: post.id).select
@@ -101,7 +110,7 @@ describe DiscourseNarrativeBot::TrackSelector do
         context 'start/reset advanced track' do
           before do
             post.update!(
-              raw: "@discobot #{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER}"
+              raw: "@#{discobot_user.username} #{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER}"
             )
           end
 
@@ -128,64 +137,114 @@ describe DiscourseNarrativeBot::TrackSelector do
           end
         end
       end
-    end
 
-    context 'random discobot mentions' do
-      describe 'when discobot is mentioned' do
+      context 'generic replies' do
+        before do
+          narrative.set_data(user,
+            state: :end,
+            topic_id: topic.id,
+            track: "DiscourseNarrativeBot::NewUserNarrative"
+          )
+        end
+
+        after do
+          $redis.del("#{described_class::GENERIC_REPLIES_COUNT_PREFIX}#{user.id}")
+        end
+
+        it 'should create the right generic do not understand responses' do
+          described_class.new(:reply, user, post_id: post.id).select
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.track_selector.do_not_understand.first_response',
+            reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
+          ))
+
+          described_class.new(:reply, user, post_id: Fabricate(:post,
+            topic: new_post.topic,
+            user: user,
+            reply_to_post_number: new_post.post_number
+          ).id).select
+
+          new_post = Post.last
+
+          expect(new_post.raw).to eq(I18n.t(
+            'discourse_narrative_bot.track_selector.do_not_understand.second_response',
+            reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
+          ))
+
+          new_post = Fabricate(:post,
+            topic: new_post.topic,
+            user: user,
+            reply_to_post_number: new_post.post_number
+          )
+
+          expect { described_class.new(:reply, user, post_id: new_post.id).select }
+            .to_not change { Post.count }
+        end
+      end
+
+      context 'when discobot is mentioned at the end of a track' do
+        before do
+          narrative.set_data(user,
+            state: :end,
+            topic_id: post.topic.id,
+            track: "DiscourseNarrativeBot::NewUserNarrative"
+          )
+        end
+
         it 'should create the right reply' do
           post.update!(raw: 'Show me what you can do @discobot')
           described_class.new(:reply, user, post_id: post.id).select
           new_post = Post.last
+
           expect(new_post.raw).to eq(random_mention_reply)
         end
 
-        context 'when discobot is mentioned at the end of a track' do
-          it 'should create the right reply' do
+        context 'when user is an admin or moderator' do
+          it 'should include the commands to start the advanced user track' do
+            user.update!(moderator: true)
+            post.update!(raw: 'Show me what you can do @discobot')
+            described_class.new(:reply, user, post_id: post.id).select
+            new_post = Post.last
+
+            expect(new_post.raw).to include(
+              DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
+            )
+          end
+        end
+
+        context 'when user has completed the new user track' do
+          it 'should include the commands to start the advanced user track' do
             narrative.set_data(user,
               state: :end,
               topic_id: post.topic.id,
-              track: "DiscourseNarrativeBot::NewUserNarrative"
+              track: "DiscourseNarrativeBot::NewUserNarrative",
+              completed: ["DiscourseNarrativeBot::NewUserNarrative"]
             )
 
             post.update!(raw: 'Show me what you can do @discobot')
             described_class.new(:reply, user, post_id: post.id).select
             new_post = Post.last
 
-            expect(new_post.raw).to eq(random_mention_reply)
+            expect(new_post.raw).to include(
+              DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
+            )
           end
+        end
+      end
+    end
 
-          context 'when user is an admin or moderator' do
-            it 'should include the commands to start the advanced user track' do
-              user.update!(moderator: true)
+    context 'random discobot mentions' do
+      let(:topic) { Fabricate(:topic) }
+      let(:post) { Fabricate(:post, topic: topic) }
 
-              post.update!(raw: 'Show me what you can do @discobot')
-              described_class.new(:reply, user, post_id: post.id).select
-              new_post = Post.last
-
-              expect(new_post.raw).to include(
-                DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
-              )
-            end
-          end
-
-          context 'when user has completed the new user track' do
-            it 'should include the commands to start the advanced user track' do
-              narrative.set_data(user,
-                state: :end,
-                topic_id: post.topic.id,
-                track: "DiscourseNarrativeBot::NewUserNarrative",
-                completed: ["DiscourseNarrativeBot::NewUserNarrative"]
-              )
-
-              post.update!(raw: 'Show me what you can do @discobot')
-              described_class.new(:reply, user, post_id: post.id).select
-              new_post = Post.last
-
-              expect(new_post.raw).to include(
-                DiscourseNarrativeBot::AdvancedUserNarrative::RESET_TRIGGER
-              )
-            end
-          end
+      describe 'when discobot is mentioned' do
+        it 'should create the right reply' do
+          post.update!(raw: 'Show me what you can do @discobot')
+          described_class.new(:reply, user, post_id: post.id).select
+          new_post = Post.last
+          expect(new_post.raw).to eq(random_mention_reply)
         end
 
         describe 'when discobot is asked to roll dice' do
@@ -211,6 +270,7 @@ describe DiscourseNarrativeBot::TrackSelector do
 
           describe 'when roll dice command is present inside a quote' do
             it 'should ignore the command' do
+              user
               post.update!(raw: '[quote="Donkey, post:6, topic:1"]@discobot roll 2d1[/quote]')
 
               expect { described_class.new(:reply, user, post_id: post.id).select }
@@ -246,6 +306,7 @@ describe DiscourseNarrativeBot::TrackSelector do
 
           describe 'when quote command is present inside a onebox or quote' do
             it 'should ignore the command' do
+              user
               post.update!(raw: '[quote="Donkey, post:6, topic:1"]@discobot quote[/quote]')
 
               expect { described_class.new(:reply, user, post_id: post.id).select }
@@ -297,54 +358,6 @@ describe DiscourseNarrativeBot::TrackSelector do
 
           expect(Post.last.raw).to eq(random_mention_reply)
         end
-      end
-    end
-
-    context 'generic replies' do
-      before do
-        narrative.set_data(user,
-          state: :end,
-          topic_id: post.topic.id,
-          track: "DiscourseNarrativeBot::NewUserNarrative"
-        )
-      end
-
-      after do
-        $redis.del("#{described_class::GENERIC_REPLIES_COUNT_PREFIX}#{user.id}")
-      end
-
-      it 'should create the right generic do not understand responses' do
-        described_class.new(:reply, user, post_id: post.id).select
-        new_post = Post.last
-
-        expect(new_post.raw).to eq(I18n.t(
-          'discourse_narrative_bot.track_selector.do_not_understand.first_response',
-          reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
-          discobot_username: discobot_user.username
-        ))
-
-        described_class.new(:reply, user, post_id: Fabricate(:post,
-          topic: new_post.topic,
-          user: user,
-          reply_to_post_number: new_post.post_number
-        ).id).select
-
-        new_post = Post.last
-
-        expect(new_post.raw).to eq(I18n.t(
-          'discourse_narrative_bot.track_selector.do_not_understand.second_response',
-          reset_trigger: "#{described_class::RESET_TRIGGER} #{DiscourseNarrativeBot::NewUserNarrative::RESET_TRIGGER}",
-          discobot_username: discobot_user.username
-        ))
-
-        new_post = Fabricate(:post,
-          topic: new_post.topic,
-          user: user,
-          reply_to_post_number: new_post.post_number
-        )
-
-        expect { described_class.new(:reply, user, post_id: new_post.id).select }
-          .to_not change { Post.count }
       end
     end
   end

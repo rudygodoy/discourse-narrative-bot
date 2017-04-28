@@ -76,14 +76,10 @@ module DiscourseNarrativeBot
 
     def pm_to_bot?(post)
       topic = post.topic
+      return false if !topic
 
-      return false unless topic.archetype == Archetype.private_message
-
-      allowed_users = topic.allowed_users.pluck(:id)
-
-      topic.allowed_groups.length == 0 &&
-        allowed_users.delete(-2) &&
-        allowed_users.length == 1
+      topic.pm_with_non_human_user? &&
+        topic.topic_allowed_users.where(user_id: -2).exists?
     end
   end
 end

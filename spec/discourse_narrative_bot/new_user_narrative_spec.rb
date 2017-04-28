@@ -2,16 +2,25 @@ require 'rails_helper'
 
 describe DiscourseNarrativeBot::NewUserNarrative do
   let!(:welcome_topic) { Fabricate(:topic, title: 'Welcome to Discourse') }
-  let(:first_post) { Fabricate(:post) }
-  let(:topic) { Fabricate(:private_message_topic, first_post: first_post) }
-  let(:user) { topic.user }
+  let(:discobot_user) { User.find(-2) }
+  let(:first_post) { Fabricate(:post, user: discobot_user) }
+  let(:user) { Fabricate(:user) }
+
+  let(:topic) do
+    Fabricate(:private_message_topic, first_post: first_post,
+      topic_allowed_users: [
+        Fabricate.build(:topic_allowed_user, user: discobot_user),
+        Fabricate.build(:topic_allowed_user, user: user),
+      ]
+    )
+  end
+
   let(:post) { Fabricate(:post, topic: topic, user: user) }
   let(:narrative) { described_class.new }
   let(:other_topic) { Fabricate(:topic) }
   let(:other_post) { Fabricate(:post, topic: other_topic) }
-  let(:discobot_user) { User.find(-2) }
   let(:profile_page_url) { "#{Discourse.base_url}/users/#{user.username}" }
-  let(:skip_trigger) { "@#{discobot_user.username} #{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
+  let(:skip_trigger) { "#{DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER}" }
 
   describe '#notify_timeout' do
     before do
@@ -30,7 +39,6 @@ describe DiscourseNarrativeBot::NewUserNarrative do
         username: user.username,
         skip_trigger: DiscourseNarrativeBot::TrackSelector::SKIP_TRIGGER,
         reset_trigger: "#{DiscourseNarrativeBot::TrackSelector::RESET_TRIGGER} #{described_class::RESET_TRIGGER}",
-        discobot_username: discobot_user.username
       ))
     end
   end
@@ -200,7 +208,7 @@ describe DiscourseNarrativeBot::NewUserNarrative do
 
         describe 'when reply contains the skip trigger' do
           it 'should create the right reply' do
-            post.update!(raw: skip_trigger)
+            post.update!(raw: "@#{discobot_user.username} #{skip_trigger}")
             described_class.any_instance.expects(:enqueue_timeout_job).with(user)
 
             DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select

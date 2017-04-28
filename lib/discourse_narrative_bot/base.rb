@@ -92,7 +92,6 @@ module DiscourseNarrativeBot
           username: user.username,
           skip_trigger: TrackSelector::SKIP_TRIGGER,
           reset_trigger: "#{TrackSelector::RESET_TRIGGER} #{self.class::RESET_TRIGGER}",
-          discobot_username: self.class.discobot_user.username
         ))
       end
     end

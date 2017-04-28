@@ -12,9 +12,9 @@ en:
 
         - To continue, reply to me any time.
 
-        - If you’d like to skip this step, say `@%{discobot_username} %{skip_trigger}`.
+        - If you’d like to skip this step, say `%{skip_trigger}`.
 
-        - To start over, say `@%{discobot_username} %{reset_trigger}`.
+        - To start over, say `%{reset_trigger}`.
 
         If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:
 
@@ -42,13 +42,13 @@ en:
 
           Unfortunately, as a poorly programmed bot, I can’t quite understand that one. :frowning:
         track_response:
-          You can try again, or if you’d like to skip this step, say `@%{discobot_username} %{skip_trigger}`. Otherwise, to start over, say `@%{discobot_username} %{reset_trigger}`.
+          You can try again, or if you’d like to skip this step, say `%{skip_trigger}`. Otherwise, to start over, say `%{reset_trigger}`.
         second_response: |-
           Aw, sorry. I’m still not getting it. :anguished:
 
           It’s not you – it’s me. I blame my programmers! They’re terrible!
 
-          Perhaps let’s start over? Say `@%{discobot_username} %{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
+          Perhaps let’s start over? Say `%{reset_trigger}` to start over. In the meantime, I’ll stay out of your way.
 
     new_user_narrative:
 

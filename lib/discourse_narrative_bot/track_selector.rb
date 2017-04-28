@@ -32,15 +32,12 @@ module DiscourseNarrativeBot
         topic_id = @post.topic_id
         post_analyzer = PostAnalyzer.new(@post.raw, topic_id)
 
-        # TODO: Expose the method publicaly in PostAnalyzer
-        stripped_text = post_analyzer.send(:cooked_stripped).text
-
         TRACKS.each do |klass|
-          if selected_track(klass, stripped_text)
+          if selected_track(klass)
             klass.new.reset_bot(@user, @post)
             return
           end
-        end
+          end
 
         bot_mentioned = post_analyzer.raw_mentions.include?(
           self.class.discobot_user.username
@@ -51,10 +48,10 @@ module DiscourseNarrativeBot
           klass = (data[:track] || NewUserNarrative.to_s).constantize
 
           if state&.to_sym == :end && @input == :reply
-            bot_mentioned ? mention_replies(stripped_text) : generic_replies(klass::RESET_TRIGGER)
+            bot_mentioned ? mention_replies : generic_replies(klass::RESET_TRIGGER)
           elsif @input == :reply
             previous_status = data[:attempted]
-            current_status = klass.new.input(@input, @user, post: @post, skip: skip_track?(stripped_text))
+            current_status = klass.new.input(@input, @user, post: @post, skip: skip_track?)
             data = Store.get(@user.id)
             data[:attempted] = !current_status
 
@@ -66,10 +63,10 @@ module DiscourseNarrativeBot
 
             Store.set(@user.id, data)
           else
-            klass.new.input(@input, @user, post: @post, skip: skip_track?(stripped_text))
+            klass.new.input(@input, @user, post: @post, skip: skip_track?)
           end
         elsif (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
-          mention_replies(stripped_text)
+          mention_replies
         end
       elsif data && data.dig(:state)&.to_sym != :end && is_topic_action?
         klass = (data[:track] || NewUserNarrative.to_s).constantize
@@ -83,21 +80,21 @@ module DiscourseNarrativeBot
       @is_topic_action ||= TOPIC_ACTIONS.include?(@input)
     end
 
-    def selected_track(klass, text)
+    def selected_track(klass)
       return if klass.respond_to?(:can_start?) && !klass.can_start?(@user)
-      text.match(/@#{self.class.discobot_user.username} #{RESET_TRIGGER} #{klass::RESET_TRIGGER}/)
+      match_trigger?(@post.raw, "#{RESET_TRIGGER} #{klass::RESET_TRIGGER}")
     end
 
-    def mention_replies(text)
+    def mention_replies
       post_raw = @post.raw
       discobot_username = self.class.discobot_user.username
 
       raw =
-        if match_data = post_raw.match(/@#{discobot_username} roll (\d+)d(\d+)/i)
+        if match_data = match_trigger?(post_raw, 'roll (\d+)d(\d+)')
           I18n.t(i18n_key('random_mention.dice'),
             results: Dice.new(match_data[1].to_i, match_data[2].to_i).roll.join(", ")
           )
-        elsif match_data = post_raw.match(/@#{discobot_username} quote/i)
+        elsif match_data = match_trigger?(post_raw, 'quote')
           I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
         else
           data = Store.get(@user.id)
@@ -140,14 +137,13 @@ module DiscourseNarrativeBot
         raw = I18n.t(i18n_key('do_not_understand.first_response'))
 
         if state && state.to_sym != :end
-          raw = "#{raw}\n\n#{I18n.t(i18n_key('do_not_understand.track_response'), discobot_username: self.class.discobot_user.username, reset_trigger: reset_trigger, skip_trigger: SKIP_TRIGGER)}"
+          raw = "#{raw}\n\n#{I18n.t(i18n_key('do_not_understand.track_response'), reset_trigger: reset_trigger, skip_trigger: SKIP_TRIGGER)}"
         end
 
         reply_to(@post, raw)
       when 1
         reply_to(@post, I18n.t(i18n_key('do_not_understand.second_response'),
-          reset_trigger: reset_trigger,
-          discobot_username: self.class.discobot_user.username
+          reset_trigger: reset_trigger
         ))
       else
         # Stay out of the user's way
@@ -160,11 +156,24 @@ module DiscourseNarrativeBot
       "discourse_narrative_bot.track_selector.#{key}"
     end
 
-    def skip_track?(text)
+    def skip_track?
       if pm_to_bot?(@post)
-        text == SKIP_TRIGGER
+        post_raw = @post.raw
+
+        post_raw.match(/^@#{self.class.discobot_user.username} #{SKIP_TRIGGER}/i) ||
+          post_raw.strip == SKIP_TRIGGER
       else
-        text.match(/@#{self.class.discobot_user.username} #{SKIP_TRIGGER}/)
+        false
+      end
+    end
+
+    def match_trigger?(text, trigger)
+      match = text.match(Regexp.new("^@#{self.class.discobot_user.username} #{trigger}", 'i'))
+
+      if pm_to_bot?(@post)
+        match || text.strip == trigger
+      else
+        match
       end
     end
   end
