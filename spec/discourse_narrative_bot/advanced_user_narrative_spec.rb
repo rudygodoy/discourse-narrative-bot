@@ -615,13 +615,11 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           it 'should create the right reply' do
             post.update!(raw: skip_trigger)
 
-            DiscourseNarrativeBot::TrackSelector.new(:reply, user, post_id: post.id).select
-
-            new_post = Post.last
-
-            expect(new_post.raw).to eq(I18n.t(
-              'discourse_narrative_bot.advanced_user_narrative.end.message')
-            )
+            expect do
+              DiscourseNarrativeBot::TrackSelector.new(
+                :reply, user, post_id: post.id
+              ).select
+            end.to change { Post.count }.by(1)
 
             expect(narrative.get_data(user)[:state].to_sym).to eq(:end)
           end

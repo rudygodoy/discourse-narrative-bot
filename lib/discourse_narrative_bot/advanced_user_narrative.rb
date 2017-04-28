@@ -363,7 +363,10 @@ module DiscourseNarrativeBot
 
     def end_reply
       fake_delay
-      reply_to(@post, I18n.t("#{I18N_KEY}.end.message"))
+
+      reply_to(@post, I18n.t("#{I18N_KEY}.end.message",
+        certificate: certificate('advanced')
+      ))
     end
 
     def synchronize(user)
@@ -387,10 +390,6 @@ module DiscourseNarrativeBot
         user_id: user.id,
         klass: self.class.to_s
       )
-    end
-
-    def valid_topic?(topic_id)
-      topic_id == @data[:topic_id]
     end
   end
 end

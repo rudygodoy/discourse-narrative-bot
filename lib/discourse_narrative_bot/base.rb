@@ -96,6 +96,19 @@ module DiscourseNarrativeBot
       end
     end
 
+    def certificate(type = nil)
+      options = {
+        user_id: @user.id,
+        date: Time.zone.now.strftime('%b %d %Y'),
+        host: Discourse.base_url,
+        format: :svg
+      }
+
+      options.merge!(type: type) if type
+      src = DiscourseNarrativeBot::Engine.routes.url_helpers.certificate_url(options)
+      "<img class='discobot-certificate' src='#{src}' width='650' height='464' alt='#{I18n.t("#{self.class::I18N_KEY}.certificate.alt")}'>"
+    end
+
     private
 
     def set_state_data(key, value)
@@ -138,6 +151,10 @@ module DiscourseNarrativeBot
       else
         @post
       end
+    end
+
+    def valid_topic?(topic_id)
+      topic_id == @data[:topic_id]
     end
 
     def not_implemented

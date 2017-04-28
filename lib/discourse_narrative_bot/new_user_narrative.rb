@@ -493,10 +493,6 @@ module DiscourseNarrativeBot
       )
     end
 
-    def valid_topic?(topic_id)
-      topic_id == @data[:topic_id]
-    end
-
     def like_post(post)
       PostAction.act(self.class.discobot_user, post, PostActionType.types[:like])
     end
@@ -523,17 +519,6 @@ module DiscourseNarrativeBot
 
     def url_helpers(url, opts = {})
       Rails.application.routes.url_helpers.send(url, opts.merge(host: Discourse.base_url))
-    end
-
-    def certificate
-      src = DiscourseNarrativeBot::Engine.routes.url_helpers.certificate_url(
-        user_id: @user.id,
-        date: Time.zone.now.strftime('%b %d %Y'),
-        host: Discourse.base_url,
-        format: :svg
-      )
-
-      "<img class='discobot-certificate' src='#{src}' width='650' height='464' alt='#{I18n.t("#{I18N_KEY}.certificate.alt")}'>"
     end
   end
 end

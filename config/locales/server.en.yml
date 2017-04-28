@@ -286,7 +286,7 @@ en:
         instructions: |-
           Next, we're going to start learning about notification levels for a topic so that you can selectively 'watch', 'track' or 'mute' a topic. By default, the notification level for a private message is set to 'watching' where you'll be notified for all new posts in the topic.
 
-          Let us try changing the notification level for thiis topic. At the bottom of the topic, you'll find a button which shows that you're already 'watching' this topic by default. Can you change the notification level for this topic to 'tracking' such that you'll only be annoyed by me if I mention you or replies to one of your post?
+          Let us try changing the notification level for this topic. At the bottom of the topic, you'll find a button which shows that you're already 'watching' this topic by default. Can you change the notification level for this topic to 'tracking' such that you'll only be annoyed by me if I mention you or replies to one of your post?
         not_found: |-
           It looks like you're still watching :eyes: this topic! The button is located at the bottom of the topic if you're having trouble finding it.
         reply: |-
@@ -340,6 +340,10 @@ en:
         message: |-
           You blazed through this track like a pro :bow:
 
+          %{certificate}
+
           That’s all I have for you.
 
           Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:
+      certificate:
+        alt: 'Advanced User Track Certificate of Achievement'
