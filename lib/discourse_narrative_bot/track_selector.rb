@@ -48,7 +48,7 @@ module DiscourseNarrativeBot
           klass = (data[:track] || NewUserNarrative.to_s).constantize
 
           if state&.to_sym == :end && @input == :reply
-            bot_mentioned ? mention_replies : generic_replies(klass::RESET_TRIGGER)
+            bot_commands(bot_mentioned) || generic_replies(klass::RESET_TRIGGER)
           elsif @input == :reply
             previous_status = data[:attempted]
             current_status = klass.new.input(@input, @user, post: @post, skip: skip_track?)
@@ -66,7 +66,7 @@ module DiscourseNarrativeBot
             klass.new.input(@input, @user, post: @post, skip: skip_track?)
           end
         elsif (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
-          mention_replies
+          bot_commands
         end
       elsif data && data.dig(:state)&.to_sym != :end && is_topic_action?
         klass = (data[:track] || NewUserNarrative.to_s).constantize
@@ -85,7 +85,7 @@ module DiscourseNarrativeBot
       match_trigger?(@post.raw, "#{RESET_TRIGGER} #{klass::RESET_TRIGGER}")
     end
 
-    def mention_replies
+    def bot_commands(display_help = true)
       post_raw = @post.raw
       discobot_username = self.class.discobot_user.username
 
@@ -96,7 +96,7 @@ module DiscourseNarrativeBot
           )
         elsif match_data = match_trigger?(post_raw, 'quote')
           I18n.t(i18n_key('random_mention.quote'), QuoteGenerator.generate)
-        else
+        elsif display_help
           data = Store.get(@user.id)
 
           tracks = [NewUserNarrative::RESET_TRIGGER]
@@ -118,9 +118,10 @@ module DiscourseNarrativeBot
           message << "\n\n#{I18n.t(i18n_key('random_mention.bot_actions'), discobot_username: discobot_username)}"
         end
 
-      fake_delay
-
-      reply_to(@post, raw)
+      if raw
+        fake_delay
+        reply_to(@post, raw)
+      end
     end
 
     def generic_replies_key(user)
@@ -171,7 +172,7 @@ module DiscourseNarrativeBot
       match = text.match(Regexp.new("^@#{self.class.discobot_user.username} #{trigger}", 'i'))
 
       if pm_to_bot?(@post)
-        match || text.strip == trigger
+        match || text.strip.match(Regexp.new("^#{trigger}$", 'i'))
       else
         match
       end

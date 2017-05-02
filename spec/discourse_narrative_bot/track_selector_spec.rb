@@ -214,6 +214,26 @@ describe DiscourseNarrativeBot::TrackSelector do
           end
         end
 
+        describe 'when discobot is asked to roll dice' do
+          before do
+            narrative.set_data(user,
+              state: :end,
+              topic_id: topic.id
+            )
+          end
+
+          it 'should create the right reply' do
+            post.update!(raw: 'roll 2d1')
+            described_class.new(:reply, user, post_id: post.id).select
+            new_post = Post.last
+
+            expect(new_post.raw).to eq(
+              I18n.t("discourse_narrative_bot.track_selector.random_mention.dice",
+              results: '1, 1'
+            ))
+          end
+        end
+
         context 'when user has completed the new user track' do
           it 'should include the commands to start the advanced user track' do
             narrative.set_data(user,
