@@ -1,7 +1,7 @@
 module Jobs
   class BotInput < Jobs::Base
 
-    sidekiq_options queue: 'critical', retry: 1
+    sidekiq_options queue: 'critical', retry: false
 
     def execute(args)
       return unless user = User.find_by(id: args[:user_id])
