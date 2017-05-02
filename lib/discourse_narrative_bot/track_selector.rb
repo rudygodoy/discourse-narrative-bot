@@ -37,19 +37,22 @@ module DiscourseNarrativeBot
             klass.new.reset_bot(@user, @post)
             return
           end
-          end
+        end
 
         bot_mentioned = post_analyzer.raw_mentions.include?(
           self.class.discobot_user.username
         )
+        is_reply = @input == :reply
 
         if (data && data[:topic_id] == topic_id)
           state = data[:state]
           klass = (data[:track] || NewUserNarrative.to_s).constantize
 
-          if state&.to_sym == :end && @input == :reply
+          like_user_post if is_reply
+
+          if state&.to_sym == :end && is_reply
             bot_commands(bot_mentioned) || generic_replies(klass::RESET_TRIGGER)
-          elsif @input == :reply
+          elsif is_reply
             previous_status = data[:attempted]
             current_status = klass.new.input(@input, @user, post: @post, skip: skip_track?)
             data = Store.get(@user.id)
@@ -65,7 +68,8 @@ module DiscourseNarrativeBot
           else
             klass.new.input(@input, @user, post: @post, skip: skip_track?)
           end
-        elsif (@input == :reply) && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
+        elsif is_reply && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
+          like_user_post
           bot_commands
         end
       elsif data && data.dig(:state)&.to_sym != :end && is_topic_action?
@@ -129,8 +133,8 @@ module DiscourseNarrativeBot
     end
 
     def generic_replies(reset_trigger, state = nil)
-      key = generic_replies_key(@user)
       reset_trigger = "#{RESET_TRIGGER} #{reset_trigger}"
+      key = generic_replies_key(@user)
       count = ($redis.get(key) || $redis.setex(key, 900, 0)).to_i
 
       case count
@@ -175,6 +179,12 @@ module DiscourseNarrativeBot
         match || text.strip.match(Regexp.new("^#{trigger}$", 'i'))
       else
         match
+      end
+    end
+
+    def like_user_post
+      if @post.raw.match(/thank/i)
+        PostAction.act(self.class.discobot_user, @post, PostActionType.types[:like])
       end
     end
   end

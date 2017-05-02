@@ -95,6 +95,20 @@ describe DiscourseNarrativeBot::TrackSelector do
         end
       end
 
+      describe 'when user thanks the bot' do
+        it 'should like the post' do
+          post.update!(raw: 'thanks!')
+
+          expect { described_class.new(:reply, user, post_id: post.id).select }
+            .to change { PostAction.count }.by(1)
+
+          post_action = PostAction.last
+
+          expect(post_action.post).to eq(post)
+          expect(post_action.post_action_type_id).to eq(PostActionType.types[:like])
+        end
+      end
+
       context 'when reply contains a reset trigger' do
         it 'should start/reset the track' do
           post.update!(
@@ -377,6 +391,20 @@ describe DiscourseNarrativeBot::TrackSelector do
           described_class.new(:reply, user, post_id: other_post.id).select
 
           expect(Post.last.raw).to eq(random_mention_reply)
+        end
+      end
+
+      describe 'when user thanks the bot' do
+        it 'should like the post' do
+          other_post.update!(raw: 'thanks!')
+
+          expect { described_class.new(:reply, user, post_id: other_post.id).select }
+            .to change { PostAction.count }.by(1)
+
+          post_action = PostAction.last
+
+          expect(post_action.post).to eq(other_post)
+          expect(post_action.post_action_type_id).to eq(PostActionType.types[:like])
         end
       end
     end
