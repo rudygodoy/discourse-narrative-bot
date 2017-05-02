@@ -247,7 +247,7 @@ en:
         instructions: |-
           If you’d like to withdraw a post you made, you can delete it.
 
-          Go ahead and delete any of your posts above by using the <img src="/images/font-awesome-trash.png" width="16" height="16"> **delete** action.
+          Go ahead and **delete** any of your posts above by using the <img src="/images/font-awesome-trash.png" width="16" height="16"> **delete** action.
         not_found: |-
           I don’t see any deleted posts yet? Remember <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> show more will reveal <img src="/images/font-awesome-trash.png" width="16" height="16"> delete.
         reply: |-
@@ -270,33 +270,33 @@ en:
 
       category_hashtag:
         instructions: |-
-          Did you know that you can easily add a category hashtag in your post? For example, I could get you to checkout the %{category} category.
+          Did you know that you can refer to categories and tags in your post? For example, have you seen the %{category} category?
 
-          In the middle of any sentence, simply type `#` and it'll trigger the autocomplete for you to select the available categories.
+          Type `#` in the middle of a sentence and select any category or tag.
         not_found: |-
-          O dear, it looks like you didn't manage to create a category hashtag. Do note that `#` can't be the first character as that conflicts with Markdown's syntax.
+          Hmm, I don’t see a category in there anywhere. Note that `#` can't be the first character. Can you copy this in your next reply?
 
-          Can you try and copy the following text in your next reply?
-
-              I can create a category hashtag #
+              I can create a category link via #
         reply: |-
-          Great job! If tagging is enabled, tag hashtags will also be available in the autocomplete and you can use them like how you would for category hashtags.
+          Excellent! Remember this works for both categories _and_ tags, if tags are enabled.
 
       change_topic_notification_level:
         instructions: |-
-          Next, we're going to start learning about notification levels for a topic so that you can selectively 'watch', 'track' or 'mute' a topic. By default, the notification level for a private message is set to 'watching' where you'll be notified for all new posts in the topic.
+          Every topic has a notification level. It starts at 'normal', which means you’ll normally only be notified when someone is speaking directly to you.
 
-          Let us try changing the notification level for this topic. At the bottom of the topic, you'll find a button which shows that you're already 'watching' this topic by default. Can you change the notification level for this topic to 'tracking' such that you'll only be annoyed by me if I mention you or replies to one of your post?
+          By default, the notification level for a private message is set to the highest level of 'watching', which means you you’ll be notified of every new reply.  But you can override the notification level for _any_ topic to 'watch', 'tracking' or 'muted'. 
+
+          Let’s try changing the notification level for this topic. At the bottom of the topic, you’ll find a button which shows that you’re **watching** this topic. Can you change the notification level to **tracking**?
         not_found: |-
-          It looks like you're still watching :eyes: this topic! The button is located at the bottom of the topic if you're having trouble finding it.
+          It looks like you’re still watching :eyes: this topic! If you’re having trouble finding it, the notification level button is located at the bottom of the topic.
         reply: |-
-          Awesome work! I hope you didn't mute me since I can be a little talkative at times :grin:.
+          Awesome work! I hope you didn’t mute this topic since I can be a little talkative at times :grin:.
+
+          Note that when you reply to a topic, or read a topic for more than a few minutes, it is automatically set to a notification level of 'tracking'. You can change this in [your user preferences](/my/preferences).
 
       poll:
         instructions: |-
-          Did you know you can add a **poll** to any post?
-
-          Can you use the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor to build a poll?
+          Did you know you can add a poll to any post? Try using the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor to **build a poll**.
         not_found: |-
           Whoops! There wasn’t any poll in your reply.
 
@@ -315,11 +315,11 @@ en:
           [/poll]
       details:
         instructions: |-
-          Sometimes you may wish to **hide details** of your posts:
+          Sometimes you may wish to **hide details** in your replies:
 
-          - You’re discussing plot points of a movie or TV show that would be a spoiler.
+          - When you’re discussing plot points of a movie or TV show that would be a considered a spoiler.
 
-          - Your post has lots of detailed, optional content that may be overwhelming when read all at once.
+          - When your post needs lots of optional details that may be overwhelming when read all at once.
 
           [details=Select this to see how it works!]
           1. Select the <img src="/images/font-awesome-gear.png" width="16" height="16"> gear in the editor.
@@ -335,15 +335,15 @@ en:
               Here are the details
               [/details]
         reply: |-
-          Great work — your attention to _detail_ is admirable! :thumbsup:
+          Great work — your attention to _detail_ is admirable!
       end:
         message: |-
-          You blazed through this track like a pro :bow:
+          You blazed through this like an _advanced user_ indeed :bow:
 
           %{certificate}
 
           That’s all I have for you.
 
-          Bye for now! If you’d like to speak with me again, send me a personal message any time :sunglasses:
+          Bye for now! If you’d like to speak with me again, send me a message any time :sunglasses:
       certificate:
         alt: 'Advanced User Track Certificate of Achievement'
