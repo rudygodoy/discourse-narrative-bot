@@ -327,6 +327,9 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
 
         describe 'when reply contains the skip trigger' do
           it 'should create the right reply' do
+            parent_category = Fabricate(:category, name: 'a')
+            category = Fabricate(:category, parent_category: parent_category, name: 'b')
+
             post.update!(raw: skip_trigger)
             described_class.any_instance.expects(:enqueue_timeout_job).with(user)
 
@@ -336,7 +339,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
 
             expect(new_post.raw).to eq(I18n.t(
               'discourse_narrative_bot.advanced_user_narrative.category_hashtag.instructions',
-              category: "#Uncategorized"
+              category: "#a:b"
             ))
 
             expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_category_hashtag)
@@ -358,6 +361,8 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
 
       describe 'when user recovers a post in the right topic' do
         it 'should create the right reply' do
+          parent_category = Fabricate(:category, name: 'a')
+          category = Fabricate(:category, parent_category: parent_category, name: 'b')
           post
 
           PostDestroyer.new(user, post).destroy
@@ -368,7 +373,7 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
           expected_raw = <<~RAW
           #{I18n.t('discourse_narrative_bot.advanced_user_narrative.recover.reply')}
 
-          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.category_hashtag.instructions', category: "#Uncategorized")}
+          #{I18n.t('discourse_narrative_bot.advanced_user_narrative.category_hashtag.instructions', category: "#a:b")}
           RAW
 
           expect(narrative.get_data(user)[:state].to_sym).to eq(:tutorial_category_hashtag)

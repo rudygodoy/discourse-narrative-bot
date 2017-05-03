@@ -38,8 +38,15 @@ module DiscourseNarrativeBot
       tutorial_recover: {
         next_state: :tutorial_category_hashtag,
         next_instructions: Proc.new do
+          category = Category.secured.last
+          slug = category.slug
+
+          if parent_category = category.parent_category
+            slug = "#{parent_category.slug}#{CategoryHashtag::SEPARATOR}#{slug}"
+          end
+
           I18n.t("#{I18N_KEY}.category_hashtag.instructions",
-            category: "##{Category.secured.last.name}"
+            category: "##{slug}"
           )
         end,
         recover: {
