@@ -2,6 +2,7 @@ en:
   site_settings:
     discourse_narrative_bot_enabled: 'Enable Discourse Narrative Bot'
     disable_discourse_narrative_bot_welcome_post: "Disable the welcome post by Discourse Narrative Bot"
+    discourse_narrative_bot_ignored_usernames: "Usernames that the Discourse Narrative Bot should ignore"
 
   discourse_narrative_bot:
     bio: "Hi, I’m not a real person. I’m a bot. To interact with me, send me a message or mention **`@%{discobot_username}`** anywhere."

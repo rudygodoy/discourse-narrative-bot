@@ -114,9 +114,10 @@ after_initialize do
   User.class_eval do
     def enqueue_narrative_bot_job?
       SiteSetting.discourse_narrative_bot_enabled &&
-        ![-1, -2].include?(self.id) &&
+        self.id > 0 &&
         !self.user_option.mailing_list_mode &&
-        !self.staged
+        !self.staged &&
+        !SiteSetting.discourse_narrative_bot_ignored_usernames.split('|'.freeze).include?(self.username)
     end
   end
 

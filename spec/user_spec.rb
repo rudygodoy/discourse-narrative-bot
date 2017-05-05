@@ -32,6 +32,20 @@ describe User do
         expect { user }.to_not change { Post.count }
       end
     end
+
+    context "when user's username should be ignored" do
+      let(:user) { Fabricate.build(:user) }
+
+      before do
+        SiteSetting.discourse_narrative_bot_ignored_usernames = 'discourse|test'
+      end
+
+      ['discourse', 'test'].each do |username|
+        it 'should not initiate the bot' do
+          expect { user.update!(username: username) }.to_not change { Post.count }
+        end
+      end
+    end
   end
 
   describe 'when a user has been destroyed' do
