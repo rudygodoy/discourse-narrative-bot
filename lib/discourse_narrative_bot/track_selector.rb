@@ -72,7 +72,10 @@ module DiscourseNarrativeBot
           else
             klass.new.input(@input, @user, post: @post, skip: skip_track?)
           end
-        elsif is_reply && (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
+        elsif is_reply &&
+          !SiteSetting.discourse_narrative_bot_disable_public_replies &&
+          (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
+
           like_user_post
           bot_commands
         end

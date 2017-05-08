@@ -278,7 +278,23 @@ describe DiscourseNarrativeBot::TrackSelector do
 
     context 'random discobot mentions' do
       let(:topic) { Fabricate(:topic) }
-      let(:post) { Fabricate(:post, topic: topic) }
+      let(:post) { Fabricate(:post, topic: topic, user: user) }
+
+      describe 'when discobot public replies are disabled' do
+        before do
+          SiteSetting.discourse_narrative_bot_disable_public_replies = true
+        end
+
+        describe 'when discobot is mentioned' do
+          it 'should not reply' do
+            post.update!(raw: 'Show me what you can do @discobot')
+
+            expect do
+              described_class.new(:reply, user, post_id: post.id).select
+            end.to_not change { Post.count }
+          end
+        end
+      end
 
       describe 'when discobot is mentioned' do
         it 'should create the right reply' do
