@@ -32,11 +32,6 @@ module DiscourseNarrativeBot
         return if reset_track
 
         topic_id = @post.topic_id
-        post_analyzer = PostAnalyzer.new(@post.raw, topic_id)
-
-        bot_mentioned = post_analyzer.raw_mentions.include?(
-          self.class.discobot_user.username
-        )
         is_reply = @input == :reply
 
         if (data && data[:topic_id] == topic_id)
@@ -46,11 +41,8 @@ module DiscourseNarrativeBot
           if is_reply && like_user_post
             data[:state] = nil
             Store.set(@user.id, data)
-            return
-          end
-
-          if state&.to_sym == :end && is_reply
-            bot_commands(bot_mentioned) || generic_replies(klass::RESET_TRIGGER)
+          elsif state&.to_sym == :end && is_reply
+            bot_commands(bot_mentioned?) || generic_replies(klass::RESET_TRIGGER)
           elsif is_reply
             previous_status = data[:attempted]
             current_status = klass.new.input(@input, @user, post: @post, skip: skip_track?)
@@ -67,10 +59,7 @@ module DiscourseNarrativeBot
           else
             klass.new.input(@input, @user, post: @post, skip: skip_track?)
           end
-        elsif is_reply &&
-          !SiteSetting.discourse_narrative_bot_disable_public_replies &&
-          (bot_mentioned || pm_to_bot?(@post) || reply_to_bot_post?(@post))
-
+        elsif is_reply && (pm_to_bot?(@post) || public_reply?)
           like_user_post
           bot_commands
         end
@@ -202,6 +191,17 @@ module DiscourseNarrativeBot
       if @post.raw.match(/thank/i)
         PostAction.act(self.class.discobot_user, @post, PostActionType.types[:like])
       end
+    end
+
+    def bot_mentioned?
+      @bot_mentioned ||= PostAnalyzer.new(@post.raw, @post.topic_id).raw_mentions.include?(
+        self.class.discobot_user.username
+      )
+    end
+
+    def public_reply?
+      !SiteSetting.discourse_narrative_bot_disable_public_replies &&
+        (bot_mentioned? || reply_to_bot_post?(@post))
     end
   end
 end
