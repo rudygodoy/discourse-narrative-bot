@@ -312,7 +312,8 @@ module DiscourseNarrativeBot
       end
 
       fake_delay
-      reply = reply_to(@post, raw) unless @data[:attempted]
+
+      reply = reply_to(@post, raw) unless @data[:attempted] && !transition
       enqueue_timeout_job(@user)
       transition ? reply : false
     end
