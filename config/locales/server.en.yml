@@ -20,10 +20,18 @@ en:
 
         If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:
 
+    dice:
+      not_enough_dice: |-
+        I'm so sorry :crying_cat_face: My programmers only gave me %{num_of_dice} dices to play with.
+      out_of_range: |-
+        Did you know that the maximum number of sides for a mathematically fair dice is 120 sides?
+
+        https://www.wired.com/2016/05/mathematical-challenge-of-designing-the-worlds-most-complex-120-sided-dice
+      results: |-
+        > :game_die: dice roll: %{results}
+
     track_selector:
       random_mention:
-        dice: |-
-          :game_die: dice roll: %{results}
         quote: |-
           > :left_speech_bubble: _%{quote}_ &mdash; %{author}
         tracks: |-

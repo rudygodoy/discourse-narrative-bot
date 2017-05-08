@@ -1,12 +1,28 @@
 module DiscourseNarrativeBot
   class Dice
-    def initialize(number_of_dice, range_of_dice)
-      @number_of_dice = number_of_dice
-      @range_of_dice = range_of_dice
-    end
+    MAXIMUM_NUM_OF_DICE = 20
+    MAXIMUM_RANGE_OF_DICE = 120
 
-    def roll
-      @number_of_dice.times.map { rand(1..@range_of_dice) }
+    def self.roll(num_of_dice, range_of_dice)
+      output = ''
+
+      if num_of_dice > MAXIMUM_NUM_OF_DICE
+        output << I18n.t('discourse_narrative_bot.dice.not_enough_dice',
+          num_of_dice: MAXIMUM_NUM_OF_DICE
+        )
+        output << "\n\n"
+        num_of_dice = MAXIMUM_NUM_OF_DICE
+      end
+
+      if range_of_dice > MAXIMUM_RANGE_OF_DICE
+        output << I18n.t('discourse_narrative_bot.dice.out_of_range')
+        output << "\n\n"
+        range_of_dice = MAXIMUM_RANGE_OF_DICE
+      end
+
+      output << I18n.t('discourse_narrative_bot.dice.results',
+        results: num_of_dice.times.map { rand(1..range_of_dice) }.join(", ")
+      )
     end
   end
 end

@@ -243,10 +243,48 @@ describe DiscourseNarrativeBot::TrackSelector do
               described_class.new(:reply, user, post_id: post.id).select
               new_post = Post.last
 
-              expect(new_post.raw).to eq(
-                I18n.t("discourse_narrative_bot.track_selector.random_mention.dice",
-                results: '1, 1'
+              expect(new_post.raw).to eq(I18n.t(
+                "discourse_narrative_bot.dice.results", results: '1, 1'
               ))
+            end
+
+            describe 'when range of dice request is too high' do
+              before do
+                srand(1)
+              end
+
+              it 'should create the right reply' do
+                stub_request(:get, "https://www.wired.com/2016/05/mathematical-challenge-of-designing-the-worlds-most-complex-120-sided-dice")
+                  .to_return(status: 200, body: "", headers: {})
+
+                post.update!(raw: "roll 1d#{DiscourseNarrativeBot::Dice::MAXIMUM_RANGE_OF_DICE + 1}")
+                described_class.new(:reply, user, post_id: post.id).select
+                new_post = Post.last
+
+                expected_raw = <<~RAW
+                #{I18n.t('discourse_narrative_bot.dice.out_of_range')}
+
+                #{I18n.t('discourse_narrative_bot.dice.results', results: '38')}
+                RAW
+
+                expect(new_post.raw).to eq(expected_raw.chomp)
+              end
+            end
+
+            describe 'when number of dice to roll is too high' do
+              it 'should create the right reply' do
+                post.update!(raw: "roll #{DiscourseNarrativeBot::Dice::MAXIMUM_NUM_OF_DICE + 1}d1")
+                described_class.new(:reply, user, post_id: post.id).select
+                new_post = Post.last
+
+                expected_raw = <<~RAW
+                #{I18n.t('discourse_narrative_bot.dice.not_enough_dice', num_of_dice: DiscourseNarrativeBot::Dice::MAXIMUM_NUM_OF_DICE)}
+
+                #{I18n.t('discourse_narrative_bot.dice.results', results: '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1')}
+                RAW
+
+                expect(new_post.raw).to eq(expected_raw.chomp)
+              end
             end
           end
 
@@ -320,7 +358,7 @@ describe DiscourseNarrativeBot::TrackSelector do
             new_post = Post.last
 
             expect(new_post.raw).to eq(
-              I18n.t("discourse_narrative_bot.track_selector.random_mention.dice",
+              I18n.t("discourse_narrative_bot.dice.results",
               results: '1, 1'
             ))
           end
