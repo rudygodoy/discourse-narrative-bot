@@ -347,7 +347,7 @@ describe DiscourseNarrativeBot::TrackSelector do
 
         describe 'when a quote is requested' do
           it 'should create the right reply' do
-            QuoteGenerator.expects(:generate).returns(
+            DiscourseNarrativeBot::QuoteGenerator.expects(:generate).returns(
               quote: "Be Like Water", author: "Bruce Lee"
             )
 

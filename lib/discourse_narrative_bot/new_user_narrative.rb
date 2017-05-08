@@ -1,5 +1,3 @@
-require_relative '../dice'
-require_relative '../quote_generator'
 require 'distributed_mutex'
 
 module DiscourseNarrativeBot

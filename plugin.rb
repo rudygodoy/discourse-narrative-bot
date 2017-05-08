@@ -29,6 +29,8 @@ after_initialize do
   load File.expand_path("../lib/discourse_narrative_bot/advanced_user_narrative.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/track_selector.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/certificate_generator.rb", __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/dice.rb", __FILE__)
+  load File.expand_path("../lib/discourse_narrative_bot/quote_generator.rb", __FILE__)
 
   module ::DiscourseNarrativeBot
     PLUGIN_NAME = "discourse-narrative-bot".freeze
