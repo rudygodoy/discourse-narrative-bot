@@ -22,11 +22,9 @@ en:
 
     dice:
       not_enough_dice: |-
-        I'm so sorry :crying_cat_face: My programmers only gave me %{num_of_dice} dices to play with.
+        I only have %{num_of_dice} dice. [Shameful](http://www.therobotsvoice.com/2009/04/the_10_most_shameful_rpg_dice.php), I know!
       out_of_range: |-
-        Did you know that the maximum number of sides for a mathematically fair dice is 120 sides?
-
-        https://www.wired.com/2016/05/mathematical-challenge-of-designing-the-worlds-most-complex-120-sided-dice
+        Did you know that [the maximum number of sides](https://www.wired.com/2016/05/mathematical-challenge-of-designing-the-worlds-most-complex-120-sided-dice) for a mathematically fair die is 120?
       results: |-
         > :game_die: dice roll: %{results}
 
