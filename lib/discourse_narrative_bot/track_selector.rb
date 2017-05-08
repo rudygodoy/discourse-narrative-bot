@@ -29,15 +29,10 @@ module DiscourseNarrativeBot
       data = Store.get(@user.id)
 
       if @post && !is_topic_action?
+        return if reset_track
+
         topic_id = @post.topic_id
         post_analyzer = PostAnalyzer.new(@post.raw, topic_id)
-
-        TRACKS.each do |klass|
-          if selected_track(klass)
-            klass.new.reset_bot(@user, @post)
-            return
-          end
-        end
 
         bot_mentioned = post_analyzer.raw_mentions.include?(
           self.class.discobot_user.username
@@ -89,6 +84,20 @@ module DiscourseNarrativeBot
 
     def is_topic_action?
       @is_topic_action ||= TOPIC_ACTIONS.include?(@input)
+    end
+
+    def reset_track
+      reset = false
+
+      TRACKS.each do |klass|
+        if selected_track(klass)
+          klass.new.reset_bot(@user, @post)
+          reset = true
+          break
+        end
+      end
+
+      reset
     end
 
     def selected_track(klass)
