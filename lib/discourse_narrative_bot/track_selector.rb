@@ -3,6 +3,7 @@ module DiscourseNarrativeBot
     include Actions
 
     GENERIC_REPLIES_COUNT_PREFIX = 'discourse-narrative-bot:track-selector-count:'.freeze
+    PUBLIC_DISPLAY_BOT_HELP_KEY = 'discourse-narrative-bot:track-selector:display-bot-help'.freeze
 
     TRACKS = [
       NewUserNarrative,
@@ -96,7 +97,6 @@ module DiscourseNarrativeBot
 
     def bot_commands(display_help = true)
       post_raw = @post.raw
-      discobot_username = self.class.discobot_user.username
 
       raw =
         if match_data = match_trigger?(post_raw, 'roll (\d+)d(\d+)')
@@ -104,31 +104,51 @@ module DiscourseNarrativeBot
         elsif match_data = match_trigger?(post_raw, 'quote')
           I18n.t(i18n_key('random_mention.quote'), DiscourseNarrativeBot::QuoteGenerator.generate)
         elsif display_help
-          data = Store.get(@user.id)
+          if public_reply?
+            key = "#{PUBLIC_DISPLAY_BOT_HELP_KEY}:#{@post.topic_id}"
+            last_bot_help_post_number = $redis.get(key)
 
-          tracks = [NewUserNarrative::RESET_TRIGGER]
+            if !last_bot_help_post_number ||
+                (last_bot_help_post_number &&
+                 @post.post_number - 10 > last_bot_help_post_number.to_i &&
+                 (1.day.to_i - $redis.ttl(key)) > 6.hours.to_i)
 
-          if (data && (completed = data[:completed]) && completed.include?(NewUserNarrative.to_s)) ||
-              @user.staff?
-
-            tracks << AdvancedUserNarrative::RESET_TRIGGER
+              $redis.setex(key, 1.day.to_i, @post.post_number)
+              help_message
+            end
+          else
+            help_message
           end
-
-          message = I18n.t(
-            i18n_key('random_mention.tracks'),
-            discobot_username: discobot_username,
-            reset_trigger: RESET_TRIGGER,
-            default_track: NewUserNarrative::RESET_TRIGGER,
-            tracks: tracks.join(', ')
-          )
-
-          message << "\n\n#{I18n.t(i18n_key('random_mention.bot_actions'), discobot_username: discobot_username)}"
         end
 
       if raw
         fake_delay
         reply_to(@post, raw)
       end
+    end
+
+    def help_message
+      data = Store.get(@user.id)
+
+      tracks = [NewUserNarrative::RESET_TRIGGER]
+
+      if (data && (completed = data[:completed]) && completed.include?(NewUserNarrative.to_s)) ||
+          @user.staff?
+
+        tracks << AdvancedUserNarrative::RESET_TRIGGER
+      end
+
+      discobot_username = self.class.discobot_user.username
+
+      message = I18n.t(
+        i18n_key('random_mention.tracks'),
+        discobot_username: discobot_username,
+        reset_trigger: RESET_TRIGGER,
+        default_track: NewUserNarrative::RESET_TRIGGER,
+        tracks: tracks.join(', ')
+      )
+
+      message << "\n\n#{I18n.t(i18n_key('random_mention.bot_actions'), discobot_username: discobot_username)}"
     end
 
     def generic_replies_key(user)

@@ -319,6 +319,16 @@ describe DiscourseNarrativeBot::TrackSelector do
 
             expect(new_post.raw).to eq(random_mention_reply)
           end
+
+          it 'should not rate limit help message' do
+            post.update!(raw: '@discobot')
+            other_post = Fabricate(:post, raw: 'discobot', topic: post.topic)
+
+            [post, other_post].each do |reply|
+              described_class.new(:reply, user, post_id: reply.id).select
+              expect(Post.last.raw).to eq(random_mention_reply)
+            end
+          end
         end
       end
     end
@@ -349,6 +359,69 @@ describe DiscourseNarrativeBot::TrackSelector do
           described_class.new(:reply, user, post_id: post.id).select
           new_post = Post.last
           expect(new_post.raw).to eq(random_mention_reply)
+        end
+
+        describe 'rate limiting help message in public topic' do
+          let(:topic) { Fabricate(:topic) }
+          let(:other_post) { Fabricate(:post, raw: '@discobot show me something', topic: topic) }
+          let(:post) { Fabricate(:post, topic: topic) }
+
+          after do
+            $redis.flushall
+          end
+
+          describe 'when help massage has been displayed in the last 6 hours' do
+            it 'should not do anything' do
+              $redis.set(
+                "#{described_class::PUBLIC_DISPLAY_BOT_HELP_KEY}:#{other_post.topic_id}",
+                post.post_number - 11
+              )
+
+              $redis.class.any_instance.expects(:ttl).returns(19.hours.to_i)
+
+              user
+              post.update!(raw: "Show me what you can do @discobot")
+
+              expect { described_class.new(:reply, user, post_id: post.id).select }
+                .to_not change { Post.count }
+            end
+          end
+
+          describe 'when help message has not been displayed in the last 6 hours' do
+            it 'should create the right reply' do
+              $redis.set(
+                "#{described_class::PUBLIC_DISPLAY_BOT_HELP_KEY}:#{other_post.topic_id}",
+                post.post_number - 11
+              )
+
+              $redis.class.any_instance.expects(:ttl).returns(7.hours.to_i)
+
+              user
+              post.update!(raw: "Show me what you can do @discobot")
+
+              described_class.new(:reply, user, post_id: post.id).select
+
+              expect(Post.last.raw).to eq(random_mention_reply)
+            end
+          end
+
+          describe 'when help message has been displayed in the last 10 replies' do
+            it 'should not do anything' do
+              described_class.new(:reply, user, post_id: other_post.id).select
+              expect(Post.last.raw).to eq(random_mention_reply)
+
+              expect($redis.get(
+                "#{described_class::PUBLIC_DISPLAY_BOT_HELP_KEY}:#{other_post.topic_id}"
+              ).to_i).to eq(other_post.post_number.to_i)
+
+              user
+              post.update!(raw: "Show me what you can do @discobot")
+
+              expect do
+                described_class.new(:reply, user, post_id: post.id).select
+              end.to_not change { Post.count }
+            end
+          end
         end
 
         describe 'when discobot is asked to roll dice' do
