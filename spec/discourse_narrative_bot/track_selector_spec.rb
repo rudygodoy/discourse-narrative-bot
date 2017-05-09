@@ -147,9 +147,10 @@ describe DiscourseNarrativeBot::TrackSelector do
 
             context 'when new user track has been completed' do
               it 'should start the track' do
-                data = DiscourseNarrativeBot::Store.get(user.id)
-                data[:completed] = [DiscourseNarrativeBot::NewUserNarrative.to_s]
-                DiscourseNarrativeBot::Store.set(user.id, data)
+                BadgeGranter.grant(
+                  Badge.find_by(name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME),
+                  user
+                )
 
                 described_class.new(:reply, user, post_id: post.id).select
 
@@ -305,7 +306,11 @@ describe DiscourseNarrativeBot::TrackSelector do
                 state: :end,
                 topic_id: post.topic.id,
                 track: "DiscourseNarrativeBot::NewUserNarrative",
-                completed: ["DiscourseNarrativeBot::NewUserNarrative"]
+              )
+
+              BadgeGranter.grant(
+                Badge.find_by(name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME),
+                user
               )
 
               post.update!(raw: 'Show me what you can do @discobot')

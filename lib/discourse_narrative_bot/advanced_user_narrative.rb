@@ -1,6 +1,8 @@
 module DiscourseNarrativeBot
   class AdvancedUserNarrative < Base
     I18N_KEY = "discourse_narrative_bot.advanced_user_narrative".freeze
+    BADGE_NAME = 'Complete Discobot Advanced User Track'.freeze
+
 
     TRANSITION_TABLE = {
       begin: {
@@ -99,12 +101,7 @@ module DiscourseNarrativeBot
 
     def self.can_start?(user)
       return true if user.staff?
-
-      data = DiscourseNarrativeBot::Store.get(user.id)
-      return unless data
-      completed_tracks = data[:completed]
-
-      completed_tracks && completed_tracks.include?(DiscourseNarrativeBot::NewUserNarrative.to_s)
+      user.badges.where(name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME).exists?
     end
 
     def reset_bot(user, post)

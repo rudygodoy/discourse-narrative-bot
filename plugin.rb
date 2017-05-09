@@ -23,6 +23,7 @@ after_initialize do
   load File.expand_path('../jobs/bot_input.rb', __FILE__)
   load File.expand_path('../jobs/narrative_timeout.rb', __FILE__)
   load File.expand_path('../jobs/narrative_init.rb', __FILE__)
+  load File.expand_path('../jobs/onceoff/grant_badges.rb', __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/actions.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/base.rb", __FILE__)
   load File.expand_path("../lib/discourse_narrative_bot/new_user_narrative.rb", __FILE__)

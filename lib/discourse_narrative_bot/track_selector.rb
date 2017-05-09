@@ -127,12 +127,10 @@ module DiscourseNarrativeBot
     end
 
     def help_message
-      data = Store.get(@user.id)
-
       tracks = [NewUserNarrative::RESET_TRIGGER]
 
-      if (data && (completed = data[:completed]) && completed.include?(NewUserNarrative.to_s)) ||
-          @user.staff?
+      if @user.staff? ||
+         @user.badges.where(name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME).exists?
 
         tracks << AdvancedUserNarrative::RESET_TRIGGER
       end

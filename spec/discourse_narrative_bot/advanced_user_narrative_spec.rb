@@ -642,9 +642,11 @@ RSpec.describe DiscourseNarrativeBot::AdvancedUserNarrative do
         expect(narrative.get_data(user)).to eq({
           "state" => "end",
           "topic_id" => topic.id,
-          "track" => described_class.to_s,
-          "completed" => [described_class.to_s]
+          "track" => described_class.to_s
         })
+
+        expect(user.badges.where(name: DiscourseNarrativeBot::AdvancedUserNarrative::BADGE_NAME).exists?)
+          .to eq(true)
       end
     end
   end

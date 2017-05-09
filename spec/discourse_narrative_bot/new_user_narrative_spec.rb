@@ -872,9 +872,11 @@ describe DiscourseNarrativeBot::NewUserNarrative do
           expect(narrative.get_data(user)).to eq({
             "state" => "end",
             "topic_id" => new_post.topic_id,
-            "track" => described_class.to_s,
-            "completed" => [described_class.to_s]
+            "track" => described_class.to_s
           })
+
+          expect(user.badges.where(name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME).exists?)
+            .to eq(true)
         end
       end
     end

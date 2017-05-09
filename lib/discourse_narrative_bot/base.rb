@@ -51,14 +51,15 @@ module DiscourseNarrativeBot
               end_reply
               cancel_timeout_job(user)
 
-              completed = Set.new(get_data(@user)[:completed])
-              completed << self.class.to_s
+              BadgeGranter.grant(
+                Badge.find_by(name: self.class::BADGE_NAME),
+                user
+              )
 
               set_data(@user,
                 topic_id: new_post.topic_id,
                 state: :end,
-                track: self.class.to_s,
-                completed: completed
+                track: self.class.to_s
               )
             end
           end
@@ -125,7 +126,6 @@ module DiscourseNarrativeBot
     def reset_data(user, additional_data = {})
       old_data = get_data(user)
       new_data = additional_data
-      new_data[:completed] = old_data[:completed] if old_data && old_data[:completed]
       set_data(user, new_data)
       new_data
     end

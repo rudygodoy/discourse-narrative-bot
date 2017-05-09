@@ -3,6 +3,7 @@ require 'distributed_mutex'
 module DiscourseNarrativeBot
   class NewUserNarrative < Base
     I18N_KEY = "discourse_narrative_bot.new_user_narrative".freeze
+    BADGE_NAME = 'Complete New User Track'.freeze
 
     TRANSITION_TABLE = {
       begin: {
