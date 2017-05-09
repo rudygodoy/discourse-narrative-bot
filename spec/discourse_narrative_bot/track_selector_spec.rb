@@ -474,17 +474,16 @@ describe DiscourseNarrativeBot::TrackSelector do
 
         describe 'when a quote is requested' do
           it 'should create the right reply' do
-            ['@discobot quote', 'hello @discobot quote there'].each do |raw|
-              DiscourseNarrativeBot::QuoteGenerator.expects(:generate).returns(
-                quote: "Be Like Water", author: "Bruce Lee"
-              )
+            stub_request(:get, "http://api.forismatic.com/api/1.0/?format=json&lang=en&method=getQuote").
+              to_return(status: 200, body: "{\"quoteText\":\"Be Like Water\",\"quoteAuthor\":\"Bruce Lee\"}")
 
+            ['@discobot quote', 'hello @discobot quote there'].each do |raw|
               post.update!(raw: raw)
               described_class.new(:reply, user, post_id: post.id).select
               new_post = Post.last
 
               expect(new_post.raw).to eq(
-                I18n.t("discourse_narrative_bot.track_selector.random_mention.quote",
+                I18n.t("discourse_narrative_bot.quote.results",
                 quote: "Be Like Water", author: "Bruce Lee"
               ))
             end
@@ -506,6 +505,24 @@ describe DiscourseNarrativeBot::TrackSelector do
 
               expect { described_class.new(:reply, user, post_id: post.id).select }
                 .to_not change { Post.count }
+            end
+          end
+
+          describe 'when user requesting quote has a preferred locale' do
+            before do
+              SiteSetting.allow_user_locale = true
+              user.update!(locale: 'it')
+              srand(1)
+            end
+
+            it 'should create the right reply' do
+              post.update!(raw: '@discobot quote')
+              described_class.new(:reply, user, post_id: post.id).select
+              key = "discourse_narrative_bot.quote.6"
+
+              expect(Post.last.raw).to eq(I18n.t('discourse_narrative_bot.quote.results',
+                quote: I18n.t("#{key}.quote"), author: I18n.t("#{key}.author")
+              ))
             end
           end
         end

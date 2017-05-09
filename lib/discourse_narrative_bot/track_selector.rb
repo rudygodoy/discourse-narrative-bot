@@ -101,7 +101,7 @@ module DiscourseNarrativeBot
         if match_data = match_trigger?(post_raw, 'roll (\d+)d(\d+)')
           DiscourseNarrativeBot::Dice.roll(match_data[1].to_i, match_data[2].to_i)
         elsif match_data = match_trigger?(post_raw, 'quote')
-          I18n.t(i18n_key('random_mention.quote'), DiscourseNarrativeBot::QuoteGenerator.generate)
+          DiscourseNarrativeBot::QuoteGenerator.generate(@user)
         elsif display_help
           if public_reply?
             key = "#{PUBLIC_DISPLAY_BOT_HELP_KEY}:#{@post.topic_id}"
