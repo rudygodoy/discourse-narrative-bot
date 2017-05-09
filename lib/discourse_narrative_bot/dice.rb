@@ -4,6 +4,10 @@ module DiscourseNarrativeBot
     MAXIMUM_RANGE_OF_DICE = 120
 
     def self.roll(num_of_dice, range_of_dice)
+      if num_of_dice == 0 || range_of_dice == 0
+        return I18n.t('discourse_narrative_bot.dice.invalid')
+      end
+
       output = ''
 
       if num_of_dice > MAXIMUM_NUM_OF_DICE

@@ -286,6 +286,17 @@ describe DiscourseNarrativeBot::TrackSelector do
                 expect(new_post.raw).to eq(expected_raw.chomp)
               end
             end
+
+            describe 'when dice combination is invalid' do
+              it 'should create the right reply' do
+                post.update!(raw: "roll 0d1")
+                described_class.new(:reply, user, post_id: post.id).select
+
+                expect(Post.last.raw).to eq(I18n.t(
+                  'discourse_narrative_bot.dice.invalid'
+                ))
+              end
+            end
           end
 
           context 'when user has completed the new user track' do

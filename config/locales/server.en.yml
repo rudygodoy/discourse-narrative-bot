@@ -21,6 +21,8 @@ en:
         If you’d rather not, that’s OK too. I’m a robot. You won’t hurt my feelings. :sob:
 
     dice:
+      invalid: |-
+        I'm sorry, it is mathematically impossible to roll the combination of dice which you've requested.
       not_enough_dice: |-
         I only have %{num_of_dice} dice. [Shameful](http://www.therobotsvoice.com/2009/04/the_10_most_shameful_rpg_dice.php), I know!
       out_of_range: |-
