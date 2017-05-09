@@ -40,8 +40,7 @@ module DiscourseNarrativeBot
           klass = (data[:track] || NewUserNarrative.to_s).constantize
 
           if is_reply && like_user_post
-            data[:state] = nil
-            Store.set(@user.id, data)
+            Store.set(@user.id, data.merge!(state: nil, topic_id: nil))
           elsif state&.to_sym == :end && is_reply
             bot_commands(bot_mentioned?) || generic_replies(klass::RESET_TRIGGER)
           elsif is_reply
