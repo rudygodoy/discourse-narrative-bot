@@ -1,3 +1,11 @@
+Badge
+  .where(name: 'Complete New User Track')
+  .update_all(name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME)
+
+Badge
+  .where(name: 'Complete Discobot Advanced User Track')
+  .update_all(name: DiscourseNarrativeBot::AdvancedUserNarrative::BADGE_NAME)
+
 unless Badge.find_by(name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME)
   Badge.create!(
     name: DiscourseNarrativeBot::NewUserNarrative::BADGE_NAME,

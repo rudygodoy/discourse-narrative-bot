@@ -1,8 +1,7 @@
 module DiscourseNarrativeBot
   class AdvancedUserNarrative < Base
     I18N_KEY = "discourse_narrative_bot.advanced_user_narrative".freeze
-    BADGE_NAME = 'Complete Discobot Advanced User Track'.freeze
-
+    BADGE_NAME = 'Licensed'.freeze
 
     TRANSITION_TABLE = {
       begin: {
