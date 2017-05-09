@@ -27,5 +27,8 @@ unless advanced_user_narrative_badge
 end
 
 [new_user_narrative_badge, advanced_user_narrative_badge].each do |badge|
-  badge.update!(badge_grouping: BadgeGrouping.find(1))
+  badge.update!(
+    badge_grouping: BadgeGrouping.find(1),
+    system: true
+  )
 end
