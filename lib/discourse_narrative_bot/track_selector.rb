@@ -195,7 +195,7 @@ module DiscourseNarrativeBot
     end
 
     def match_trigger?(text, trigger)
-      match = text.match(Regexp.new("^@#{self.class.discobot_user.username} #{trigger}", 'i'))
+      match = text.match(Regexp.new("@#{self.class.discobot_user.username} #{trigger}", 'i'))
 
       if pm_to_bot?(@post)
         match || text.strip.match(Regexp.new("^#{trigger}$", 'i'))

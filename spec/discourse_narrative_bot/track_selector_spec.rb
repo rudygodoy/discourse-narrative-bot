@@ -469,18 +469,20 @@ describe DiscourseNarrativeBot::TrackSelector do
 
         describe 'when a quote is requested' do
           it 'should create the right reply' do
-            DiscourseNarrativeBot::QuoteGenerator.expects(:generate).returns(
-              quote: "Be Like Water", author: "Bruce Lee"
-            )
+            ['@discobot quote', 'hello @discobot quote there'].each do |raw|
+              DiscourseNarrativeBot::QuoteGenerator.expects(:generate).returns(
+                quote: "Be Like Water", author: "Bruce Lee"
+              )
 
-            post.update!(raw: '@discobot quote')
-            described_class.new(:reply, user, post_id: post.id).select
-            new_post = Post.last
+              post.update!(raw: raw)
+              described_class.new(:reply, user, post_id: post.id).select
+              new_post = Post.last
 
-            expect(new_post.raw).to eq(
-              I18n.t("discourse_narrative_bot.track_selector.random_mention.quote",
-              quote: "Be Like Water", author: "Bruce Lee"
-            ))
+              expect(new_post.raw).to eq(
+                I18n.t("discourse_narrative_bot.track_selector.random_mention.quote",
+                quote: "Be Like Water", author: "Bruce Lee"
+              ))
+            end
           end
 
           describe 'when quote is requested incorrectly' do
