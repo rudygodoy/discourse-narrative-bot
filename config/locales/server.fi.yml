@@ -11,7 +11,7 @@ fi:
     timeout:
       message: |-
         Hei @%{username}, kyselen kuulumisia, kun en ole kuullut sinusta hetkeen.
-        
+
         - Voit jatkaa milloin vain vastaamalla minulle.
 
         - Voit hypätä tämän vaiheen yli sanomalla `@%{discobot_username} %{skip_trigger}`.
@@ -81,7 +81,7 @@ fi:
       do_not_understand:
         first_response: |-
           Hei, kiitos kun vastasit!
-          
+
           Valitettavasti olen huonosti ohjelmoitu botti, enkä aivan ymmärtänyt mitä tarkoitit. :frowning:
         track_response:
           Voit yrittää uudelleen, tai jos mieluummin hyppäät vaiheen yli, sano `@%{discobot_username} %{skip_trigger}`. Tai jos haluat aloittaa alusta, sano `@%{discobot_username} %{reset_trigger}`.
@@ -94,12 +94,12 @@ fi:
 
     new_user_narrative:
       cert_title: "Tunnustuksena uuden käyttäjän opastuskurssin menestyksekkäästä suorittamisesta"
-      
+
       hello:
         title: ":robot: Tervehdys!"
         message: |-
           Kiitos kun liityit sivustollemme %{title}. Tervetuloa!
-          
+
           - Olen vain robotti, mutta [avulias henkilökunta](/about) auttaa myös mielellään, jos sinulla on asiaa heille.
 
           - Turvallisuussyistä uusi käyttäjä ei voi tehdä ihan kaikkea. Saat uusia toimintoja käyttöösi (ja [ansiomerkkejä](/badges)) kun tutustumme sinuun.
@@ -109,7 +109,7 @@ fi:
       onebox:
         instructions: |-
           Voisitko nyt jakaa jonkun seuraavista linkeistä minulle? Laita vastaukseesi **linkin osoite yksin omalle rivilleen**, jolloin siitä muotoillaan automaattisesti kätevä tiivistelmälaatikko
-          
+
           Kopioi linkki mobiililaitteella koskettamalla sitä hetken aikaa, tai klikkaa sitä hiiresi oikealla painikkeella:
 
           - https://en.wikipedia.org/wiki/Inherently_funny_word
@@ -139,15 +139,15 @@ fi:
           Unohditko tykätä :heart: [viestistäni?](%{url}) :crying_cat_face:
         not_found: |-
           Näyttää ettet laittanut kuvaa, joten valitsin kuvan josta _takuulla_ pidät.
-          
+
           `%{image_url}`
-          
+
           Kokeilepa liittää tämä kuva tai liittää linkin osoite omalle rivilleen!
-          
+
       formatting:
         instructions: |-
           **Lihavoi** tai **kursivoi** sanoja seuraavasta vastauksestasi.
-          
+
           - kirjoita `**lihavoitua**` tai `_kursivoitua_`
 
           - tai käytä viestieditorin <kbd><b>B</b></kbd>- tai <kbd><i>I</i></kbd>-painiketta
@@ -162,23 +162,23 @@ fi:
       quoting:
         instructions: |-
           Voisitko lainata minua kun vastaat, jotta tiedän mihin kohtaan viittaat?
-          
+
           > Jos tässä on kahvia, tuo minulle teetä. Jos tässä on teetä, tuo minulle kahvia.
           >
           > Hyvä puoli itsekseen juttelussa on, että voit olla varma, että joku kuuntelee.
           >
           > Jotkut ovat briljantteja sanankäyttäjiä ja toiset... öö... tuota... eivät ole.
-          
+
           Maalaa valitsemasi sitaatin &uarr; teksti ja paina sitten Lainaa-painiketta, joka ilmestyy valintasi yhteyteen. Lainaa-napin sijasta voit myös painaa Vastaa-nappia tämän viestin alla.
-          
+
           Kuvaile parilla sanalla sitaatin perään, miksi valitsit juuri sen, sillä olen kovin utelias. :thinking:
         reply: |-
           Satuit valitsemaan suosikkisitaattini! :left_speech_bubble:
         not_found: |-
           Hmm, minusta tuntuu ettet lainannut tekstiäni vastaukseesi?
-          
+
           <kbd>**Lainaa**</kbd>-painike ilmestyy, kun maalaat viestini tekstiä. **Vastaa**-painike käy yhtä hyvin, jos sinulla on tekstiä maalattuna. Kokeilisitko uudelleen?
-      
+
       bookmark:
         instructions: |-
           Jos haluat oppia lisää, valitse <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> tämän alta ja <img src="/images/font-awesome-bookmark.png" width="16" height="16"> **lisää tämä yksityisviestiketju kirjanmerkkeihisi**.  Jos teet niin, sinua voi odottaa :gift: tulevaisuudessa!
@@ -186,7 +186,7 @@ fi:
           Erinomaista! Löydät yksityiskeskustelumme nyt helposti koska vain [profiilisi kirjanmerkkivälilehdeltä](%{profile_page_url}/activity/bookmarks). Klikkaat vain profiilikuvaasi oikeassa yläkulmasssa &#8599;
         not_found: |-
           Tuota noin, et ole mielestäni kirjanmerkinnyt tämän ketjun viestejä. Löysithän kirjanmerkkikuvakkeen kunkin viestin alta? Voi olla, että sinun täytyy klikata <img src="/images/font-awesome-ellipsis.png" width="16" height="16">-kuvaketta, jotta näet sen ja muita toimintoja.
-      
+
       emoji:
         instructions: |-
           Tapaan käyttää pieniä kuvia :blue_car::dash: viesteissäni; ne ovat [emojeja](https://fi.wikipedia.org/wiki/Emoji). **Laitapa joku emoji** vastausviestiisi. On useita tapoja:
@@ -209,8 +209,8 @@ fi:
 
       mention:
         instructions: |-
-          Voit haluta huomiota joltakulta, vaikket edes olisi vastaamassa heille suoraan. Mainitse hänet näppäilemällä `@` ja sen perään käyttäjänimi kokonaisuudessaan 
-          
+          Voit haluta huomiota joltakulta, vaikket edes olisi vastaamassa heille suoraan. Mainitse hänet näppäilemällä `@` ja sen perään käyttäjänimi kokonaisuudessaan
+
           Mainitsepa minut **`@%{discobot_username}`** seuraavassa vastauksessasi.
         reply: |-
           _Kutsuiko joku minua!?_ :raised_hand: Sinäkö se olit? :wave:  Tässäpä minä! Kiitos kun mainitsit minut.  :ok_hand:
@@ -222,7 +222,7 @@ fi:
       flag:
         instructions: |-
           Pidämme ystävällishenkisistä keskusteluista, ja tarvitsemme apuasi, jotta [pysytään asialinjalla](%{guidelines_url}). Kun näet ongelman, kerro siitä kirjoittajalle tai [avuliaalle henkilökunnalle](%{about_url}) liputtamalla.
-          
+
           >  :imp: Kirjoitin tähän jotain tuhmaa.
 
           Tiedät mitä tehdä. **Liputa tämä viesti** <img src="/images/font-awesome-flag.png" width="16" height="16"> sopimattomaksi!
@@ -234,7 +234,7 @@ fi:
       search:
         instructions: |-
           _psst_ … Tein jekun yhteen aiemmista vastauksistani. Jos olet valmis ottamaan haasteen vastaan, **valitse hakukuvake** <img src="/images/font-awesome-search.png" width="16" height="16"> at the top right &#8599; to search for it.
-          
+
           <small>Etsi hakusanaa "kapy&#8203;bara" tästä ketjusta</small>
         hidden_message: |-
           Miten sinulta jäi tämä kapybara huomaamatta? :wink:
@@ -252,7 +252,7 @@ fi:
           - Jos sinulla on fyysinen :keyboard:, tutki käteviä näppäinoikoteitä painamalla <kbd>?</kbd>.
         not_found: |-
           Hm… sinulla vaikuttaa olevan vaikeuksia. Pahoitteluni. Haitko <img src="/images/font-awesome-search.png" width="16" height="16"> hakusanalla **kapy&#8203;bara**?
-      
+
       end:
         message: |-
           Kiitos kun jaksoit loppuun asti @%{username}! Tein tämän sinulle, minusta olet ansainnut sen:
@@ -267,30 +267,30 @@ fi:
         alt: 'Kunniakirja'
 
     advanced_user_narrative:
-      cert_title: ""Tunnustuksena edistyneen käyttäjän opastuskurssin menestyksekkäästä suorittamisesta""
+      cert_title: "Tunnustuksena edistyneen käyttäjän opastuskurssin menestyksekkäästä suorittamisesta"
       title: ':arrow_up: Edistyneet toiminnot'
       start_message: |-
         Moi @%{username}, käydään läpi edistyneempiä toimintoja.
-        
+
       edit:
         bot_created_post_raw: "@%{discobot_username} on ylivoimaisesti mahtavin botti, jonka tiedän. :wink:"
         instructions: |-
           Kaikki tekevät virheitä. Vaan älä huoli, voit muokata viestejäsi ja korjata erheesi!
-          
+
           Aloita **muokkaamalla** viestiä, jonka juuri tein sinun nimissäsi.
         not_found: |-
           Näyttää, ettet vielä muokannut [viestiä](%{url}), jonka tein puolestasi. Yrittäisitkö uudelleen?
-          
+
           Palaa viestieditoriin klikkaamalla <img src="/images/font-awesome-pencil.png" width="16" height="16">-kuvaketta.
         reply: |-
           Hyvin tehty!
-          
+
           Huomaa, että 5 minuutin jälkeen tehdyt muokkaukset näkyvät kaikille muokkaushistoriassa, joka ilmestyy viestin oikeaan yläkulmaan pienenä kynäsymbolina, jossa näkyy muokkausten määrä.
-      
+
       delete:
         instructions: |-
           Jos haluat perua viestisi, voit poistaa sen.
-          
+
           Anna mennä ja **poista** yltä mikä tahansa viestisi <img src="/images/font-awesome-trash.png" width="16" height="16"> poista-toiminnon avulla.
         not_found: |-
           Minusta viestejä ei vielä poistettu? Muista, että <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> näytä lisää -kuvake paljastaa <img src="/images/font-awesome-trash.png" width="16" height="16"> poista-kuvakkeen.
@@ -303,7 +303,7 @@ fi:
         deleted_post_raw: 'Miksi @%{discobot_username} poisti viestini? :anguished:'
         instructions: |-
           Voi ei! Taisin vahingossa poistaa viestin, jonka tein sinun nimissäsi.
-          
+
           Tekisitkö palveluksen ja <img src="/images/font-awesome-rotate-left.png" width="16" height="16"> **palauttaisit** sen?
         not_found: |-
           Onko ongelmia? Muista, että <img src="/images/font-awesome-ellipsis.png" width="16" height="16"> näytä lisää -kuvake paljastaa <img src="/images/font-awesome-rotate-left.png" width="16" height="16"> palauta-kuvakkeen.
@@ -315,35 +315,35 @@ fi:
       category_hashtag:
         instructions: |-
           Tiesitkö, että viesteissä voi viitata alueisiin ja tunnisteisiin? Esimerkiksi, oletko käynyt %{category}-alueella?
-          
+
           Näppäile lauseen keskellä `#` ja valitse mieleinen alue tai tunniste.
         not_found: |-
           Höh, en näe viittauksia alueisiin. Huomioi, ettei `#` saa olla rivinsä ensimmäinen merkki. Kopioisitko tämän seuraavaan vastaukseesi?
-              
+
               Voin linkittää alueeseen näppäilemällä #
         reply: |-
           Erinomaista! Muista, että tämä toimii alueiden lisäksi myös tunnisteille, jos ne ovat käytössä täällä.
-      
+
       change_topic_notification_level:
         instructions: |-
           Sinulla on jokaiselle ketjulle ilmoitustaso. Aluksi se on 'tavallinen', jolloin saat tavalliseen tapaan ilmoituksen vain, jos joku puhuu nimenomaan sinulle.
-          
+
           Oletuksena yksityisviestiketjujen ilmoitustaso on kaikkein korkein eli 'tarkkaillaan', jolloin saat ilmoituksen joka ikisestä viestistä. Voit kuitenkin valita _mille tahansa_ ketjulle ilmoitustason 'tarkkaillaan', 'seurataan' tai 'vaimennettu'.
-          
+
           Kokeillaanpa vaihtaa tämän ketjun ilmoitustasoa. Ketjun alla on painike, joka näyttää sinun tarkkailevan tätä ketjua. Vaihdapa ilmoitustasoksi **seurataan**.
         not_found: |-
           Näytät yhä tarkkailevan :eyes: tätä ketjua! Jollet meinaa löytää sitä, ilmoitustasopainike sijaitsee ketjun alla.
         reply: |-
           Mahtavaa! Toivottavasti et kuitenkaan vaimentanut tätä ketjua, vaikka saatan välillä olla vähän liiankin puhelias. :grin:.
-          
+
           Huomioi, että kun vastaat ketjuun tai luet sitä kauemmin kuin muutaman minuutin ajan, se saa automaattisesti ilmoitustasokseen 'seurataan'. Tätä voi säätää [käyttäjäasetuksissa](/my/preferences).
-      
+
       poll:
         instructions: |-
           Tiesitkö, että viesteihin voi lisätä äänestyksiä? **Luo äänestys** valitsemalla viestieditorin <img src="/images/font-awesome-gear.png" width="16" height="16"> hammasrataskuvake.
         not_found: |-
           Ups! Vastauksessasi ei ollut äänestystä.
-          
+
           Käytä editorin <img src="/images/font-awesome-gear.png" width="16" height="16"> hammasrataskuvaketta tai kopioi tämä äänestys ja liitä se seuraavaan vastaukseesi:
 
               [poll]
@@ -352,7 +352,7 @@ fi:
               [/poll]
         reply: |-
           Hauska äänestys! Miten onnistuin opetuksessa?
-          
+
           [poll]
           * :+1:
           * :-1:
