@@ -102,6 +102,8 @@ module DiscourseNarrativeBot
           DiscourseNarrativeBot::Dice.roll(match_data[1].to_i, match_data[2].to_i)
         elsif match_data = match_trigger?(post_raw, 'quote')
           DiscourseNarrativeBot::QuoteGenerator.generate(@user)
+        elsif match_data = match_trigger?(post_raw, 'btc (\d+)')
+          DiscourseNarrativeBot::BitcoinPrice.tobtc(match_data[1].to_i)
         elsif display_help
           if public_reply?
             key = "#{PUBLIC_DISPLAY_BOT_HELP_KEY}:#{@post.topic_id}"
