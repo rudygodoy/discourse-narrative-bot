@@ -30,6 +30,12 @@ en:
       results: |-
         > :game_die: %{results}
 
+    bitcoinprice:
+      invalid: |-
+        Please, enter a number that represents an amount in USD.
+      results: |-
+        > :moneybag: right now you could buy %{btc} BTC with %{value} USD.
+
     quote:
       "1":
         quote: "In the middle of every difficulty lies opportunity"

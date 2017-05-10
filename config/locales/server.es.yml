@@ -28,6 +28,12 @@ es:
       results: |-
         > :game_die: tirada de dados: %{results}
 
+    bitcoinprice:
+      invalid: |-
+        Escribe un número que represente la cantidad en dólares americanos (USD).
+      results: |-
+        > :moneybag: con %{value} dólares podrías comprar en este momento %{btc} BTC.
+                  
     quote:
       "1":
         quote: "In the middle of every difficulty lies opportunity"
