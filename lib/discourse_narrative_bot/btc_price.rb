@@ -12,10 +12,9 @@ module DiscourseNarrativeBot
 	return I18n.t('discourse_narrative_bot.bitcoinprice.invalid')
       end
       
-      btc =
-	connection = Excon.new("#{API_ENDPOINT_TOBTC}?currency=USD&value=#{value}")
-        response = connection.request(expects: [200, 201], method: :Get)
-        [response.body.strip]
+      connection = Excon.new("#{API_ENDPOINT_TOBTC}?currency=USD&value=#{value}")
+      response = connection.request(expects: [200, 201], method: :Get)
+      btc = response.body.strip
 
       I18n.t('discourse_narrative_bot.bitcoinprice.results', value: value, btc: btc)
     end
