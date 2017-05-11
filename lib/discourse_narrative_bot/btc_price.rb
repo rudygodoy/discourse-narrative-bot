@@ -29,7 +29,7 @@ module DiscourseNarrativeBot
       results = JSON.parse(response.body)
 
       price = results["bpi"][currency]["rate_float"]
-      btc = price / value
+      btc = value / price
       
       I18n.t('discourse_narrative_bot.bitcoinprice.results', value: value, btc: btc, currency: CURRENCY_CODES[currency])
     end
