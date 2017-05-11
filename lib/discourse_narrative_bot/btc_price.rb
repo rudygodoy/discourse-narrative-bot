@@ -33,9 +33,5 @@ module DiscourseNarrativeBot
       
       I18n.t('discourse_narrative_bot.bitcoinprice.results', value: value, btc: btc, currency: CURRENCY_CODES[currency])
     end
-
-    def self.price(currency)
-      if currency 
-    end
   end
 end
