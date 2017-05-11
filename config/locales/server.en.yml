@@ -34,7 +34,11 @@ en:
       invalid: |-
         Please, enter a number that represents an amount in USD.
       results: |-
-        > :moneybag: right now you could buy %{btc} BTC with %{value} USD.
+        > :moneybag: right now you could buy %{btc} BTC with %{value} %{currency}.
+      codes:
+        pen: Peruvian Soles
+        usd: United States Dolar
+        eur: Euro
 
     quote:
       "1":

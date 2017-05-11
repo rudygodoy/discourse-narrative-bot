@@ -32,8 +32,12 @@ es:
       invalid: |-
         Escribe un número que represente la cantidad en dólares americanos (USD).
       results: |-
-        > :moneybag: con %{value} dólares podrías comprar en este momento %{btc} BTC.
-                  
+        > :moneybag: con %{value} %{currency} podrías comprar en este momento %{btc} BTC.
+      codes:
+        pen: soles
+        usd: dólares americanos
+        eur: euros
+
     quote:
       "1":
         quote: "In the middle of every difficulty lies opportunity"
