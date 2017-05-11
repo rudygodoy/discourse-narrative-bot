@@ -24,7 +24,7 @@ module DiscourseNarrativeBot
 	return I18n.t('discourse_narrative_bot.bitcoinprice.invalid')
       end
       
-      connection = Excon.new("#{API_ENDPOINT_CBPI}/#{currency}.json")
+      connection = Excon.new("#{API_ENDPOINT_CDBPI}/#{currency}.json")
       response = connection.request(expects: [200, 201], method: :Get)
       results = JSON.parse(response.body)
 
